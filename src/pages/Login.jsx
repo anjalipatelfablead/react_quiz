@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, Link } from 'react-router-dom';
 import { login, reset } from '../redux/slices/authSlice';
+import { Mail, Lock } from "lucide-react";
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -80,33 +81,34 @@ const Login = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-primary-100 to-primary-400 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-sm w-full bg-card-bg/90 backdrop-blur-sm p-8 rounded-2xl shadow-xl border border-card-border">
+      <div className="max-w-md w-full bg-card-bg/90 backdrop-blur-sm p-8 rounded-2xl shadow-xl border border-card-border">
         <div className="mb-8">
-          <h2 className="text-center text-xl font-light tracking-wide text-gray-800 uppercase">
+          {/* <h2 className="text-center text-xl tracking-wide font-extrabold text-gray-800 uppercase">
             Welcome back to Fablead Quiz
+          </h2> */}
+          <h2 className="text-center text-2xl tracking-wide font-bold text-gray-900 uppercase px-5">
+            Welcome back to <span className="text-orange-500">Fablead Quiz</span>
           </h2>
         </div>
-        
+
         <form className="space-y-6" onSubmit={onSubmit}>
           {isError && message && !errors && (
             <div className="bg-red-50 border border-red-200 rounded-lg p-3 mb-4">
               <p className="text-sm text-red-600 text-center">{message}</p>
             </div>
           )}
-          
+
           <div className="space-y-5">
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <svg className="h-4 w-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                </svg>
+                <Mail size={18} className="text-primary-600" />
               </div>
               <input
                 id="email"
                 name="email"
                 type="text"
                 autoComplete="email"
-                className={`block w-full pl-10 pr-3 py-2 bg-transparent border-0 border-b ${fieldErrors.email ? 'border-red-400' : 'border-gray-400'} placeholder-gray-500 text-gray-800 text-sm focus:outline-none focus:border-primary-600 focus:ring-0 transition-colors`}
+                className={`block w-full pl-10 pr-3 py-2 bg-transparent border-0 border-b ${fieldErrors.email ? 'border-red-400' : 'border-gray-400'} placeholder-gray-700 text-gray-800 text-sm focus:outline-none focus:border-primary-600 focus:ring-0 transition-colors`}
                 placeholder="Email ID"
                 value={email}
                 onChange={onChange}
@@ -115,19 +117,17 @@ const Login = () => {
                 <p className="mt-1 text-xs text-red-500">{fieldErrors.email}</p>
               )}
             </div>
-            
+
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <svg className="h-4 w-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                </svg>
+                <Lock size={18} className="text-primary-600" />
               </div>
               <input
                 id="password"
                 name="password"
                 type="password"
                 autoComplete="current-password"
-                className={`block w-full pl-10 pr-3 py-2 bg-transparent border-0 border-b ${fieldErrors.password ? 'border-red-400' : 'border-gray-400'} placeholder-gray-500 text-gray-800 text-sm focus:outline-none focus:border-primary-600 focus:ring-0 transition-colors`}
+                className={`block w-full pl-10 pr-3 py-2 bg-transparent border-0 border-b ${fieldErrors.password ? 'border-red-400' : 'border-gray-400'} placeholder-gray-700 text-gray-800 text-sm focus:outline-none focus:border-primary-600 focus:ring-0 transition-colors`}
                 placeholder="Password"
                 value={password}
                 onChange={onChange}
@@ -176,7 +176,7 @@ const Login = () => {
               </Link>
             </div>
           </div>
-          
+
           <div className="text-center pt-4 border-t border-gray-300/50">
             <p className="text-xs text-gray-600">
               Don't have an account?{' '}

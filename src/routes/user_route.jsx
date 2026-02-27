@@ -4,23 +4,19 @@ import Register from '../pages/Register';
 import Dashboard from '../pages/dashboard';
 
 import ProtectedRoute from './protected_route';
+import DashboardLayout from '../components/DashboardLayout';
 
 const UserRoutes = ({ user }) => {
   return (
     <>
-      {/* Public Routes */}
+      {/* Public Routes - No sidebar */}
       <Route path="/login" element={!user ? <Login /> : <Navigate to="/dashboard" />} />
       <Route path="/register" element={!user ? <Register /> : <Navigate to="/dashboard" />} />
 
-      {/* protected route */}
-      <Route
-        path="/dashboard"
-        element={
-          <ProtectedRoute>
-            <Dashboard />
-          </ProtectedRoute>
-        }
-      />
+      {/* Protected Routes with Sidebar */}
+      <Route element={<ProtectedRoute><DashboardLayout /></ProtectedRoute>}>
+        <Route path="/dashboard" element={<Dashboard />} />
+      </Route>
     </>
   );
 };

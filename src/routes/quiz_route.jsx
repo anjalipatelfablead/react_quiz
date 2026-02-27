@@ -4,6 +4,8 @@ import QuizList from "../pages/quiz/QuizList";
 import QuizForm from "../pages/quiz/QuizForm";
 import QuizDetail from "../pages/quiz/QuizDetail";
 import QuestionForm from "../pages/question/QuestionForm";
+import QuestionTest from "../pages/question/QuestionTest";
+import QuestionReview from "../pages/question/QuestionReview";
 import ProtectedRoute from "./protected_route";
 
 const QuizRoutes = () => {
@@ -50,6 +52,24 @@ const QuizRoutes = () => {
         element={
           <ProtectedRoute>
             <QuestionForm />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/quizzes/:quizId/take"
+        element={
+          <ProtectedRoute>
+            <QuestionTest />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/quizzes/:quizId/review"
+        element={
+          <ProtectedRoute>
+            <QuestionReview />
           </ProtectedRoute>
         }
       />

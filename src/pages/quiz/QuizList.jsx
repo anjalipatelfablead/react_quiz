@@ -43,8 +43,11 @@ const QuizList = () => {
     // Get unique categories
     const categories = [...new Set(quizzes.map(q => q.category))];
 
-    // Filter quizzes
+    // Filter quizzes - users only see published quizzes
     const filteredQuizzes = quizzes.filter(quiz => {
+        // For users, only show published quizzes
+        if (!isAdmin && quiz.status !== 'published') return false;
+        
         const matchesSearch = quiz.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
             quiz.description.toLowerCase().includes(searchTerm.toLowerCase());
         const matchesStatus = statusFilter === 'all' || quiz.status === statusFilter;
@@ -210,37 +213,43 @@ const QuizList = () => {
                                     <BookOpen size={20} className="text-blue-600" />
                                 </div>
                                 <div>
-                                    <p className="text-2xl font-bold text-gray-800">{quizzes.length}</p>
-                                    <p className="text-sm text-gray-500">Total Quizzes</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="bg-white rounded-xl shadow-md p-4 border border-gray-100">
-                            <div className="flex items-center space-x-3">
-                                <div className="p-2 bg-green-100 rounded-lg">
-                                    <CheckCircle size={20} className="text-green-600" />
-                                </div>
-                                <div>
                                     <p className="text-2xl font-bold text-gray-800">
-                                        {quizzes.filter(q => q.status === 'published').length}
+                                        {isAdmin ? quizzes.length : quizzes.filter(q => q.status === 'published').length}
                                     </p>
-                                    <p className="text-sm text-gray-500">Published</p>
+                                    <p className="text-sm text-gray-500">{isAdmin ? 'Total Quizzes' : 'Available Quizzes'}</p>
                                 </div>
                             </div>
                         </div>
-                        <div className="bg-white rounded-xl shadow-md p-4 border border-gray-100">
-                            <div className="flex items-center space-x-3">
-                                <div className="p-2 bg-yellow-100 rounded-lg">
-                                    <AlertCircle size={20} className="text-yellow-600" />
+                        {isAdmin && (
+                            <>
+                                <div className="bg-white rounded-xl shadow-md p-4 border border-gray-100">
+                                    <div className="flex items-center space-x-3">
+                                        <div className="p-2 bg-green-100 rounded-lg">
+                                            <CheckCircle size={20} className="text-green-600" />
+                                        </div>
+                                        <div>
+                                            <p className="text-2xl font-bold text-gray-800">
+                                                {quizzes.filter(q => q.status === 'published').length}
+                                            </p>
+                                            <p className="text-sm text-gray-500">Published</p>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div>
-                                    <p className="text-2xl font-bold text-gray-800">
-                                        {quizzes.filter(q => q.status === 'draft').length}
-                                    </p>
-                                    <p className="text-sm text-gray-500">Drafts</p>
+                                <div className="bg-white rounded-xl shadow-md p-4 border border-gray-100">
+                                    <div className="flex items-center space-x-3">
+                                        <div className="p-2 bg-yellow-100 rounded-lg">
+                                            <AlertCircle size={20} className="text-yellow-600" />
+                                        </div>
+                                        <div>
+                                            <p className="text-2xl font-bold text-gray-800">
+                                                {quizzes.filter(q => q.status === 'draft').length}
+                                            </p>
+                                            <p className="text-sm text-gray-500">Drafts</p>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                        </div>
+                            </>
+                        )}
                         <div className="bg-white rounded-xl shadow-md p-4 border border-gray-100">
                             <div className="flex items-center space-x-3">
                                 <div className="p-2 bg-purple-100 rounded-lg">

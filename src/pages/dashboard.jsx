@@ -1,6 +1,9 @@
+import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { logout } from '../redux/slices/authSlice';
+import { getAllQuizzes } from '../redux/slices/quizSlice';
+import userService from '../services/user_service';
 import {
     BookOpen,
     Users,
@@ -16,18 +19,45 @@ import {
 
 const Dashboard = () => {
     const { user } = useSelector((state) => state.auth);
+    const { quizzes } = useSelector((state) => state.quiz);
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const [totalUsers, setTotalUsers] = useState(0);
+
+    useEffect(() => {
+        dispatch(getAllQuizzes());
+        // Fetch total users for admin dashboard
+        if (user?.role === 'admin') {
+            fetchTotalUsers();
+        }
+    }, [dispatch, user]);
+
+    const fetchTotalUsers = async () => {
+        try {
+            const data = await userService.getAllUsers();
+            // Handle both array and object response formats
+            const users = Array.isArray(data) ? data : data.users || [];
+            const onlyUsers = users.filter(u => u.role === 'user');
+
+            setTotalUsers(onlyUsers.length);
+        } catch (error) {
+            console.error('Failed to fetch users:', error);
+        }
+    };
 
     const handleLogout = () => {
         dispatch(logout());
         navigate('/login');
     };
 
-    // Static data for demonstration
+    // Get actual quiz counts
+    const publishedQuizzes = quizzes.filter(q => q.status === 'published').length;
+    const totalQuizzes = quizzes.length || 0;
+
+    // Admin stats with dynamic data
     const adminStats = {
-        totalQuizzes: 24,
-        totalUsers: 156,
+        totalQuizzes: totalQuizzes,
+        totalUsers: totalUsers,
         totalAttempts: 892,
         analyticsSummary: {
             avgScore: '78%',
@@ -36,8 +66,9 @@ const Dashboard = () => {
         }
     };
 
+    // User stats with dynamic available quizzes
     const userStats = {
-        availableQuizzes: 18,
+        availableQuizzes: publishedQuizzes,
         attemptedQuizzes: 12,
         highestScore: 95,
         recentAttempts: [
@@ -84,7 +115,7 @@ const Dashboard = () => {
                             <StatCard
                                 icon={BookOpen}
                                 value={adminStats.totalQuizzes}
-                                label="Total Quizzes Created"
+                                label="Total Quizzes"
                                 color="bg-blue-500"
                             />
                             <StatCard
@@ -202,8 +233,8 @@ const Dashboard = () => {
                                         <div key={index} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
                                             <div className="flex items-center space-x-4">
                                                 <div className={`w-10 h-10 rounded-full flex items-center justify-center ${attempt.score >= 90 ? 'bg-green-100 text-green-600' :
-                                                        attempt.score >= 70 ? 'bg-yellow-100 text-yellow-600' :
-                                                            'bg-red-100 text-red-600'
+                                                    attempt.score >= 70 ? 'bg-yellow-100 text-yellow-600' :
+                                                        'bg-red-100 text-red-600'
                                                     }`}>
                                                     <Trophy size={18} />
                                                 </div>
@@ -214,8 +245,8 @@ const Dashboard = () => {
                                             </div>
                                             <div className="text-right">
                                                 <p className={`text-xl font-bold ${attempt.score >= 90 ? 'text-green-600' :
-                                                        attempt.score >= 70 ? 'text-yellow-600' :
-                                                            'text-red-600'
+                                                    attempt.score >= 70 ? 'text-yellow-600' :
+                                                        'text-red-600'
                                                     }`}>
                                                     {attempt.score}%
                                                 </p>
@@ -246,7 +277,10 @@ const Dashboard = () => {
                                         >
                                             Create New Quiz
                                         </button>
-                                        <button className="w-full py-2 px-4 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors text-sm font-medium">
+                                        <button
+                                            onClick={() => navigate('/users')}
+                                            className="w-full py-2 px-4 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors text-sm font-medium"
+                                        >
                                             Manage Users
                                         </button>
                                         <button className="w-full py-2 px-4 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium">

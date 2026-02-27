@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getQuizById, reset, clearCurrentQuiz } from '../../redux/slices/quizSlice';
+import { getQuestionsByQuiz, reset as resetQuestions } from '../../redux/slices/questionSlice';
 import {
   BookOpen,
   ArrowLeft,
@@ -27,16 +28,19 @@ const QuizDetail = () => {
 
   const { user } = useSelector((state) => state.auth);
   const { currentQuiz, isLoading, isError, message } = useSelector((state) => state.quiz);
+  const { questions, isLoading: questionsLoading } = useSelector((state) => state.question);
 
   const isAdmin = user?.role === 'admin';
 
   useEffect(() => {
     if (id) {
       dispatch(getQuizById(id));
+      dispatch(getQuestionsByQuiz(id));
     }
     return () => {
       dispatch(reset());
       dispatch(clearCurrentQuiz());
+      dispatch(resetQuestions());
     };
   }, [dispatch, id]);
 
@@ -234,14 +238,16 @@ const QuizDetail = () => {
                 </div>
               </div>
 
-              {/* Questions Count (Placeholder) */}
+              {/* Questions Count */}
               <div className="bg-gray-50 rounded-xl p-4">
                 <div className="flex items-center space-x-3">
                   <div className="p-2 bg-purple-100 rounded-lg">
                     <FileText size={20} className="text-purple-600" />
                   </div>
                   <div>
-                    <p className="text-lg font-bold text-gray-800">-</p>
+                    <p className="text-lg font-bold text-gray-800">
+                      {questionsLoading ? '...' : questions.length}
+                    </p>
                     <p className="text-sm text-gray-500">Questions</p>
                   </div>
                 </div>

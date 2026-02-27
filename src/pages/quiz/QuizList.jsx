@@ -336,7 +336,24 @@ const QuizList = () => {
                                                 <span>By {quiz.createdBy?.username || 'Unknown'}</span>
                                             </div>
                                             <div className="flex items-center gap-2">
-                                                
+                                                {!isAdmin && quiz.status === 'published' && (
+                                                    <button
+                                                        onClick={() => navigate(`/quizzes/${quiz._id}/take`)}
+                                                        className="inline-flex items-center px-3 py-1.5 text-sm font-medium text-green-600 hover:text-green-700 hover:bg-green-50 rounded-lg transition-colors"
+                                                    >
+                                                        ▶ Start
+                                                    </button>
+                                                )}
+
+                                                {isAdmin && (
+                                                    <button
+                                                        onClick={() => navigate(`/quizzes/${quiz._id}/questions`)}
+                                                        className="inline-flex items-center px-3 py-1.5 text-sm font-medium text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-colors"
+                                                    >
+                                                        Questions
+                                                    </button>
+                                                )}
+
                                                 <button
                                                     onClick={() => navigate(`/quizzes/${quiz._id}`)}
                                                     className="inline-flex items-center px-3 py-1.5 text-sm font-medium text-orange-600 hover:text-orange-700 hover:bg-orange-50 rounded-lg transition-colors"

@@ -177,7 +177,7 @@ const QuizDetail = () => {
                 )}
                 {currentQuiz.status === 'published' && !isAdmin && (
                   <button
-                    onClick={() => navigate(`/quizzes/take/${currentQuiz._id}`)}
+                    onClick={() => navigate(`/quizzes/${currentQuiz._id}/take`)}
                     className="inline-flex items-center justify-center px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors font-medium shadow-md"
                   >
                     <Play size={18} className="mr-2" />

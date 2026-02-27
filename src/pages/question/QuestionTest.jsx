@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getQuizById, reset as resetQuiz, clearCurrentQuiz } from '../../redux/slices/quizSlice';
 import { getQuestionsByQuiz, reset as resetQuestions } from '../../redux/slices/questionSlice';
+import { submitQuiz, reset as resetResult } from '../../redux/slices/resultSlice';
 import {
     ChevronLeft,
     ChevronRight,
@@ -25,6 +26,7 @@ const QuestionTest = () => {
     const [markedQuestions, setMarkedQuestions] = useState([]);
     const [showSubmitConfirm, setShowSubmitConfirm] = useState(false);
     const [timeLeft, setTimeLeft] = useState(null);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     useEffect(() => {
         if (quizId) {
@@ -35,6 +37,7 @@ const QuestionTest = () => {
             dispatch(resetQuiz());
             dispatch(clearCurrentQuiz());
             dispatch(resetQuestions());
+            dispatch(resetResult());
         };
     }, [dispatch, quizId]);
 
@@ -100,7 +103,10 @@ const QuestionTest = () => {
         setCurrentQuestionIndex(index);
     };
 
-    const submitTest = () => {
+    const submitTest = async () => {
+        setIsSubmitting(true);
+        
+        // Calculate local results for display
         let correctCount = 0;
         let totalMarks = 0;
         let obtainedMarks = 0;
@@ -124,13 +130,29 @@ const QuestionTest = () => {
             percentage: percentage.toFixed(2)
         };
 
-        // Redirect to review page with results
-        navigate(`/quizzes/${quizId}/review`, {
-            state: {
-                testResults,
-                selectedAnswers
-            }
-        });
+        // Format answers for backend API
+        const answers = Object.entries(selectedAnswers).map(([questionId, selectedAnswer]) => ({
+            questionId,
+            selectedAnswer
+        }));
+
+        try {
+            // Submit to backend
+            const result = await dispatch(submitQuiz({ quizId, answers })).unwrap();
+            
+            // Redirect to review page with results
+            navigate(`/quizzes/${quizId}/review/${result.result._id}`, {
+                state: {
+                    testResults,
+                    selectedAnswers
+                }
+            });
+        } catch (error) {
+            console.error('Failed to submit quiz:', error);
+            alert('Failed to submit quiz. Please try again.');
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     const getOptionLabel = (index) => {
@@ -198,9 +220,10 @@ const QuestionTest = () => {
                             </div>
                             <button
                                 onClick={() => setShowSubmitConfirm(true)}
-                                className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors text-sm font-medium"
+                                disabled={isSubmitting}
+                                className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-medium"
                             >
-                                Submit
+                                {isSubmitting ? 'Submitting...' : 'Submit'}
                             </button>
                         </div>
                     </div>
@@ -360,9 +383,10 @@ const QuestionTest = () => {
                             </button>
                             <button
                                 onClick={submitTest}
-                                className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors"
+                                disabled={isSubmitting}
+                                className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                             >
-                                Submit
+                                {isSubmitting ? 'Submitting...' : 'Submit'}
                             </button>
                         </div>
                     </div>

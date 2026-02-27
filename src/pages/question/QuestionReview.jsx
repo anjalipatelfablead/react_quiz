@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { getQuizById, reset as resetQuiz, clearCurrentQuiz } from '../../redux/slices/quizSlice';
 import { getQuestionsByQuiz, reset as resetQuestions } from '../../redux/slices/questionSlice';
+import { getResultById, reset as resetResult, clearCurrentResult } from '../../redux/slices/resultSlice';
 import {
     CheckCircle,
     XCircle,
@@ -15,13 +16,14 @@ import {
 const QuestionReview = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const { quizId } = useParams();
+    const { quizId, resultId } = useParams();
     const location = useLocation();
 
     const { currentQuiz, isLoading: quizLoading } = useSelector((state) => state.quiz);
     const { questions, isLoading: questionsLoading } = useSelector((state) => state.question);
+    const { currentResult, isLoading: resultLoading } = useSelector((state) => state.result);
 
-    // Get test results from navigation state
+    // Get test results from navigation state (for immediate view after quiz)
     const testResults = location.state?.testResults;
     const selectedAnswers = location.state?.selectedAnswers || {};
 
@@ -30,12 +32,18 @@ const QuestionReview = () => {
             dispatch(getQuizById(quizId));
             dispatch(getQuestionsByQuiz(quizId));
         }
+        // If resultId is provided, fetch the result from backend
+        if (resultId) {
+            dispatch(getResultById(resultId));
+        }
         return () => {
             dispatch(resetQuiz());
             dispatch(clearCurrentQuiz());
             dispatch(resetQuestions());
+            dispatch(resetResult());
+            dispatch(clearCurrentResult());
         };
-    }, [dispatch, quizId]);
+    }, [dispatch, quizId, resultId]);
 
     const getOptionLabel = (index) => {
         return String.fromCharCode(65 + index);
@@ -53,7 +61,7 @@ const QuestionReview = () => {
         navigate(`/quizzes/${quizId}`);
     };
 
-    if (quizLoading || questionsLoading) {
+    if (quizLoading || questionsLoading || resultLoading) {
         return (
             <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-orange-100 flex items-center justify-center">
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500"></div>
@@ -78,8 +86,8 @@ const QuestionReview = () => {
         );
     }
 
-    // If no test results, show error
-    if (!testResults) {
+    // If no test results and no current result from backend, show error
+    if (!testResults && !currentResult) {
         return (
             <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-orange-100 flex items-center justify-center">
                 <div className="bg-white rounded-xl shadow-md p-8 text-center max-w-md">
@@ -105,6 +113,23 @@ const QuestionReview = () => {
         );
     }
 
+    // Calculate display data from either testResults (immediate) or currentResult (from backend)
+    const displayData = testResults || {
+        percentage: currentResult ? ((currentResult.score / currentResult.totalMarks) * 100).toFixed(1) : 0,
+        correctAnswers: currentResult ? currentResult.answers.filter(a => a.isCorrect).length : 0,
+        answeredQuestions: currentResult ? currentResult.answers.length : 0,
+        totalQuestions: questions.length,
+        obtainedMarks: currentResult ? currentResult.score : 0,
+        totalMarks: currentResult ? currentResult.totalMarks : 0,
+    };
+
+    // Build selectedAnswers map from currentResult if available
+    const resultAnswersMap = currentResult ? 
+        currentResult.answers.reduce((acc, ans) => {
+            acc[ans.questionId._id || ans.questionId] = ans.selectedAnswer;
+            return acc;
+        }, {}) : {};
+
     return (
         <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-orange-100">
             <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -126,37 +151,37 @@ const QuestionReview = () => {
                 <div className="bg-white rounded-xl shadow-lg p-8 mb-6">
                     <div className="text-center mb-8">
                         <div className={`w-24 h-24 rounded-full mx-auto mb-4 flex items-center justify-center ${
-                            parseFloat(testResults.percentage) >= 60 ? 'bg-green-100' : 'bg-red-100'
+                            parseFloat(displayData.percentage) >= 60 ? 'bg-green-100' : 'bg-red-100'
                         }`}>
-                            {parseFloat(testResults.percentage) >= 60 ? (
+                            {parseFloat(displayData.percentage) >= 60 ? (
                                 <CheckCircle size={48} className="text-green-600" />
                             ) : (
                                 <XCircle size={48} className="text-red-600" />
                             )}
                         </div>
                         <h2 className="text-3xl font-bold text-gray-800 mb-2">
-                            {parseFloat(testResults.percentage) >= 60 ? 'Congratulations!' : 'Keep Practicing!'}
+                            {parseFloat(displayData.percentage) >= 60 ? 'Congratulations!' : 'Keep Practicing!'}
                         </h2>
                         <p className="text-gray-600">
-                            You scored <span className="font-bold text-orange-600">{testResults.percentage}%</span>
+                            You scored <span className="font-bold text-orange-600">{displayData.percentage}%</span>
                         </p>
                     </div>
 
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                         <div className="bg-blue-50 rounded-xl p-4 text-center">
-                            <p className="text-3xl font-bold text-blue-600">{testResults.percentage}%</p>
+                            <p className="text-3xl font-bold text-blue-600">{displayData.percentage}%</p>
                             <p className="text-sm text-gray-600">Score</p>
                         </div>
                         <div className="bg-green-50 rounded-xl p-4 text-center">
-                            <p className="text-3xl font-bold text-green-600">{testResults.correctAnswers}</p>
+                            <p className="text-3xl font-bold text-green-600">{displayData.correctAnswers}</p>
                             <p className="text-sm text-gray-600">Correct</p>
                         </div>
                         <div className="bg-orange-50 rounded-xl p-4 text-center">
-                            <p className="text-3xl font-bold text-orange-600">{testResults.answeredQuestions}/{testResults.totalQuestions}</p>
+                            <p className="text-3xl font-bold text-orange-600">{displayData.answeredQuestions}/{displayData.totalQuestions}</p>
                             <p className="text-sm text-gray-600">Attempted</p>
                         </div>
                         <div className="bg-purple-50 rounded-xl p-4 text-center">
-                            <p className="text-3xl font-bold text-purple-600">{testResults.obtainedMarks}/{testResults.totalMarks}</p>
+                            <p className="text-3xl font-bold text-purple-600">{displayData.obtainedMarks}/{displayData.totalMarks}</p>
                             <p className="text-sm text-gray-600">Marks</p>
                         </div>
                     </div>
@@ -167,8 +192,12 @@ const QuestionReview = () => {
                     <h3 className="text-lg font-semibold text-gray-800 mb-4">Question Review</h3>
                     <div className="space-y-4 max-h-[600px] overflow-y-auto pr-2">
                         {questions.map((question, index) => {
-                            const isCorrect = selectedAnswers[question._id] === question.correctAnswer;
-                            const isAnswered = selectedAnswers[question._id] !== undefined;
+                            // Use resultAnswersMap if available (from backend), otherwise use selectedAnswers (immediate)
+                            const userAnswer = resultAnswersMap[question._id] !== undefined 
+                                ? resultAnswersMap[question._id] 
+                                : selectedAnswers[question._id];
+                            const isCorrect = userAnswer === question.correctAnswer;
+                            const isAnswered = userAnswer !== undefined;
                             return (
                                 <div 
                                     key={question._id} 
@@ -199,7 +228,7 @@ const QuestionReview = () => {
                                                         className={`p-2 rounded text-sm ${
                                                             option === question.correctAnswer
                                                                 ? 'bg-green-100 text-green-800 border border-green-300'
-                                                                : selectedAnswers[question._id] === option && option !== question.correctAnswer
+                                                                : userAnswer === option && option !== question.correctAnswer
                                                                     ? 'bg-red-100 text-red-800 border border-red-300'
                                                                     : 'bg-white border border-gray-200'
                                                         }`}
@@ -208,7 +237,7 @@ const QuestionReview = () => {
                                                         {option === question.correctAnswer && (
                                                             <span className="ml-2 text-green-600 font-medium">(Correct)</span>
                                                         )}
-                                                        {selectedAnswers[question._id] === option && (
+                                                        {userAnswer === option && (
                                                             <span className="ml-2 text-blue-600 font-medium">(Your Answer)</span>
                                                         )}
                                                     </div>

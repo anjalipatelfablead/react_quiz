@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import AppRoutes from './routes/user_route';
+import AppRoutes from './routes/app_route';
 import Navbar from './components/navbar';
 import Sidebar from './components/sidebar';
 import './App.css';

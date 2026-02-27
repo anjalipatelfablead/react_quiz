@@ -39,6 +39,16 @@ const Navbar = ({ onMenuClick }) => {
                                 <Menu size={24} />
                             </button>
                         )}
+
+                        {/* Mobile Logo - NOW ON LEFT */}
+                        <div className="md:hidden flex items-center space-x-2">
+                            <div className="w-8 h-8 bg-gradient-to-br from-gray-700 to-gray-900 rounded-lg flex items-center justify-center">
+                                <span className="text-orange-500 font-bold text-lg">F</span>
+                            </div>
+                            <span className="text-lg font-bold text-gray-800">
+                                Fablead<span className="text-orange-500">Quiz</span>
+                            </span>
+                        </div>
                     </div>
 
                     {/* Desktop Navigation */}

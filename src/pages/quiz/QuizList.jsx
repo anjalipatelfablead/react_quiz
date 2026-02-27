@@ -159,19 +159,21 @@ const QuizList = () => {
                             </div>
 
                             {/* Status Filter */}
-                            <div className="flex items-center gap-2">
-                                <Filter size={20} className="text-gray-400" />
-                                <select
-                                    value={statusFilter}
-                                    onChange={(e) => setStatusFilter(e.target.value)}
-                                    className="px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none bg-white"
-                                >
-                                    <option value="all">All Status</option>
-                                    <option value="published">Published</option>
-                                    <option value="draft">Draft</option>
-                                    <option value="archived">Archived</option>
-                                </select>
-                            </div>
+                            {isAdmin && (
+                                <div className="flex items-center gap-2">
+                                    <Filter size={20} className="text-gray-400" />
+                                    <select
+                                        value={statusFilter}
+                                        onChange={(e) => setStatusFilter(e.target.value)}
+                                        className="px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none bg-white"
+                                    >
+                                        <option value="all">All Status</option>
+                                        <option value="published">Published</option>
+                                        <option value="draft">Draft</option>
+                                        <option value="archived">Archived</option>
+                                    </select>
+                                </div>
+                            )}
 
                             {/* Category Filter */}
                             <div className="flex items-center gap-2">

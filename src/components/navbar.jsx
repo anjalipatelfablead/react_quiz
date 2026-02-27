@@ -28,7 +28,7 @@ const Navbar = ({ onMenuClick }) => {
         <nav className="bg-white shadow-md sticky top-0 z-50">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex justify-between items-center h-16">
-                    {/* Menu Button & Logo */}
+                    {/* Menu Button Only */}
                     <div className="flex items-center space-x-3">
                         {user && (
                             <button
@@ -39,27 +39,6 @@ const Navbar = ({ onMenuClick }) => {
                                 <Menu size={24} />
                             </button>
                         )}
-                        <Link to="/dashboard" className="flex items-center space-x-2">
-                            <img
-                                src="/src/assets/logo.png"
-                                alt="Fablead Logo"
-                                className="h-10 w-auto"
-                                onError={(e) => {
-                                    // Fallback if logo image fails to load
-                                    e.target.style.display = 'none';
-                                    e.target.nextSibling.style.display = 'flex';
-                                }}
-                            />
-                            {/* Fallback logo text */}
-                            <div className="hidden items-center space-x-2">
-                                <div className="w-10 h-10 bg-gradient-to-br from-gray-700 to-gray-900 rounded-lg flex items-center justify-center">
-                                    <span className="text-orange-500 font-bold text-xl">F</span>
-                                </div>
-                                <span className="text-xl font-bold text-gray-800">
-                                    Fablead<span className="text-orange-500">Quiz</span>
-                                </span>
-                            </div>
-                        </Link>
                     </div>
 
                     {/* Desktop Navigation */}

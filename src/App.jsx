@@ -1,21 +1,11 @@
-import { useState } from 'react';
 import AppRoutes from './routes/app_route';
-import Navbar from './components/navbar';
-import Sidebar from './components/sidebar';
 import './App.css';
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 function App() {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-
-  const openSidebar = () => setSidebarOpen(true);
-  const closeSidebar = () => setSidebarOpen(false);
-
   return (
-    <div className="App">
-      <Navbar onMenuClick={openSidebar} />
-      <Sidebar isOpen={sidebarOpen} onClose={closeSidebar} />
+    <div className="App min-h-screen bg-gray-50">
       <AppRoutes />
 
       <ToastContainer

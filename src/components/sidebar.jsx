@@ -20,6 +20,13 @@ const Sidebar = ({ isOpen, onClose }) => {
 
     const isActive = (path) => location.pathname === path;
 
+    // Close sidebar on route change for mobile
+    const handleLinkClick = () => {
+        if (window.innerWidth < 1024) {
+            onClose();
+        }
+    };
+
     const adminMenuItems = [
         { path: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
         { path: '/quizzes', icon: BookOpen, label: 'Quizzes' },
@@ -42,18 +49,19 @@ const Sidebar = ({ isOpen, onClose }) => {
 
     return (
         <>
-            {/* Overlay */}
+            {/* Overlay - only show on mobile/tablet when sidebar is open */}
             {isOpen && (
                 <div
-                    className="fixed inset-0 backdrop-blur-sm bg-white/30 z-40 transition-all duration-300"
+                    className="fixed inset-0 backdrop-blur-sm bg-white/30 z-40 transition-all duration-300 lg:hidden"
                     onClick={onClose}
                 />
             )}
 
-            {/* Sidebar */}
-            <div
-                className={`fixed top-0 left-0 h-full w-64 bg-white shadow-xl z-50 transform transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : '-translate-x-full'
-                    }`}
+            {/* Sidebar - Full height fixed on desktop (lg+), slideable on mobile */}
+            <aside
+                className={`fixed top-0 left-0 h-screen w-64 bg-white  z-[60] transform transition-transform duration-300 ease-in-out 
+                    lg:translate-x-0
+                    ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}
             >
                 {/* Sidebar Header */}
                 <div className="flex items-center justify-between p-4 border-b border-gray-200">
@@ -67,7 +75,7 @@ const Sidebar = ({ isOpen, onClose }) => {
                     </div>
                     <button
                         onClick={onClose}
-                        className="p-2 rounded-lg text-gray-500 hover:text-gray-700 hover:bg-gray-100 transition-colors"
+                        className="p-2 rounded-lg text-gray-500 hover:text-gray-700 hover:bg-gray-100 transition-colors lg:hidden"
                         aria-label="Close sidebar"
                     >
                         <X size={20} />
@@ -111,7 +119,7 @@ const Sidebar = ({ isOpen, onClose }) => {
                                 <li key={item.path}>
                                     <Link
                                         to={item.path}
-                                        onClick={onClose}
+                                        onClick={handleLinkClick}
                                         className={`flex items-center space-x-3 px-3 py-2.5 rounded-lg transition-colors ${active
                                                 ? 'bg-orange-50 text-orange-600'
                                                 : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
@@ -130,12 +138,12 @@ const Sidebar = ({ isOpen, onClose }) => {
                 </nav>
 
                 {/* Sidebar Footer */}
-                <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200 bg-white">
+                <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200 bg-white lg:bg-gray-50">
                     <p className="text-xs text-gray-400 text-center">
                         {isAdmin ? 'Fablead Admin Panel' : 'Fablead Quiz Platform'}
                     </p>
                 </div>
-            </div>
+            </aside>
         </>
     );
 };

@@ -3,6 +3,7 @@ import { Route } from "react-router-dom";
 import QuizList from "../pages/quiz/QuizList";
 import QuizForm from "../pages/quiz/QuizForm";
 import QuizDetail from "../pages/quiz/QuizDetail";
+import QuestionForm from "../pages/question/QuestionForm";
 import ProtectedRoute from "./protected_route";
 
 const QuizRoutes = () => {
@@ -40,6 +41,15 @@ const QuizRoutes = () => {
         element={
           <ProtectedRoute>
             <QuizDetail />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/quizzes/:quizId/questions"
+        element={
+          <ProtectedRoute>
+            <QuestionForm />
           </ProtectedRoute>
         }
       />

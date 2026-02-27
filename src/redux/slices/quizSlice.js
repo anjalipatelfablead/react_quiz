@@ -6,6 +6,8 @@ const initialState = {
   currentQuiz: null,
   isLoading: false,
   isSuccess: false,
+  isCreateSuccess: false,
+  isUpdateSuccess: false,
   isError: false,
   message: '',
 };
@@ -87,6 +89,8 @@ const quizSlice = createSlice({
     reset: (state) => {
       state.isLoading = false;
       state.isSuccess = false;
+      state.isCreateSuccess = false;
+      state.isUpdateSuccess = false;
       state.isError = false;
       state.message = '';
     },
@@ -132,11 +136,13 @@ const quizSlice = createSlice({
       .addCase(createQuiz.pending, (state) => {
         state.isLoading = true;
         state.isError = false;
+        state.isCreateSuccess = false;
         state.message = '';
       })
       .addCase(createQuiz.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isSuccess = true;
+        state.isCreateSuccess = true;
         state.quizzes.unshift(action.payload.quiz);
         state.message = action.payload.message || 'Quiz created successfully';
       })
@@ -149,11 +155,13 @@ const quizSlice = createSlice({
       .addCase(updateQuiz.pending, (state) => {
         state.isLoading = true;
         state.isError = false;
+        state.isUpdateSuccess = false;
         state.message = '';
       })
       .addCase(updateQuiz.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isSuccess = true;
+        state.isUpdateSuccess = true;
         const updatedQuiz = action.payload.quiz;
         const index = state.quizzes.findIndex(q => q._id === updatedQuiz._id);
         if (index !== -1) {

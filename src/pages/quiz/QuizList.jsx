@@ -15,7 +15,7 @@ import {
     MoreVertical,
     CheckCircle,
     XCircle,
-    AlertCircle
+    AlertCircle,
 } from 'lucide-react';
 
 const QuizList = () => {
@@ -335,13 +335,16 @@ const QuizList = () => {
                                             <div className="flex items-center text-sm text-gray-500">
                                                 <span>By {quiz.createdBy?.username || 'Unknown'}</span>
                                             </div>
-                                            <button
-                                                onClick={() => navigate(`/quizzes/${quiz._id}`)}
-                                                className="inline-flex items-center px-3 py-1.5 text-sm font-medium text-orange-600 hover:text-orange-700 hover:bg-orange-50 rounded-lg transition-colors"
-                                            >
-                                                <Eye size={16} className="mr-1" />
-                                                View
-                                            </button>
+                                            <div className="flex items-center gap-2">
+                                                
+                                                <button
+                                                    onClick={() => navigate(`/quizzes/${quiz._id}`)}
+                                                    className="inline-flex items-center px-3 py-1.5 text-sm font-medium text-orange-600 hover:text-orange-700 hover:bg-orange-50 rounded-lg transition-colors"
+                                                >
+                                                    <Eye size={16} className="mr-1" />
+                                                    View
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

@@ -11,6 +11,7 @@ import {
   Calendar,
   Edit,
   Play,
+  Plus,
   CheckCircle,
   AlertCircle,
   XCircle,
@@ -157,18 +158,27 @@ const QuizDetail = () => {
               {/* Action Buttons */}
               <div className="flex flex-col gap-2">
                 {isAdmin && (
-                  <button
-                    onClick={() => navigate(`/quizzes/edit/${currentQuiz._id}`)}
-                    className="inline-flex items-center justify-center px-4 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-900 transition-colors font-medium"
-                  >
-                    <Edit size={18} className="mr-2" />
-                    Edit Quiz
-                  </button>
+                  <>
+                    <button
+                      onClick={() => navigate(`/quizzes/${currentQuiz._id}/questions`)}
+                      className="inline-flex items-center justify-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium shadow-md"
+                    >
+                      <Plus size={18} className="mr-2" />
+                       Questions
+                    </button>
+                    <button
+                      onClick={() => navigate(`/quizzes/edit/${currentQuiz._id}`)}
+                      className="inline-flex items-center justify-center px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors font-medium shadow-md"
+                    >
+                      <Edit size={18} className="mr-2" />
+                      Edit Quiz
+                    </button>
+                  </>
                 )}
                 {currentQuiz.status === 'published' && !isAdmin && (
                   <button
                     onClick={() => navigate(`/quizzes/take/${currentQuiz._id}`)}
-                    className="inline-flex items-center justify-center px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors font-medium"
+                    className="inline-flex items-center justify-center px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors font-medium shadow-md"
                   >
                     <Play size={18} className="mr-2" />
                     Start Quiz

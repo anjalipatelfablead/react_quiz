@@ -2,6 +2,7 @@ import { Route, Navigate } from 'react-router-dom';
 import Login from '../pages/Login';
 import Register from '../pages/Register';
 import Dashboard from '../pages/dashboard';
+import UserList from '../pages/UserList';
 
 import ProtectedRoute from './protected_route';
 import DashboardLayout from '../components/DashboardLayout';
@@ -16,6 +17,7 @@ const UserRoutes = ({ user }) => {
       {/* Protected Routes with Sidebar */}
       <Route element={<ProtectedRoute><DashboardLayout /></ProtectedRoute>}>
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/users" element={<UserList />} />
       </Route>
     </>
   );

@@ -124,13 +124,34 @@ const Navbar = ({ onMenuClick }) => {
                     </div>
 
                     {/* Mobile Menu Button */}
-                    <div className="md:hidden">
+                    {/* <div className="md:hidden">
                         <button
                             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                             className="text-gray-600 hover:text-gray-800 p-2"
                         >
                             {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
                         </button>
+                    </div> */}
+                    {/* Mobile Right Side User Icon */}
+                    <div className="md:hidden">
+                        {user && (
+                            <button
+                                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                                className="p-1"
+                            >
+                                {user.profileImage ? (
+                                    <img
+                                        src={`http://localhost:3030${user.profileImage}`}
+                                        alt="Profile"
+                                        className="w-9 h-9 rounded-full object-cover border-2 border-orange-500"
+                                    />
+                                ) : (
+                                    <div className="w-9 h-9 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white font-bold">
+                                        {user.username?.charAt(0).toUpperCase()}
+                                    </div>
+                                )}
+                            </button>
+                        )}
                     </div>
                 </div>
 
@@ -144,9 +165,9 @@ const Navbar = ({ onMenuClick }) => {
                                         <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
                                             {user.profileImage ? (
                                                 <img
-                                                    src={user.profileImage}
-                                                    alt={user.username}
-                                                    className="w-10 h-10 rounded-full object-cover"
+                                                    src={`http://localhost:3030${user.profileImage}`}
+                                                    alt="Profile"
+                                                    className="w-12 h-12 rounded-full object-cover border-2 border-orange-500"
                                                 />
                                             ) : (
                                                 <User size={20} className="text-gray-600" />

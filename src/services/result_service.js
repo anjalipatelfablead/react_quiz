@@ -43,6 +43,16 @@ const resultService = {
         }
     },
 
+    //  Get all results (Admin only - matches: GET /api/results/all)
+    getAllResults: async () => {
+        try {
+            const response = await api.get("/results/all");
+            return response.data;
+        } catch (error) {
+            throw error.response?.data || error.message;
+        }
+    },
+
     //  Get single result (matches: GET /api/results/:id)
     getResultById: async (resultId) => {
         try {

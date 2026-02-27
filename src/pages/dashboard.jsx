@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { logout } from '../redux/slices/authSlice';
 import { getAllQuizzes } from '../redux/slices/quizSlice';
 import userService from '../services/user_service';
+import resultService from '../services/result_service';
 import {
     BookOpen,
     Users,
@@ -23,25 +24,44 @@ const Dashboard = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const [totalUsers, setTotalUsers] = useState(0);
+    const [totalAttempts, setTotalAttempts] = useState(0);
+    const [userAttempts, setUserAttempts] = useState(0);
 
     useEffect(() => {
         dispatch(getAllQuizzes());
-        // Fetch total users for admin dashboard
+        // Fetch data based on role
         if (user?.role === 'admin') {
-            fetchTotalUsers();
+            fetchAdminData();
+        } else {
+            fetchUserData();
         }
     }, [dispatch, user]);
 
-    const fetchTotalUsers = async () => {
+    const fetchAdminData = async () => {
         try {
-            const data = await userService.getAllUsers();
-            // Handle both array and object response formats
-            const users = Array.isArray(data) ? data : data.users || [];
+            // Fetch total users
+            const userData = await userService.getAllUsers();
+            const users = Array.isArray(userData) ? userData : userData.users || [];
             const onlyUsers = users.filter(u => u.role === 'user');
-
             setTotalUsers(onlyUsers.length);
+
+            // Fetch all attempts
+            const resultData = await resultService.getAllResults();
+            const results = Array.isArray(resultData) ? resultData : resultData.results || [];
+            setTotalAttempts(results.length);
         } catch (error) {
-            console.error('Failed to fetch users:', error);
+            console.error('Failed to fetch admin data:', error);
+        }
+    };
+
+    const fetchUserData = async () => {
+        try {
+            // Fetch user's attempts
+            const resultData = await resultService.getUserResults();
+            const results = Array.isArray(resultData) ? resultData : resultData.results || [];
+            setUserAttempts(results.length);
+        } catch (error) {
+            console.error('Failed to fetch user data:', error);
         }
     };
 
@@ -58,7 +78,7 @@ const Dashboard = () => {
     const adminStats = {
         totalQuizzes: totalQuizzes,
         totalUsers: totalUsers,
-        totalAttempts: 892,
+        totalAttempts: totalAttempts,
         analyticsSummary: {
             avgScore: '78%',
             completionRate: '85%',
@@ -66,10 +86,10 @@ const Dashboard = () => {
         }
     };
 
-    // User stats with dynamic available quizzes
+    // User stats with dynamic available quizzes and attempts
     const userStats = {
         availableQuizzes: publishedQuizzes,
-        attemptedQuizzes: 12,
+        attemptedQuizzes: userAttempts,
         highestScore: 95,
         recentAttempts: [
             { quiz: 'JavaScript Basics', score: 85, date: '2026-02-25' },
@@ -292,7 +312,9 @@ const Dashboard = () => {
                                         <button className="w-full py-2 px-4 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors text-sm font-medium">
                                             Start New Quiz
                                         </button>
-                                        <button className="w-full py-2 px-4 bg-gray-800 text-white rounded-lg hover:bg-gray-900 transition-colors text-sm font-medium">
+                                        <button className="w-full py-2 px-4 bg-gray-800 text-white rounded-lg hover:bg-gray-900 transition-colors text-sm font-medium"
+                                            onClick={() => navigate('/quizzes')}
+                                        >
                                             Browse Quizzes
                                         </button>
                                         <button className="w-full py-2 px-4 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium">

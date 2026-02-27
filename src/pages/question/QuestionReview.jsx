@@ -105,7 +105,7 @@ const QuestionReview = () => {
                             onClick={handleBackToQuizzes}
                             className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
                         >
-                            Back to Quizzes
+                            izzes
                         </button>
                     </div>
                 </div>
@@ -264,7 +264,7 @@ const QuestionReview = () => {
                     </button>
                     <button
                         onClick={handleBackToQuizzes}
-                        className="flex items-center justify-center px-6 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors font-medium"
+                        className="flex items-center justify-center px-6 py-3 bg-gray-100 text-gray-700 rounded-lg bg-gray-200 hover:bg-gray-400 cursor-pointer transition-colors font-medium"
                     >
                         <Home size={18} className="mr-2" />
                         Back to Quizzes

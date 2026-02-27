@@ -143,7 +143,7 @@ const QuizDetail = () => {
             <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
               <div className="flex-1">
                 <div className="flex items-center gap-3 mb-3">
-                  {getStatusBadge(currentQuiz.status)}
+                  {isAdmin && getStatusBadge(currentQuiz.status)}
                   <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-600">
                     <Tag size={14} className="mr-1" />
                     {currentQuiz.category}
@@ -265,10 +265,12 @@ const QuizDetail = () => {
                     <span className="text-gray-600">Last Updated</span>
                     <span className="text-gray-800">{formatDate(currentQuiz.updatedAt)}</span>
                   </div>
-                  <div className="flex justify-between items-center py-2 border-b border-gray-200 last:border-0">
-                    <span className="text-gray-600">Status</span>
-                    <span className="capitalize text-gray-800">{currentQuiz.status}</span>
-                  </div>
+                  {isAdmin && (
+                    <div className="flex justify-between items-center py-2 border-b border-gray-200 last:border-0">
+                      <span className="text-gray-600">Status</span>
+                      <span className="capitalize text-gray-800">{currentQuiz.status}</span>
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -300,8 +302,8 @@ const QuizDetail = () => {
                 </div>
               </div>
 
-              {/* Status Messages */}
-              {currentQuiz.status === 'draft' && isAdmin && (
+              {/* Status Messages - Only for Admin */}
+              {isAdmin && currentQuiz.status === 'draft' && (
                 <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4">
                   <div className="flex items-center text-yellow-700">
                     <AlertCircle size={20} className="mr-2" />

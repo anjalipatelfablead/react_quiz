@@ -118,7 +118,7 @@ const QuizList = () => {
     return (
 
         <>
-            <div className="min-h-screen bg-gray-100">
+            <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-orange-100">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                     {/* Header */}
                     <div className="mb-8">
@@ -281,7 +281,7 @@ const QuizList = () => {
                                     key={quiz._id}
                                     className="bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden hover:shadow-lg transition-shadow duration-300"
                                 >
-                                    <div className="p-6">
+                                    <div className="p-6  ">
                                         <div className="flex items-start justify-between mb-4">
                                             <div className="flex-1">
                                                 <h3 className="text-lg font-bold text-gray-800 mb-1 line-clamp-1">{quiz.title}</h3>

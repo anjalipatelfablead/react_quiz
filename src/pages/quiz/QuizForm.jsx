@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import { createQuiz, updateQuiz, getQuizById, reset, clearCurrentQuiz } from '../../redux/slices/quizSlice';
+import { toast } from "react-toastify";
+
 import {
   BookOpen,
   ArrowLeft,
@@ -22,7 +24,7 @@ const QuizForm = () => {
   const isEditMode = Boolean(id);
   
   const { user } = useSelector((state) => state.auth);
-  const { currentQuiz, isLoading, isSuccess, isError, message } = useSelector((state) => state.quiz);
+  const { currentQuiz, isLoading, isCreateSuccess, isUpdateSuccess, isError, message } = useSelector((state) => state.quiz);
 
   const [formData, setFormData] = useState({
     title: '',
@@ -33,7 +35,7 @@ const QuizForm = () => {
   });
 
   const [errors, setErrors] = useState({});
-  const [showSuccess, setShowSuccess] = useState(false);
+  // const [showSuccess, setShowSuccess] = useState(false);
 
   // Predefined categories
   const categories = [
@@ -73,24 +75,45 @@ const QuizForm = () => {
     }
   }, [currentQuiz, isEditMode]);
 
-  useEffect(() => {
-    if (isSuccess) {
-      setShowSuccess(true);
-      setTimeout(() => {
-        setShowSuccess(false);
-        if (!isEditMode) {
-          // Reset form after successful creation
-          setFormData({
-            title: '',
-            description: '',
-            category: '',
-            timeLimit: 30,
-            status: 'draft'
-          });
-        }
-      }, 2000);
-    }
-  }, [isSuccess, isEditMode]);
+  // useEffect(() => {
+  //   if (isSuccess) {
+  //     setShowSuccess(true);
+  //     setTimeout(() => {
+  //       setShowSuccess(false);
+  //       if (!isEditMode) {
+  //         // Reset form after successful creation
+  //         setFormData({
+  //           title: '',
+  //           description: '',
+  //           category: '',
+  //           timeLimit: 30,
+  //           status: 'draft'
+  //         });
+  //       }
+  //     }, 2000);
+  //   }
+  // }, [isSuccess, isEditMode]);
+
+useEffect(() => {
+  if (isCreateSuccess && !isEditMode) {
+    toast.success("Quiz created successfully!");
+    setFormData({
+      title: '',
+      description: '',
+      category: '',
+      timeLimit: 30,
+      status: 'draft'
+    });
+    dispatch(reset());
+  }
+}, [isCreateSuccess, isEditMode, dispatch]);
+
+useEffect(() => {
+  if (isUpdateSuccess && isEditMode) {
+    toast.success("Quiz updated successfully!");
+    dispatch(reset());
+  }
+}, [isUpdateSuccess, isEditMode, dispatch]);
 
   const validateForm = () => {
     const newErrors = {};
@@ -195,7 +218,7 @@ const QuizForm = () => {
         </div>
 
         {/* Success Message */}
-        {showSuccess && (
+        {/* {showSuccess && (
           <div className="bg-green-50 border border-green-200 rounded-xl p-4 mb-6 animate-fade-in">
             <div className="flex items-center text-green-600">
               <CheckCircle size={20} className="mr-2" />
@@ -204,7 +227,7 @@ const QuizForm = () => {
               </span>
             </div>
           </div>
-        )}
+        )} */}
 
         {/* Error Message */}
         {isError && (

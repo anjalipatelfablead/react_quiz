@@ -290,7 +290,7 @@ const QuestionTest = () => {
                                     </button>
                                     <button
                                         onClick={goToNextQuestion}
-                                        disabled={currentQuestionIndex === questions.length - 1}
+                                        disabled={currentQuestionIndex === questions.length - 1 || !selectedAnswers[currentQuestion._id]}
                                         className="flex items-center px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                                     >
                                         Next

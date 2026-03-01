@@ -303,7 +303,9 @@ const Dashboard = () => {
                                         >
                                             Manage Users
                                         </button>
-                                        <button className="w-full py-2 px-4 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium">
+                                        <button className="w-full py-2 px-4 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium"
+                                            onClick={() => navigate('/reports')}
+                                        >
                                             View Reports
                                         </button>
                                     </>

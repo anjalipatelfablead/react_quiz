@@ -10,7 +10,8 @@ import {
     FileText,
     Award,
     History,
-    BarChart3
+    BarChart3,
+    User
 } from 'lucide-react';
 
 const Sidebar = ({ isOpen, onClose }) => {
@@ -33,6 +34,7 @@ const Sidebar = ({ isOpen, onClose }) => {
         { path: '/users', icon: Users, label: 'Users' },
         { path: '/analytics', icon: BarChart3, label: 'Analytics' },
         { path: '/reports', icon: FileText, label: 'Reports' },
+        { path: '/profile', icon: User, label: 'Profile' },
         { path: '/settings', icon: Settings, label: 'Settings' },
     ];
 
@@ -41,6 +43,7 @@ const Sidebar = ({ isOpen, onClose }) => {
         { path: '/quizzes', icon: BookOpen, label: 'Browse Quizzes' },
         { path: '/my-attempts', icon: History, label: 'My Attempts' },
         { path: '/achievements', icon: Award, label: 'Achievements' },
+        { path: '/profile', icon: User, label: 'Profile' },
         { path: '/help', icon: HelpCircle, label: 'Help' },
         { path: '/settings', icon: Settings, label: 'Settings' },
     ];
@@ -86,7 +89,7 @@ const Sidebar = ({ isOpen, onClose }) => {
                 {user && (
                     <div className="p-4 border-b border-gray-200 bg-gray-50">
                         <div className="flex items-center space-x-3">
-                            {/* {user.profileImage ? (
+                            {user.profileImage ? (
                                 <img
                                     src={`http://localhost:3030${user.profileImage}`}
                                     alt="Profile"
@@ -96,7 +99,7 @@ const Sidebar = ({ isOpen, onClose }) => {
                                 <div className="w-12 h-12 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white font-bold text-lg">
                                     {user.username?.charAt(0).toUpperCase()}
                                 </div>
-                            )} */}
+                            )}
                             <div>
                                 <p className="text-sm text-gray-500">Welcome back,</p>
                                 <p className="font-semibold text-gray-800">{user.username}</p>

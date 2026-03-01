@@ -258,7 +258,7 @@ const Register = () => {
                             )}
                         </div>
 
-                        <div className="pt-2">
+                        {/* <div className="pt-2">
                             <label className="block text-sm text-gray-600 mb-2">Profile Image <span className="text-gray-400">(Optional)</span></label>
                             <input
                                 id="profileImage"
@@ -268,7 +268,7 @@ const Register = () => {
                                 className="block w-full text-sm text-gray-600 file:mr-3 file:py-2 file:px-3 file:rounded file:border-0 file:text-xs file:bg-gray-200 file:text-gray-700 hover:file:bg-gray-300 cursor-pointer"
                                 onChange={onChange}
                             />
-                        </div>
+                        </div> */}
                     </div>
 
                     <div className="pt-4">

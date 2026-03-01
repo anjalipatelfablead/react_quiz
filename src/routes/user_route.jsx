@@ -3,6 +3,7 @@ import Login from '../pages/Login';
 import Register from '../pages/Register';
 import Dashboard from '../pages/dashboard';
 import UserList from '../pages/UserList';
+import Profile from '../pages/auth/profile';
 
 import ProtectedRoute from './protected_route';
 import DashboardLayout from '../components/DashboardLayout';
@@ -18,6 +19,7 @@ const UserRoutes = ({ user }) => {
       <Route element={<ProtectedRoute><DashboardLayout /></ProtectedRoute>}>
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/users" element={<UserList />} />
+        <Route path="/profile" element={<Profile />} />
       </Route>
     </>
   );

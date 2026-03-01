@@ -67,25 +67,16 @@ const Navbar = ({ onMenuClick }) => {
 
                                 {/* User Info */}
                                 <div className="flex items-center space-x-3 pl-4 border-l border-gray-200">
-                                    <div className="flex items-center space-x-2">
+                                    <Link to="/profile" className="flex items-center space-x-2 hover:opacity-80 transition-opacity">
                                         <div className="bg-gray-200 rounded-full flex items-center justify-center">
-                                            {/* {user.profileImage ? (
-                                                    <img
-                                                    src={user.profileImage}
-                                                    alt={user.username}
-                                                    className="w-8 h-8 rounded-full object-cover"
-                                                    />
-                                                ) : (
-                                                    <User size={16} className="text-gray-600" />
-                                                )} */}
                                             {user.profileImage ? (
                                                 <img
                                                     src={`http://localhost:3030${user.profileImage}`}
                                                     alt="Profile"
-                                                    className="w-12 h-12 rounded-full object-cover border-2 border-orange-500"
+                                                    className="w-10 h-10 rounded-full object-cover border-2 border-orange-500"
                                                 />
                                             ) : (
-                                                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white font-bold text-lg">
+                                                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white font-bold text-sm">
                                                     {user.username?.charAt(0).toUpperCase()}
                                                 </div>
                                             )}
@@ -94,7 +85,7 @@ const Navbar = ({ onMenuClick }) => {
                                             <p className="text-sm font-medium text-gray-800">{user.username}</p>
                                             <p className="text-xs text-gray-500 capitalize">{user.role}</p>
                                         </div>
-                                    </div>
+                                    </Link>
 
                                     <button
                                         onClick={handleLogout}

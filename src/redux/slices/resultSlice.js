@@ -39,6 +39,20 @@ export const getUserResults = createAsyncThunk(
   }
 );
 
+// Get all results (Admin only)
+export const getAllResults = createAsyncThunk(
+  'result/getAllResults',
+  async (_, thunkAPI) => {
+    try {
+      const response = await resultService.getAllResults();
+      return response;
+    } catch (error) {
+      const message = error.message || 'Failed to fetch all results';
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
 // Get single result by ID
 export const getResultById = createAsyncThunk(
   'result/getById',
@@ -116,6 +130,22 @@ const resultSlice = createSlice({
         state.results = action.payload;
       })
       .addCase(getUserResults.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.message = action.payload;
+      })
+      // Get All Results (Admin)
+      .addCase(getAllResults.pending, (state) => {
+        state.isLoading = true;
+        state.isError = false;
+        state.message = '';
+      })
+      .addCase(getAllResults.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.results = action.payload;
+      })
+      .addCase(getAllResults.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
         state.message = action.payload;

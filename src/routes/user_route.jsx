@@ -4,6 +4,9 @@ import Register from '../pages/Register';
 import Dashboard from '../pages/dashboard';
 import UserList from '../pages/UserList';
 import Profile from '../pages/auth/profile';
+import MyAttempts from '../pages/MyAttempts';
+import Reports from '../pages/Reports';
+import UserAttempts from '../pages/UserAttempts';
 
 import ProtectedRoute from './protected_route';
 import DashboardLayout from '../components/DashboardLayout';
@@ -20,6 +23,9 @@ const UserRoutes = ({ user }) => {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/users" element={<UserList />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/my-attempts" element={<MyAttempts />} />
+        <Route path="/reports" element={<Reports />} />
+        <Route path="/reports/user/:userId" element={<UserAttempts />} />
       </Route>
     </>
   );

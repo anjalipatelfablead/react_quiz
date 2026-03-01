@@ -27,6 +27,7 @@ const QuestionTest = () => {
     const [showSubmitConfirm, setShowSubmitConfirm] = useState(false);
     const [timeLeft, setTimeLeft] = useState(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [startTime, setStartTime] = useState(null);
 
     useEffect(() => {
         if (quizId) {
@@ -45,6 +46,7 @@ const QuestionTest = () => {
     useEffect(() => {
         if (currentQuiz?.timeLimit && timeLeft === null) {
             setTimeLeft(currentQuiz.timeLimit * 60); // Convert to seconds
+            setStartTime(Date.now()); // Record start time
         }
     }, [currentQuiz, timeLeft]);
 
@@ -121,13 +123,17 @@ const QuestionTest = () => {
 
         const percentage = totalMarks > 0 ? (obtainedMarks / totalMarks) * 100 : 0;
 
+        // Calculate time taken in seconds
+        const timeTaken = startTime ? Math.floor((Date.now() - startTime) / 1000) : 0;
+
         const testResults = {
             totalQuestions: questions.length,
             answeredQuestions: Object.keys(selectedAnswers).length,
             correctAnswers: correctCount,
             totalMarks,
             obtainedMarks,
-            percentage: percentage.toFixed(2)
+            percentage: percentage.toFixed(2),
+            timeTaken
         };
 
         // Format answers for backend API
@@ -138,7 +144,7 @@ const QuestionTest = () => {
 
         try {
             // Submit to backend
-            const result = await dispatch(submitQuiz({ quizId, answers })).unwrap();
+            const result = await dispatch(submitQuiz({ quizId, answers, timeTaken })).unwrap();
             
             // Redirect to review page with results
             navigate(`/quizzes/${quizId}/review/${result.result._id}`, {

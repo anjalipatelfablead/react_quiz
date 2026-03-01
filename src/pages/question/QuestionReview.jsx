@@ -10,7 +10,8 @@ import {
     ArrowLeft,
     RotateCcw,
     Home,
-    AlertCircle
+    AlertCircle,
+    Clock
 } from 'lucide-react';
 
 const QuestionReview = () => {
@@ -121,6 +122,15 @@ const QuestionReview = () => {
         totalQuestions: questions.length,
         obtainedMarks: currentResult ? currentResult.score : 0,
         totalMarks: currentResult ? currentResult.totalMarks : 0,
+        timeTaken: currentResult ? currentResult.timeTaken : 0,
+    };
+
+    // Format time taken (seconds to MM:SS)
+    const formatTimeTaken = (seconds) => {
+        if (!seconds || seconds <= 0) return 'N/A';
+        const mins = Math.floor(seconds / 60);
+        const secs = seconds % 60;
+        return `${mins}m ${secs}s`;
     };
 
     // Build selectedAnswers map from currentResult if available
@@ -167,7 +177,7 @@ const QuestionReview = () => {
                         </p>
                     </div>
 
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
                         <div className="bg-blue-50 rounded-xl p-4 text-center">
                             <p className="text-3xl font-bold text-blue-600">{displayData.percentage}%</p>
                             <p className="text-sm text-gray-600">Score</p>
@@ -183,6 +193,13 @@ const QuestionReview = () => {
                         <div className="bg-purple-50 rounded-xl p-4 text-center">
                             <p className="text-3xl font-bold text-purple-600">{displayData.obtainedMarks}/{displayData.totalMarks}</p>
                             <p className="text-sm text-gray-600">Marks</p>
+                        </div>
+                        <div className="bg-teal-50 rounded-xl p-4 text-center">
+                            <div className="flex items-center justify-center gap-1">
+                                <Clock size={20} className="text-teal-600" />
+                                <p className="text-2xl font-bold text-teal-600">{formatTimeTaken(displayData.timeTaken)}</p>
+                            </div>
+                            <p className="text-sm text-gray-600">Time Taken</p>
                         </div>
                     </div>
                 </div>

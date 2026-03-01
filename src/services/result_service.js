@@ -21,11 +21,12 @@ api.interceptors.request.use(
 const resultService = {
 
     //  Submit Quiz (matches: POST /api/results/submit)
-    submitQuiz: async (quizId, answers) => {
+    submitQuiz: async (quizId, answers, timeTaken) => {
         try {
             const response = await api.post("/results/submit", {
                 quizId,
-                answers
+                answers,
+                timeTaken
             });
             return response.data;
         } catch (error) {

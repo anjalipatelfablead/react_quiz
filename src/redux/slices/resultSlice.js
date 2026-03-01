@@ -14,9 +14,9 @@ const initialState = {
 // Submit quiz and create result
 export const submitQuiz = createAsyncThunk(
   'result/submitQuiz',
-  async ({ quizId, answers }, thunkAPI) => {
+  async ({ quizId, answers, timeTaken }, thunkAPI) => {
     try {
-      const response = await resultService.submitQuiz(quizId, answers);
+      const response = await resultService.submitQuiz(quizId, answers, timeTaken);
       return response;
     } catch (error) {
       const message = error.message || 'Failed to submit quiz';

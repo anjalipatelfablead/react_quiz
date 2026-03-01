@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { getAllQuizzes, deleteQuiz, reset } from '../../redux/slices/quizSlice';
+import resultService from '../../services/result_service';
 import {
     BookOpen,
     Plus,
@@ -30,15 +31,32 @@ const QuizList = () => {
     //   const [deleteConfirm, setDeleteConfirm] = useState(null);
     const [quizToDelete, setQuizToDelete] = useState(null);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const [attemptedQuizzes, setAttemptedQuizzes] = useState(new Set());
 
     const isAdmin = user?.role === 'admin';
 
     useEffect(() => {
         dispatch(getAllQuizzes());
+        if (!isAdmin) {
+            fetchUserAttempts();
+        }
         return () => {
             dispatch(reset());
         };
-    }, [dispatch]);
+    }, [dispatch, isAdmin]);
+
+    const fetchUserAttempts = async () => {
+        try {
+            const results = await resultService.getUserResults();
+            const userResults = Array.isArray(results) ? results : results.results || [];
+            const attemptedQuizIds = new Set(
+                userResults.map(r => r.quizId?._id || r.quizId)
+            );
+            setAttemptedQuizzes(attemptedQuizIds);
+        } catch (error) {
+            console.error('Failed to fetch user attempts:', error);
+        }
+    };
 
     // Get unique categories
     const categories = [...new Set(quizzes.map(q => q.category))];
@@ -346,12 +364,18 @@ const QuizList = () => {
                                             </div>
                                             <div className="flex items-center gap-2">
                                                 {!isAdmin && quiz.status === 'published' && (
-                                                    <button
-                                                        onClick={() => navigate(`/quizzes/${quiz._id}/take`)}
-                                                        className="inline-flex items-center px-3 py-1.5 text-sm font-medium text-green-600 hover:text-green-700 hover:bg-green-50 rounded-lg transition-colors"
-                                                    >
-                                                        ▶ Start
-                                                    </button>
+                                                    attemptedQuizzes.has(quiz._id) ? (
+                                                        <span className="inline-flex items-center px-3 py-1.5 text-sm font-medium text-gray-400 cursor-not-allowed">
+                                                            ✓ Completed
+                                                        </span>
+                                                    ) : (
+                                                        <button
+                                                            onClick={() => navigate(`/quizzes/${quiz._id}/take`)}
+                                                            className="inline-flex items-center px-3 py-1.5 text-sm font-medium text-green-600 hover:text-green-700 hover:bg-green-50 rounded-lg transition-colors"
+                                                        >
+                                                            ▶ Start
+                                                        </button>
+                                                    )
                                                 )}
 
                                                 {isAdmin && (

@@ -1,8 +1,9 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getQuizById, reset, clearCurrentQuiz } from '../../redux/slices/quizSlice';
 import { getQuestionsByQuiz, reset as resetQuestions } from '../../redux/slices/questionSlice';
+import resultService from '../../services/result_service';
 import {
   BookOpen,
   ArrowLeft,
@@ -29,6 +30,8 @@ const QuizDetail = () => {
   const { user } = useSelector((state) => state.auth);
   const { currentQuiz, isLoading, isError, message } = useSelector((state) => state.quiz);
   const { questions, isLoading: questionsLoading } = useSelector((state) => state.question);
+  const [hasAttempted, setHasAttempted] = useState(false);
+  const [userResult, setUserResult] = useState(null);
 
   const isAdmin = user?.role === 'admin';
 
@@ -36,6 +39,7 @@ const QuizDetail = () => {
     if (id) {
       dispatch(getQuizById(id));
       dispatch(getQuestionsByQuiz(id));
+      checkUserAttempt();
     }
     return () => {
       dispatch(reset());
@@ -43,6 +47,23 @@ const QuizDetail = () => {
       dispatch(resetQuestions());
     };
   }, [dispatch, id]);
+
+  const checkUserAttempt = async () => {
+    try {
+      const results = await resultService.getUserResults();
+      const userResults = Array.isArray(results) ? results : results.results || [];
+      const attempt = userResults.find(r => {
+        const quizId = r.quizId?._id || r.quizId;
+        return quizId === id;
+      });
+      if (attempt) {
+        setHasAttempted(true);
+        setUserResult(attempt);
+      }
+    } catch (error) {
+      console.error('Failed to check user attempt:', error);
+    }
+  };
 
   const getStatusBadge = (status) => {
     const styles = {
@@ -180,13 +201,26 @@ const QuizDetail = () => {
                   </>
                 )}
                 {currentQuiz.status === 'published' && !isAdmin && (
-                  <button
-                    onClick={() => navigate(`/quizzes/${currentQuiz._id}/take`)}
-                    className="inline-flex items-center justify-center px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors font-medium shadow-md"
-                  >
-                    <Play size={18} className="mr-2" />
-                    Start Quiz
-                  </button>
+                  hasAttempted ? (
+                    <div className="text-center">
+                      <p className="text-sm text-gray-500 mb-2">You have already taken this quiz</p>
+                      <button
+                        onClick={() => navigate(`/quizzes/${currentQuiz._id}/review/${userResult._id}`)}
+                        className="inline-flex items-center justify-center px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors font-medium shadow-md"
+                      >
+                        <CheckCircle size={18} className="mr-2" />
+                        View Result
+                      </button>
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => navigate(`/quizzes/${currentQuiz._id}/take`)}
+                      className="inline-flex items-center justify-center px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors font-medium shadow-md"
+                    >
+                      <Play size={18} className="mr-2" />
+                      Start Quiz
+                    </button>
+                  )
                 )}
               </div>
             </div>

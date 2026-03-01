@@ -8,7 +8,6 @@ import {
     CheckCircle,
     XCircle,
     ArrowLeft,
-    RotateCcw,
     Home,
     AlertCircle,
     Clock
@@ -48,10 +47,6 @@ const QuestionReview = () => {
 
     const getOptionLabel = (index) => {
         return String.fromCharCode(65 + index);
-    };
-
-    const handleRetakeQuiz = () => {
-        navigate(`/quizzes/${quizId}/take`);
     };
 
     const handleBackToQuizzes = () => {
@@ -272,13 +267,6 @@ const QuestionReview = () => {
 
                 {/* Action Buttons */}
                 <div className="flex flex-col sm:flex-row justify-center gap-4 mt-8">
-                    <button
-                        onClick={handleRetakeQuiz}
-                        className="flex items-center justify-center px-6 py-3 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors font-medium"
-                    >
-                        <RotateCcw size={18} className="mr-2" />
-                        Retake Quiz
-                    </button>
                     <button
                         onClick={handleBackToQuizzes}
                         className="flex items-center justify-center px-6 py-3 bg-gray-100 text-gray-700 rounded-lg bg-gray-200 hover:bg-gray-400 cursor-pointer transition-colors font-medium"

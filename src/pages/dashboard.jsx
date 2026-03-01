@@ -26,6 +26,11 @@ const Dashboard = () => {
     const [totalUsers, setTotalUsers] = useState(0);
     const [totalAttempts, setTotalAttempts] = useState(0);
     const [userAttempts, setUserAttempts] = useState(0);
+    const [recentAttempts, setRecentAttempts] = useState([]);
+    const [userStatsData, setUserStatsData] = useState({
+        highestScore: 0,
+        averageScore: 0
+    });
 
     useEffect(() => {
         dispatch(getAllQuizzes());
@@ -60,6 +65,36 @@ const Dashboard = () => {
             const resultData = await resultService.getUserResults();
             const results = Array.isArray(resultData) ? resultData : resultData.results || [];
             setUserAttempts(results.length);
+            
+            // Sort by date (newest first) and take latest 3
+            const sortedResults = [...results].sort((a, b) => 
+                new Date(b.createdAt) - new Date(a.createdAt)
+            );
+            
+            // Get latest 3 attempts
+            const latestThree = sortedResults.slice(0, 3).map(result => ({
+                id: result._id,
+                quiz: result.quizId?.title || 'Unknown Quiz',
+                quizId: result.quizId?._id || result.quizId,
+                score: result.totalMarks > 0 ? Math.round((result.score / result.totalMarks) * 100) : 0,
+                date: new Date(result.createdAt).toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric'
+                })
+            }));
+            setRecentAttempts(latestThree);
+            
+            // Calculate highest and average scores
+            if (results.length > 0) {
+                const scores = results.map(r => r.totalMarks > 0 ? (r.score / r.totalMarks) * 100 : 0);
+                const highest = Math.max(...scores);
+                const average = scores.reduce((a, b) => a + b, 0) / scores.length;
+                setUserStatsData({
+                    highestScore: Math.round(highest),
+                    averageScore: Math.round(average)
+                });
+            }
         } catch (error) {
             console.error('Failed to fetch user data:', error);
         }
@@ -90,12 +125,9 @@ const Dashboard = () => {
     const userStats = {
         availableQuizzes: publishedQuizzes,
         attemptedQuizzes: userAttempts,
-        highestScore: 95,
-        recentAttempts: [
-            { quiz: 'JavaScript Basics', score: 85, date: '2026-02-25' },
-            { quiz: 'React Fundamentals', score: 92, date: '2026-02-24' },
-            { quiz: 'Node.js Essentials', score: 78, date: '2026-02-22' }
-        ]
+        highestScore: userStatsData.highestScore,
+        averageScore: userStatsData.averageScore,
+        recentAttempts: recentAttempts
     };
 
     const isAdmin = user?.role === 'admin';
@@ -179,7 +211,7 @@ const Dashboard = () => {
                             />
                             <StatCard
                                 icon={TrendingUp}
-                                value="78%"
+                                value={`${userStats.averageScore}%`}
                                 label="Average Score"
                                 color="bg-purple-500"
                             />
@@ -249,31 +281,38 @@ const Dashboard = () => {
                                     <h2 className="text-xl font-bold text-gray-800">Recent Attempts</h2>
                                 </div>
                                 <div className="space-y-4">
-                                    {userStats.recentAttempts.map((attempt, index) => (
-                                        <div key={index} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
-                                            <div className="flex items-center space-x-4">
-                                                <div className={`w-10 h-10 rounded-full flex items-center justify-center ${attempt.score >= 90 ? 'bg-green-100 text-green-600' :
-                                                    attempt.score >= 70 ? 'bg-yellow-100 text-yellow-600' :
-                                                        'bg-red-100 text-red-600'
-                                                    }`}>
-                                                    <Trophy size={18} />
+                                    {userStats.recentAttempts.length > 0 ? (
+                                        userStats.recentAttempts.map((attempt, index) => (
+                                            <div key={index} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
+                                                onClick={() => navigate(`/quizzes/${attempt.quizId}/review/${attempt.id}`)}>
+                                                <div className="flex items-center space-x-4">
+                                                    <div className={`w-10 h-10 rounded-full flex items-center justify-center ${attempt.score >= 90 ? 'bg-green-100 text-green-600' :
+                                                        attempt.score >= 70 ? 'bg-yellow-100 text-yellow-600' :
+                                                            'bg-red-100 text-red-600'
+                                                        }`}>
+                                                        <Trophy size={18} />
+                                                    </div>
+                                                    <div>
+                                                        <p className="font-semibold text-gray-800">{attempt.quiz}</p>
+                                                        <p className="text-sm text-gray-500">{attempt.date}</p>
+                                                    </div>
                                                 </div>
-                                                <div>
-                                                    <p className="font-semibold text-gray-800">{attempt.quiz}</p>
-                                                    <p className="text-sm text-gray-500">{attempt.date}</p>
+                                                <div className="text-right">
+                                                    <p className={`text-xl font-bold ${attempt.score >= 90 ? 'text-green-600' :
+                                                        attempt.score >= 70 ? 'text-yellow-600' :
+                                                            'text-red-600'
+                                                        }`}>
+                                                        {attempt.score}%
+                                                    </p>
+                                                    <p className="text-xs text-gray-500">Score</p>
                                                 </div>
                                             </div>
-                                            <div className="text-right">
-                                                <p className={`text-xl font-bold ${attempt.score >= 90 ? 'text-green-600' :
-                                                    attempt.score >= 70 ? 'text-yellow-600' :
-                                                        'text-red-600'
-                                                    }`}>
-                                                    {attempt.score}%
-                                                </p>
-                                                <p className="text-xs text-gray-500">Score</p>
-                                            </div>
+                                        ))
+                                    ) : (
+                                        <div className="text-center py-8">
+                                            <p className="text-gray-500">No attempts yet. Start taking quizzes to see your progress!</p>
                                         </div>
-                                    ))}
+                                    )}
                                 </div>
                                 <button className="w-full mt-6 py-3 text-center text-orange-500 font-medium hover:text-orange-600 transition-colors border border-orange-200 rounded-lg hover:bg-orange-50"
                                 onClick={ () => navigate('/my-attempts') }>

@@ -275,7 +275,8 @@ const Dashboard = () => {
                                         </div>
                                     ))}
                                 </div>
-                                <button className="w-full mt-6 py-3 text-center text-orange-500 font-medium hover:text-orange-600 transition-colors border border-orange-200 rounded-lg hover:bg-orange-50">
+                                <button className="w-full mt-6 py-3 text-center text-orange-500 font-medium hover:text-orange-600 transition-colors border border-orange-200 rounded-lg hover:bg-orange-50"
+                                onClick={ () => navigate('/my-attempts') }>
                                     View All Attempts
                                 </button>
                             </div>
@@ -319,7 +320,8 @@ const Dashboard = () => {
                                         >
                                             Browse Quizzes
                                         </button>
-                                        <button className="w-full py-2 px-4 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium">
+                                        <button className="w-full py-2 px-4 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium"
+                                            onClick={() => navigate('/profile')} >
                                             View Profile
                                         </button>
                                     </>

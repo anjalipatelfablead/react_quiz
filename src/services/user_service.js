@@ -178,6 +178,16 @@ const userService = {
       throw error.response?.data || error.message;
     }
   },
+
+  // Toggle user active status (Admin only)
+  toggleUserStatus: async (userId) => {
+    try {
+      const response = await api.patch(`/users/${userId}/toggle-status`);
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error.message;
+    }
+  },
 };
 
 export default userService;

@@ -83,6 +83,20 @@ export const deleteQuestion = createAsyncThunk(
   }
 );
 
+// Update questions order
+export const updateQuestionsOrder = createAsyncThunk(
+  'question/updateOrder',
+  async (questions, thunkAPI) => {
+    try {
+      const response = await questionService.updateQuestionsOrder(questions);
+      return response;
+    } catch (error) {
+      const message = error.message || 'Failed to update questions order';
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
 const questionSlice = createSlice({
   name: 'question',
   initialState,
@@ -192,6 +206,22 @@ const questionSlice = createSlice({
         state.message = action.payload.message || 'Question deleted successfully';
       })
       .addCase(deleteQuestion.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.message = action.payload;
+      })
+      // Update Questions Order
+      .addCase(updateQuestionsOrder.pending, (state) => {
+        state.isLoading = true;
+        state.isError = false;
+        state.message = '';
+      })
+      .addCase(updateQuestionsOrder.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.message = action.payload.message || 'Questions order updated successfully';
+      })
+      .addCase(updateQuestionsOrder.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
         state.message = action.payload;

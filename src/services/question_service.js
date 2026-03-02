@@ -93,6 +93,16 @@ const questionService = {
       throw error.response?.data || error.message;
     }
   },
+
+  // Update questions order (Admin only)
+  updateQuestionsOrder: async (questions) => {
+    try {
+      const response = await api.put('/questions/order/update', { questions });
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error.message;
+    }
+  },
 };
 
 export default questionService;

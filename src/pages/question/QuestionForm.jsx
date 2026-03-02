@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getQuizById } from '../../redux/slices/quizSlice';
-import { createQuestion, updateQuestion, getQuestionsByQuiz, reset, clearCurrentQuestion, deleteQuestion } from '../../redux/slices/questionSlice';
+import { createQuestion, updateQuestion, getQuestionsByQuiz, reset, clearCurrentQuestion, deleteQuestion, updateQuestionsOrder } from '../../redux/slices/questionSlice';
 import { toast } from "react-toastify";
 import {
     ArrowLeft,
@@ -13,7 +13,8 @@ import {
     HelpCircle,
     CheckCircle2,
     X,
-    Edit3
+    Edit3,
+    GripVertical
 } from 'lucide-react';
 
 const QuestionForm = () => {
@@ -46,9 +47,84 @@ const QuestionForm = () => {
     const [showEditModal, setShowEditModal] = useState(false);
     const [editQuestionData, setEditQuestionData] = useState(null);
 
+    // Drag and drop state
+    const [draggedItem, setDraggedItem] = useState(null);
+    const [dragOverItem, setDragOverItem] = useState(null);
+    const [localQuestions, setLocalQuestions] = useState([]);
+    const [hasOrderChanged, setHasOrderChanged] = useState(false);
+
+    useEffect(() => {
+        setLocalQuestions([...questions]);
+    }, [questions]);
+
     const handleEditClick = (question) => {
         setEditQuestionData({ ...question }); // clone question
         setShowEditModal(true);
+    };
+
+    // Drag and drop handlers
+    const handleDragStart = (e, index) => {
+        setDraggedItem(index);
+        e.dataTransfer.effectAllowed = 'move';
+        // Set a transparent drag image or none
+        const dragImage = new Image();
+        dragImage.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+        e.dataTransfer.setDragImage(dragImage, 0, 0);
+    };
+
+    const handleDragOver = (e, index) => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        if (draggedItem === null || draggedItem === index) return;
+        setDragOverItem(index);
+    };
+
+    const handleDragLeave = () => {
+        setDragOverItem(null);
+    };
+
+    const handleDrop = (e, dropIndex) => {
+        e.preventDefault();
+        if (draggedItem === null || draggedItem === dropIndex) {
+            setDraggedItem(null);
+            setDragOverItem(null);
+            return;
+        }
+
+        const newQuestions = [...localQuestions];
+        const draggedQuestion = newQuestions[draggedItem];
+        
+        // Remove from old position
+        newQuestions.splice(draggedItem, 1);
+        // Insert at new position
+        newQuestions.splice(dropIndex, 0, draggedQuestion);
+        
+        // Update order property
+        const updatedQuestions = newQuestions.map((q, idx) => ({
+            ...q,
+            order: idx
+        }));
+        
+        setLocalQuestions(updatedQuestions);
+        setHasOrderChanged(true);
+        setDraggedItem(null);
+        setDragOverItem(null);
+    };
+
+    const handleDragEnd = () => {
+        setDraggedItem(null);
+        setDragOverItem(null);
+    };
+
+    const saveQuestionOrder = async () => {
+        const questionsToUpdate = localQuestions.map((q, index) => ({
+            _id: q._id,
+            order: index
+        }));
+        
+        await dispatch(updateQuestionsOrder(questionsToUpdate));
+        setHasOrderChanged(false);
+        toast.success("Question order saved successfully!");
     };
 
     useEffect(() => {
@@ -448,11 +524,20 @@ const QuestionForm = () => {
                 {/* Manage Questions Tab */}
                 {activeTab === 'manage' && (
                     <div className="bg-white/90 backdrop-blur-sm rounded-xl shadow-md overflow-hidden">
-                        <div className="p-6 border-b border-gray-100 bg-gray-50">
+                        <div className="p-6 border-b border-gray-100 bg-gray-50 flex items-center justify-between">
                             <h2 className="text-xl font-semibold text-gray-800">Existing Questions</h2>
+                            {hasOrderChanged && (
+                                <button
+                                    onClick={saveQuestionOrder}
+                                    className="inline-flex items-center px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors font-medium"
+                                >
+                                    <Save size={18} className="mr-2" />
+                                    Save Order
+                                </button>
+                            )}
                         </div>
                         <div className="p-6">
-                            {questions.length === 0 ? (
+                            {localQuestions.length === 0 ? (
                                 <div className="text-center py-12">
                                     <HelpCircle size={48} className="mx-auto text-gray-300 mb-4" />
                                     <p className="text-gray-600">No questions added yet.</p>
@@ -464,43 +549,64 @@ const QuestionForm = () => {
                                     </button>
                                 </div>
                             ) : (
-                                <div className="space-y-4">
-                                    {questions.map((q, index) => (
+                                <div className="space-y-2">
+                                    <p className="text-sm text-gray-500 mb-4 flex items-center">
+                                        <GripVertical size={16} className="mr-1" />
+                                        Drag and drop to reorder questions
+                                    </p>
+                                    {localQuestions.map((q, index) => (
                                         <div
                                             key={q._id}
-                                            className="border border-gray-200 rounded-xl p-4 hover:shadow-md transition-shadow"
+                                            draggable
+                                            onDragStart={(e) => handleDragStart(e, index)}
+                                            onDragOver={(e) => handleDragOver(e, index)}
+                                            onDragLeave={handleDragLeave}
+                                            onDrop={(e) => handleDrop(e, index)}
+                                            onDragEnd={handleDragEnd}
+                                            className={`border rounded-xl p-4 transition-all cursor-grab active:cursor-grabbing ${
+                                                draggedItem === index
+                                                    ? 'opacity-50 border-orange-300 bg-orange-50'
+                                                    : dragOverItem === index
+                                                        ? 'border-orange-400 bg-orange-50 shadow-md transform scale-[1.02]'
+                                                        : 'border-gray-200 hover:shadow-md hover:border-orange-200'
+                                            }`}
                                         >
                                             <div className="flex items-start justify-between">
-                                                <div className="flex-1">
-                                                    <div className="flex items-center space-x-2 mb-2">
-                                                        <span className="bg-orange-100 text-orange-600 text-xs font-medium px-2 py-1 rounded">
-                                                            Q{index + 1}
-                                                        </span>
-                                                        <span className="bg-green-100 text-green-600 text-xs font-medium px-2 py-1 rounded">
-                                                            {q.marks} mark{q.marks > 1 ? 's' : ''}
-                                                        </span>
+                                                <div className="flex items-start flex-1">
+                                                    <div className="flex items-center justify-center w-8 h-8 mr-3 text-gray-400 hover:text-orange-500">
+                                                        <GripVertical size={20} />
                                                     </div>
-                                                    <p className="text-gray-800 font-medium mb-3">{q.questionText}</p>
-                                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                                                        {q.options.map((opt, optIndex) => (
-                                                            <div
-                                                                key={optIndex}
-                                                                className={`flex items-center space-x-2 text-sm ${opt === q.correctAnswer
-                                                                    ? 'text-green-600 font-medium'
-                                                                    : 'text-gray-600'
-                                                                    }`}
-                                                            >
-                                                                <span className="font-semibold w-6">
-                                                                    {String.fromCharCode(65 + optIndex)}.
-                                                                </span>
-                                                                {opt === q.correctAnswer ? (
-                                                                    <CheckCircle2 size={14} className="text-green-500" />
-                                                                ) : (
-                                                                    <X size={14} className="text-gray-400" />
-                                                                )}
-                                                                <span>{opt}</span>
-                                                            </div>
-                                                        ))}
+                                                    <div className="flex-1">
+                                                        <div className="flex items-center space-x-2 mb-2">
+                                                            <span className="bg-orange-100 text-orange-600 text-xs font-medium px-2 py-1 rounded">
+                                                                Q{index + 1}
+                                                            </span>
+                                                            <span className="bg-green-100 text-green-600 text-xs font-medium px-2 py-1 rounded">
+                                                                {q.marks} mark{q.marks > 1 ? 's' : ''}
+                                                            </span>
+                                                        </div>
+                                                        <p className="text-gray-800 font-medium mb-3">{q.questionText}</p>
+                                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                                                            {q.options.map((opt, optIndex) => (
+                                                                <div
+                                                                    key={optIndex}
+                                                                    className={`flex items-center space-x-2 text-sm ${opt === q.correctAnswer
+                                                                        ? 'text-green-600 font-medium'
+                                                                        : 'text-gray-600'
+                                                                        }`}
+                                                                >
+                                                                    <span className="font-semibold w-6">
+                                                                        {String.fromCharCode(65 + optIndex)}.
+                                                                    </span>
+                                                                    {opt === q.correctAnswer ? (
+                                                                        <CheckCircle2 size={14} className="text-green-500" />
+                                                                    ) : (
+                                                                        <X size={14} className="text-gray-400" />
+                                                                    )}
+                                                                    <span>{opt}</span>
+                                                                </div>
+                                                            ))}
+                                                        </div>
                                                     </div>
                                                 </div>
                                                 <div className="flex items-center space-x-2 ml-4">

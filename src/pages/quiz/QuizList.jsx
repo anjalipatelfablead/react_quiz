@@ -39,6 +39,8 @@ const QuizList = () => {
         dispatch(getAllQuizzes());
         if (!isAdmin) {
             fetchUserAttempts();
+        } else {
+            fetchAllAttempts();
         }
         return () => {
             dispatch(reset());
@@ -55,6 +57,19 @@ const QuizList = () => {
             setAttemptedQuizzes(attemptedQuizIds);
         } catch (error) {
             console.error('Failed to fetch user attempts:', error);
+        }
+    };
+
+    const fetchAllAttempts = async () => {
+        try {
+            const results = await resultService.getAllResults();
+            const allResults = Array.isArray(results) ? results : results.results || [];
+            const attemptedQuizIds = new Set(
+                allResults.map(r => r.quizId?._id || r.quizId)
+            );
+            setAttemptedQuizzes(attemptedQuizIds);
+        } catch (error) {
+            console.error('Failed to fetch all attempts:', error);
         }
     };
 
@@ -329,8 +344,13 @@ const QuizList = () => {
                                                             </button>
                                                             <button
                                                                 onClick={() => openDeleteModal(quiz._id)}
-                                                                className="p-2 text-gray-500 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
-                                                                title="Delete quiz"
+                                                                disabled={attemptedQuizzes.has(quiz._id)}
+                                                                className={`p-2 rounded-lg transition-colors ${
+                                                                    attemptedQuizzes.has(quiz._id)
+                                                                        ? 'text-gray-300 cursor-not-allowed'
+                                                                        : 'text-gray-500 hover:text-red-500 hover:bg-red-50'
+                                                                }`}
+                                                                title={attemptedQuizzes.has(quiz._id) ? 'Cannot delete - quiz has been attempted' : 'Delete quiz'}
                                                             >
                                                                 <Trash2 size={16} />
                                                             </button>

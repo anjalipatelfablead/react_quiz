@@ -351,15 +351,15 @@ const Dashboard = () => {
                                     </>
                                 ) : (
                                     <>
-                                        <button className="w-full py-2 px-4 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors text-sm font-medium">
+                                        {/* <button className="w-full py-2 px-4 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors text-sm font-medium">
                                             Start New Quiz
-                                        </button>
+                                        </button> */}
                                         <button className="w-full py-2 px-4 bg-gray-800 text-white rounded-lg hover:bg-gray-900 transition-colors text-sm font-medium"
                                             onClick={() => navigate('/quizzes')}
                                         >
                                             Browse Quizzes
                                         </button>
-                                        <button className="w-full py-2 px-4 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium"
+                                        <button className="w-full py-2 px-4 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors text-sm font-medium"
                                             onClick={() => navigate('/profile')} >
                                             View Profile
                                         </button>

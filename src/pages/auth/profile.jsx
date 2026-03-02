@@ -240,7 +240,7 @@ const Profile = () => {
                 <button
                   type="button"
                   onClick={() => setIsEditing(true)}
-                  className="inline-flex items-center px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors shadow-sm text-sm font-medium"
+                  className="inline-flex items-center px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors shadow-sm text-sm font-medium cursor-pointer"
                 >
                   <Edit2 size={16} className="mr-2" />
                   Edit Profile
@@ -251,7 +251,7 @@ const Profile = () => {
                     type="button"
                     onClick={handleCancel}
                     disabled={isLoading}
-                    className="inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium disabled:opacity-50"
+                    className="inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium disabled:opacity-50 cursor-pointer"
                   >
                     <X size={16} className="mr-2" />
                     Cancel
@@ -259,7 +259,7 @@ const Profile = () => {
                   <button
                     type="submit"
                     disabled={isLoading}
-                    className="inline-flex items-center px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors shadow-sm text-sm font-medium disabled:opacity-50"
+                    className="inline-flex items-center px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors shadow-sm text-sm font-medium cursor-pointer disabled:opacity-50"
                   >
                     {isLoading ? (
                       <span className="flex items-center">

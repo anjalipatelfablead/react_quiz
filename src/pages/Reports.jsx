@@ -192,7 +192,7 @@ const Reports = () => {
                             </div>
                             <div>
                                 <p className="text-2xl font-bold text-gray-800">{overallStats.totalUsers}</p>
-                                <p className="text-sm text-gray-500">Total Users</p>
+                                <p className="text-sm text-gray-500">Total attempted Users</p>
                             </div>
                         </div>
                     </div>

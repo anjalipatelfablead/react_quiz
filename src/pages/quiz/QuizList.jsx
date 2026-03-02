@@ -105,10 +105,10 @@ const QuizList = () => {
             toast.error(`Quiz must have at least 5 questions before publishing. Currently has ${questionCount}.`);
             return;
         }
-        
+
         setPublishingQuizId(quiz._id);
         try {
-            const publishData = { 
+            const publishData = {
                 title: quiz.title,
                 description: quiz.description,
                 category: quiz.category,
@@ -155,7 +155,7 @@ const QuizList = () => {
     const filteredQuizzes = quizzes.filter(quiz => {
         // For users, only show published quizzes
         if (!isAdmin && quiz.status !== 'published') return false;
-        
+
         const matchesSearch = quiz.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
             quiz.description.toLowerCase().includes(searchTerm.toLowerCase());
         const matchesStatus = statusFilter === 'all' || quiz.status === statusFilter;
@@ -413,13 +413,12 @@ const QuizList = () => {
                                                             <button
                                                                 onClick={() => handlePublish(quiz)}
                                                                 disabled={publishingQuizId === quiz._id || (quizQuestionCounts[quiz._id] || 0) < 5}
-                                                                className={`p-2 rounded-lg transition-colors ${
-                                                                    (quizQuestionCounts[quiz._id] || 0) >= 5
-                                                                        ? 'text-gray-500 hover:text-green-500 hover:bg-green-50'
-                                                                        : 'text-gray-300 cursor-not-allowed'
-                                                                }`}
-                                                                title={(quizQuestionCounts[quiz._id] || 0) < 5 
-                                                                    ? `Add ${5 - (quizQuestionCounts[quiz._id] || 0)} more question${(quizQuestionCounts[quiz._id] || 0) === 4 ? '' : 's'} to publish` 
+                                                                className={`p-2 rounded-lg transition-colors ${(quizQuestionCounts[quiz._id] || 0) >= 5
+                                                                    ? 'text-gray-500 hover:text-green-500 hover:bg-green-50'
+                                                                    : 'text-gray-300 cursor-not-allowed'
+                                                                    }`}
+                                                                title={(quizQuestionCounts[quiz._id] || 0) < 5
+                                                                    ? `Add ${5 - (quizQuestionCounts[quiz._id] || 0)} more question${(quizQuestionCounts[quiz._id] || 0) === 4 ? '' : 's'} to publish`
                                                                     : 'Publish quiz'}
                                                             >
                                                                 <Globe size={16} />
@@ -430,11 +429,10 @@ const QuizList = () => {
                                                             <button
                                                                 onClick={() => handleToggleActive(quiz)}
                                                                 disabled={togglingActiveId === quiz._id}
-                                                                className={`p-2 rounded-lg transition-colors ${
-                                                                    quiz.isActive !== false
-                                                                        ? 'text-gray-500 hover:text-red-500 hover:bg-red-50'
-                                                                        : 'text-gray-500 hover:text-green-500 hover:bg-green-50'
-                                                                }`}
+                                                                className={`p-2 rounded-lg transition-colors ${quiz.isActive !== false
+                                                                    ? 'text-gray-500 hover:text-red-500 hover:bg-red-50'
+                                                                    : 'text-gray-500 hover:text-green-500 hover:bg-green-50'
+                                                                    }`}
                                                                 title={quiz.isActive !== false ? 'Deactivate quiz' : 'Activate quiz'}
                                                             >
                                                                 {togglingActiveId === quiz._id ? (
@@ -456,11 +454,10 @@ const QuizList = () => {
                                                         <button
                                                             onClick={() => openDeleteModal(quiz._id)}
                                                             disabled={attemptedQuizzes.has(quiz._id)}
-                                                            className={`p-2 rounded-lg transition-colors ${
-                                                                attemptedQuizzes.has(quiz._id)
-                                                                    ? 'text-gray-300 cursor-not-allowed'
-                                                                    : 'text-gray-500 hover:text-red-500 hover:bg-red-50'
-                                                            }`}
+                                                            className={`p-2 rounded-lg transition-colors ${attemptedQuizzes.has(quiz._id)
+                                                                ? 'text-gray-300 cursor-not-allowed'
+                                                                : 'text-gray-500 hover:text-red-500 hover:bg-red-50'
+                                                                }`}
                                                             title={attemptedQuizzes.has(quiz._id) ? 'Cannot delete - quiz has been attempted' : 'Delete quiz'}
                                                         >
                                                             <Trash2 size={16} />
@@ -472,20 +469,26 @@ const QuizList = () => {
 
                                         <div className="flex items-center justify-between mb-4">
                                             <div className="flex items-center gap-2">
-                                                {getStatusBadge(quiz.status)}
-                                                {/* Show Active/Inactive badge for published quizzes */}
-                                                {quiz.status === 'published' && (
-                                                    <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
-                                                        quiz.isActive !== false 
-                                                            ? 'bg-green-100 text-green-600' 
-                                                            : 'bg-red-100 text-red-600'
-                                                    }`}>
-                                                        {quiz.isActive !== false ? 'Active' : 'Inactive'}
-                                                    </span>
+                                                {isAdmin && (
+                                                    <>
+                                                        {getStatusBadge(quiz.status)}
+                                                        {/* Show Active/Inactive badge for published quizzes */}
+                                                        {quiz.status === 'published' && (
+                                                            <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${quiz.isActive !== false
+                                                                ? 'bg-green-100 text-green-600'
+                                                                : 'bg-red-100 text-red-600'
+                                                                }`}>
+                                                                {quiz.isActive !== false ? 'Active' : 'Inactive'}
+                                                            </span>
+                                                        )}
+                                                    </>
                                                 )}
                                             </div>
                                             <span className="text-xs text-gray-400">
-                                                {formatDate(quiz.createdAt)}
+                                                {isAdmin
+                                                    ? formatDate(quiz.createdAt)
+                                                    : `Published on ${formatDate(quiz.createdAt)}`
+                                                }
                                             </span>
                                         </div>
 
@@ -506,7 +509,7 @@ const QuizList = () => {
                                             </div>
                                             <div className="flex items-center gap-2">
                                                 {/* Show Start button only for active published quizzes */}
-                                                {!isAdmin && quiz.status === 'published' && quiz.isActive !== false && (
+                                                {/* {!isAdmin && quiz.status === 'published' && quiz.isActive !== false && (
                                                     attemptedQuizzes.has(quiz._id) ? (
                                                         <span className="inline-flex items-center px-3 py-1.5 text-sm font-medium text-gray-400 cursor-not-allowed">
                                                             ✓ Completed
@@ -519,14 +522,41 @@ const QuizList = () => {
                                                             ▶ Start
                                                         </button>
                                                     )
+                                                )} */}
+
+                                                {/* Show Start button for all published quizzes (user side) */}
+                                                {!isAdmin && quiz.status === 'published' && (
+                                                    attemptedQuizzes.has(quiz._id) ? (
+                                                        <span className="inline-flex items-center px-3 py-1.5 text-sm font-medium text-gray-400 cursor-not-allowed">
+                                                            ✓ Completed
+                                                        </span>
+                                                    ) : (
+                                                        <button
+                                                            onClick={() => {
+                                                                if (quiz.isActive !== false) {
+                                                                    navigate(`/quizzes/${quiz._id}/take`);
+                                                                }
+                                                            }}
+                                                            disabled={quiz.isActive === false}
+                                                            className={`inline-flex items-center px-3 py-1.5 text-sm font-medium rounded-lg transition-colors
+                                                            ${quiz.isActive === false
+                                                                    ? 'text-gray-400 bg-gray-100 cursor-not-allowed'
+                                                                    : 'text-green-600 hover:text-green-700 hover:bg-green-50'
+                                                                }`}
+                                                            title={quiz.isActive === false ? 'Temporarily deactivated' : 'Start quiz'}
+                                                        >
+                                                            {quiz.isActive === false ? 'Temporarily Deactivated' : '▶ Start'}
+                                                        </button>
+                                                    )
                                                 )}
+
                                                 {/* Show deactivated message for inactive quizzes */}
-                                                {!isAdmin && quiz.status === 'published' && quiz.isActive === false && (
+                                                {/* {!isAdmin && quiz.status === 'published' && quiz.isActive === false && (
                                                     <span className="inline-flex items-center px-3 py-1.5 text-sm font-medium text-red-500">
                                                         <PowerOff size={14} className="mr-1" />
                                                         Deactivated
                                                     </span>
-                                                )}
+                                                )} */}
 
                                                 {isAdmin && (
                                                     <button

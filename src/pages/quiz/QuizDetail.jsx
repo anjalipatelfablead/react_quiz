@@ -39,7 +39,7 @@ const QuizDetail = () => {
   const [isPublishing, setIsPublishing] = useState(false);
 
   // Get active status from currentQuiz object (stored in database)
-  const isQuizActive = currentQuiz?.isActive !== false; 
+  const isQuizActive = currentQuiz?.isActive !== false;
 
   const isAdmin = user?.role === 'admin';
 
@@ -98,10 +98,10 @@ const QuizDetail = () => {
       toast.error('Quiz must have at least 5 questions before publishing');
       return;
     }
-    
+
     setIsPublishing(true);
     try {
-      const publishData = { 
+      const publishData = {
         title: currentQuiz.title,
         description: currentQuiz.description,
         category: currentQuiz.category,
@@ -198,7 +198,7 @@ const QuizDetail = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-primary-100 to-primary-400">
-    {/* <div className="min-h-screen bg-white"> */}
+      {/* <div className="min-h-screen bg-white"> */}
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Back Button */}
@@ -212,7 +212,7 @@ const QuizDetail = () => {
 
         {/* Main Content */}
         <div className="bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden">
-        {/* <div className=" bg-gradient-to-b from-primary-100 to-primary-400"> */}
+          {/* <div className=" bg-gradient-to-b from-primary-100 to-primary-400"> */}
 
           {/* Header */}
           <div className="p-6 border-b border-gray-100 bg-gradient-to-r from-orange-50 to-white">
@@ -239,11 +239,10 @@ const QuizDetail = () => {
                       <button
                         onClick={handlePublish}
                         disabled={isPublishing || questions.length < 5}
-                        className={`inline-flex items-center justify-center px-4 py-2 rounded-lg transition-colors font-medium shadow-md ${
-                          questions.length >= 5
+                        className={`inline-flex items-center justify-center px-4 py-2 rounded-lg transition-colors font-medium shadow-md ${questions.length >= 5
                             ? 'bg-green-500 text-white hover:bg-green-600'
                             : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                        }`}
+                          }`}
                         title={questions.length < 5 ? `Add ${5 - questions.length} more question${questions.length === 4 ? '' : 's'} to publish` : 'Publish Quiz'}
                       >
                         <Globe size={18} className="mr-2" />
@@ -254,11 +253,10 @@ const QuizDetail = () => {
                     {currentQuiz.status === 'published' && (
                       <button
                         onClick={handleToggleActive}
-                        className={`inline-flex items-center justify-center px-4 py-2 rounded-lg transition-colors font-medium shadow-md ${
-                          isQuizActive
+                        className={`inline-flex items-center justify-center px-4 py-2 rounded-lg transition-colors font-medium shadow-md ${isQuizActive
                             ? 'bg-red-500 text-white hover:bg-red-600'
                             : 'bg-green-500 text-white hover:bg-green-600'
-                        }`}
+                          }`}
                         title={isQuizActive ? 'Deactivate Quiz' : 'Activate Quiz'}
                       >
                         {isQuizActive ? (
@@ -279,7 +277,7 @@ const QuizDetail = () => {
                       className="inline-flex items-center justify-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium shadow-md"
                     >
                       <Plus size={18} className="mr-2" />
-                       Questions
+                      Questions
                     </button>
                     <button
                       onClick={() => navigate(`/quizzes/edit/${currentQuiz._id}`)}
@@ -291,7 +289,7 @@ const QuizDetail = () => {
                   </>
                 )}
                 {/* Show Start Quiz button only if quiz is active */}
-                {currentQuiz.status === 'published' && !isAdmin && isQuizActive && (
+                {currentQuiz.status === 'published' && !isAdmin && (
                   hasAttempted ? (
                     <div className="text-center">
                       <p className="text-sm text-gray-500 mb-2">You have already taken this quiz</p>
@@ -305,11 +303,20 @@ const QuizDetail = () => {
                     </div>
                   ) : (
                     <button
-                      onClick={() => navigate(`/quizzes/${currentQuiz._id}/take`)}
-                      className="inline-flex items-center justify-center px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors font-medium shadow-md"
+                      onClick={() => {
+                        if (isQuizActive) {
+                          navigate(`/quizzes/${currentQuiz._id}/take`);
+                        }
+                      }}
+                      disabled={!isQuizActive}
+                      className={`inline-flex items-center justify-center px-4 py-2 rounded-lg transition-colors font-medium shadow-md
+                      ${isQuizActive
+                          ? 'bg-orange-500 text-white hover:bg-orange-600'
+                          : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                        }`}
                     >
                       <Play size={18} className="mr-2" />
-                      Start Quiz
+                      {isQuizActive ? 'Start Quiz' : 'Temporarily Deactivated'}
                     </button>
                   )
                 )}

@@ -11,7 +11,8 @@ import {
     Shield,
     Calendar,
     Trash2,
-    AlertCircle
+    AlertCircle,
+    Power
 } from 'lucide-react';
 
 const UserList = () => {
@@ -70,6 +71,19 @@ const UserList = () => {
             } catch (err) {
                 alert(err.message || 'Failed to delete user');
             }
+        }
+    };
+
+    const handleToggleStatus = async (user) => {
+        if (user._id === currentUser?._id) return;
+
+        try {
+            const response = await userService.toggleUserStatus(user._id);
+            // Update the user in the local state
+            setUsers(users.map(u =>
+                u._id === user._id ? { ...u, isActive: response.user.isActive } : u));
+        } catch (err) {
+            alert(err.message || 'Failed to toggle user status');
         }
     };
 
@@ -216,6 +230,9 @@ const UserList = () => {
                                             <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
                                                 Joined
                                             </th>
+                                            <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                                Status
+                                            </th>
                                             <th className="px-6 py-4 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">
                                                 Actions
                                             </th>
@@ -268,6 +285,47 @@ const UserList = () => {
                                                     <div className="flex items-center text-sm text-gray-600">
                                                         <Calendar size={14} className="mr-2 text-gray-400" />
                                                         {formatDate(user.createdAt)}
+                                                    </div>
+                                                </td>
+                                                <td className="px-6 py-4 whitespace-nowrap">
+                                                    {/* <button
+                                                        onClick={() => handleToggleStatus(user)}
+                                                        disabled={user._id === currentUser?._id}
+                                                        className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold transition-colors ${
+                                                            user.isActive !== false
+                                                                ? 'bg-green-100 text-green-700 hover:bg-green-200'
+                                                                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                                                        } ${user._id === currentUser?._id ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+                                                        title={user._id === currentUser?._id ? "Cannot change your own status" : (user.isActive !== false ? "Click to deactivate" : "Click to activate")}
+                                                    >
+                                                        <Power size={12} className="mr-1" />
+                                                        {user.isActive !== false ? 'Active' : 'Inactive'}
+                                                    </button> */}
+
+                                                    <div className="flex items-center">
+                                                        <button
+                                                            onClick={() => handleToggleStatus(user)}
+                                                            disabled={user._id === currentUser?._id}
+                                                            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-300 ${user.isActive !== false ? 'bg-orange-500' : 'bg-gray-300'
+                                                                } ${user._id === currentUser?._id ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+                                                            title={
+                                                                user._id === currentUser?._id
+                                                                    ? "Cannot change your own status"
+                                                                    : user.isActive !== false
+                                                                        ? "Click to deactivate"
+                                                                        : "Click to activate"
+                                                            }
+                                                        >
+                                                            <span
+                                                                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-300 ${user.isActive !== false ? 'translate-x-6' : 'translate-x-1'
+                                                                    }`}
+                                                            />
+                                                        </button>
+
+                                                        {/* <span className={`ml-3 text-xs font-medium ${user.isActive !== false ? 'text-green-600' : 'text-gray-500'
+                                                            }`}>
+                                                            {user.isActive !== false ? 'Active' : 'Inactive'}
+                                                        </span> */}
                                                     </div>
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">

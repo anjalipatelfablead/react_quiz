@@ -104,7 +104,7 @@ const Profile = () => {
 
   return (
     <div className="max-w-4xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden mt-15">
         {/* Header/Banner */}
         <div className="h-32 bg-gradient-to-r from-orange-400 to-orange-600"></div>
 

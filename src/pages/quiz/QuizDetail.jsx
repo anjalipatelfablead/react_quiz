@@ -21,7 +21,9 @@ import {
   FileText,
   BarChart3,
   Award,
-  Globe
+  Globe,
+  Power,
+  PowerOff
 } from 'lucide-react';
 
 const QuizDetail = () => {
@@ -35,6 +37,9 @@ const QuizDetail = () => {
   const [hasAttempted, setHasAttempted] = useState(false);
   const [userResult, setUserResult] = useState(null);
   const [isPublishing, setIsPublishing] = useState(false);
+
+  // Get active status from currentQuiz object (stored in database)
+  const isQuizActive = currentQuiz?.isActive !== false; 
 
   const isAdmin = user?.role === 'admin';
 
@@ -101,7 +106,8 @@ const QuizDetail = () => {
         description: currentQuiz.description,
         category: currentQuiz.category,
         timeLimit: currentQuiz.timeLimit,
-        status: 'published' 
+        status: 'published',
+        isActive: true
       };
       await dispatch(updateQuiz({ quizId: id, quizData: publishData }));
       toast.success('Quiz published successfully!');
@@ -112,6 +118,22 @@ const QuizDetail = () => {
     } finally {
       setIsPublishing(false);
     }
+  };
+
+  const handleToggleActive = async () => {
+    const newStatus = !isQuizActive;
+    const updateData = {
+      title: currentQuiz.title,
+      description: currentQuiz.description,
+      category: currentQuiz.category,
+      timeLimit: currentQuiz.timeLimit,
+      status: currentQuiz.status,
+      isActive: newStatus
+    };
+    await dispatch(updateQuiz({ quizId: id, quizData: updateData }));
+    toast.success(`Quiz ${newStatus ? 'activated' : 'deactivated'} successfully!`);
+    // Refresh quiz data
+    dispatch(getQuizById(id));
   };
 
   const formatDate = (dateString) => {
@@ -228,6 +250,30 @@ const QuizDetail = () => {
                         {isPublishing ? 'Publishing...' : 'Publish Quiz'}
                       </button>
                     )}
+                    {/* Activate/Deactivate Button for Published Quizzes */}
+                    {currentQuiz.status === 'published' && (
+                      <button
+                        onClick={handleToggleActive}
+                        className={`inline-flex items-center justify-center px-4 py-2 rounded-lg transition-colors font-medium shadow-md ${
+                          isQuizActive
+                            ? 'bg-red-500 text-white hover:bg-red-600'
+                            : 'bg-green-500 text-white hover:bg-green-600'
+                        }`}
+                        title={isQuizActive ? 'Deactivate Quiz' : 'Activate Quiz'}
+                      >
+                        {isQuizActive ? (
+                          <>
+                            <PowerOff size={18} className="mr-2" />
+                            Deactivate
+                          </>
+                        ) : (
+                          <>
+                            <Power size={18} className="mr-2" />
+                            Activate
+                          </>
+                        )}
+                      </button>
+                    )}
                     <button
                       onClick={() => navigate(`/quizzes/${currentQuiz._id}/questions`)}
                       className="inline-flex items-center justify-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium shadow-md"
@@ -244,7 +290,8 @@ const QuizDetail = () => {
                     </button>
                   </>
                 )}
-                {currentQuiz.status === 'published' && !isAdmin && (
+                {/* Show Start Quiz button only if quiz is active */}
+                {currentQuiz.status === 'published' && !isAdmin && isQuizActive && (
                   hasAttempted ? (
                     <div className="text-center">
                       <p className="text-sm text-gray-500 mb-2">You have already taken this quiz</p>
@@ -392,6 +439,16 @@ const QuizDetail = () => {
                   <div className="flex items-center text-yellow-700">
                     <AlertCircle size={20} className="mr-2" />
                     <span>This quiz is in draft mode. Users cannot see it until you publish it.</span>
+                  </div>
+                </div>
+              )}
+
+              {/* Deactivation Message - Show to all users when quiz is inactive */}
+              {currentQuiz.status === 'published' && !isQuizActive && (
+                <div className="bg-red-50 border border-red-200 rounded-xl p-4">
+                  <div className="flex items-center text-red-700">
+                    <PowerOff size={20} className="mr-2" />
+                    <span>This quiz is temporarily deactivated.</span>
                   </div>
                 </div>
               )}

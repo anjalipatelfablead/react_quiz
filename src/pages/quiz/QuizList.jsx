@@ -20,6 +20,8 @@ import {
     XCircle,
     AlertCircle,
     Globe,
+    Power,
+    PowerOff,
 } from 'lucide-react';
 
 const QuizList = () => {
@@ -37,6 +39,7 @@ const QuizList = () => {
     const [attemptedQuizzes, setAttemptedQuizzes] = useState(new Set());
     const [quizQuestionCounts, setQuizQuestionCounts] = useState({});
     const [publishingQuizId, setPublishingQuizId] = useState(null);
+    const [togglingActiveId, setTogglingActiveId] = useState(null);
 
     const isAdmin = user?.role === 'admin';
 
@@ -110,7 +113,8 @@ const QuizList = () => {
                 description: quiz.description,
                 category: quiz.category,
                 timeLimit: quiz.timeLimit,
-                status: 'published' 
+                status: 'published',
+                isActive: true // Set as active by default when publishing
             };
             await dispatch(updateQuiz({ quizId: quiz._id, quizData: publishData }));
             toast.success('Quiz published successfully!');
@@ -119,6 +123,28 @@ const QuizList = () => {
             toast.error('Failed to publish quiz');
         } finally {
             setPublishingQuizId(null);
+        }
+    };
+
+    const handleToggleActive = async (quiz) => {
+        setTogglingActiveId(quiz._id);
+        try {
+            const newStatus = !quiz.isActive;
+            const updateData = {
+                title: quiz.title,
+                description: quiz.description,
+                category: quiz.category,
+                timeLimit: quiz.timeLimit,
+                status: quiz.status,
+                isActive: newStatus
+            };
+            await dispatch(updateQuiz({ quizId: quiz._id, quizData: updateData }));
+            toast.success(`Quiz ${newStatus ? 'activated' : 'deactivated'} successfully!`);
+            dispatch(getAllQuizzes());
+        } catch (error) {
+            toast.error('Failed to update quiz status');
+        } finally {
+            setTogglingActiveId(null);
         }
     };
 
@@ -399,6 +425,27 @@ const QuizList = () => {
                                                                 <Globe size={16} />
                                                             </button>
                                                         )}
+                                                        {/* Activate/Deactivate button for published quizzes */}
+                                                        {quiz.status === 'published' && (
+                                                            <button
+                                                                onClick={() => handleToggleActive(quiz)}
+                                                                disabled={togglingActiveId === quiz._id}
+                                                                className={`p-2 rounded-lg transition-colors ${
+                                                                    quiz.isActive !== false
+                                                                        ? 'text-gray-500 hover:text-red-500 hover:bg-red-50'
+                                                                        : 'text-gray-500 hover:text-green-500 hover:bg-green-50'
+                                                                }`}
+                                                                title={quiz.isActive !== false ? 'Deactivate quiz' : 'Activate quiz'}
+                                                            >
+                                                                {togglingActiveId === quiz._id ? (
+                                                                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-500"></div>
+                                                                ) : quiz.isActive !== false ? (
+                                                                    <PowerOff size={16} />
+                                                                ) : (
+                                                                    <Power size={16} />
+                                                                )}
+                                                            </button>
+                                                        )}
                                                         <button
                                                             onClick={() => navigate(`/quizzes/edit/${quiz._id}`)}
                                                             className="p-2 text-gray-500 hover:text-orange-500 hover:bg-orange-50 rounded-lg transition-colors"
@@ -424,7 +471,19 @@ const QuizList = () => {
                                         </div>
 
                                         <div className="flex items-center justify-between mb-4">
-                                            {getStatusBadge(quiz.status)}
+                                            <div className="flex items-center gap-2">
+                                                {getStatusBadge(quiz.status)}
+                                                {/* Show Active/Inactive badge for published quizzes */}
+                                                {quiz.status === 'published' && (
+                                                    <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
+                                                        quiz.isActive !== false 
+                                                            ? 'bg-green-100 text-green-600' 
+                                                            : 'bg-red-100 text-red-600'
+                                                    }`}>
+                                                        {quiz.isActive !== false ? 'Active' : 'Inactive'}
+                                                    </span>
+                                                )}
+                                            </div>
                                             <span className="text-xs text-gray-400">
                                                 {formatDate(quiz.createdAt)}
                                             </span>
@@ -446,7 +505,8 @@ const QuizList = () => {
                                                 <span>By {quiz.createdBy?.username || 'Unknown'}</span>
                                             </div>
                                             <div className="flex items-center gap-2">
-                                                {!isAdmin && quiz.status === 'published' && (
+                                                {/* Show Start button only for active published quizzes */}
+                                                {!isAdmin && quiz.status === 'published' && quiz.isActive !== false && (
                                                     attemptedQuizzes.has(quiz._id) ? (
                                                         <span className="inline-flex items-center px-3 py-1.5 text-sm font-medium text-gray-400 cursor-not-allowed">
                                                             ✓ Completed
@@ -459,6 +519,13 @@ const QuizList = () => {
                                                             ▶ Start
                                                         </button>
                                                     )
+                                                )}
+                                                {/* Show deactivated message for inactive quizzes */}
+                                                {!isAdmin && quiz.status === 'published' && quiz.isActive === false && (
+                                                    <span className="inline-flex items-center px-3 py-1.5 text-sm font-medium text-red-500">
+                                                        <PowerOff size={14} className="mr-1" />
+                                                        Deactivated
+                                                    </span>
                                                 )}
 
                                                 {isAdmin && (

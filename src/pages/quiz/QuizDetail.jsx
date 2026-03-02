@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
-import { getQuizById, reset, clearCurrentQuiz } from '../../redux/slices/quizSlice';
+import { getQuizById, reset, clearCurrentQuiz, updateQuiz } from '../../redux/slices/quizSlice';
 import { getQuestionsByQuiz, reset as resetQuestions } from '../../redux/slices/questionSlice';
 import resultService from '../../services/result_service';
+import { toast } from "react-toastify";
 import {
   BookOpen,
   ArrowLeft,
@@ -19,7 +20,8 @@ import {
   XCircle,
   FileText,
   BarChart3,
-  Award
+  Award,
+  Globe
 } from 'lucide-react';
 
 const QuizDetail = () => {
@@ -32,6 +34,7 @@ const QuizDetail = () => {
   const { questions, isLoading: questionsLoading } = useSelector((state) => state.question);
   const [hasAttempted, setHasAttempted] = useState(false);
   const [userResult, setUserResult] = useState(null);
+  const [isPublishing, setIsPublishing] = useState(false);
 
   const isAdmin = user?.role === 'admin';
 
@@ -83,6 +86,32 @@ const QuizDetail = () => {
         {status.charAt(0).toUpperCase() + status.slice(1)}
       </span>
     );
+  };
+
+  const handlePublish = async () => {
+    if (questions.length < 5) {
+      toast.error('Quiz must have at least 5 questions before publishing');
+      return;
+    }
+    
+    setIsPublishing(true);
+    try {
+      const publishData = { 
+        title: currentQuiz.title,
+        description: currentQuiz.description,
+        category: currentQuiz.category,
+        timeLimit: currentQuiz.timeLimit,
+        status: 'published' 
+      };
+      await dispatch(updateQuiz({ quizId: id, quizData: publishData }));
+      toast.success('Quiz published successfully!');
+      // Refresh quiz data
+      dispatch(getQuizById(id));
+    } catch (error) {
+      toast.error('Failed to publish quiz');
+    } finally {
+      setIsPublishing(false);
+    }
   };
 
   const formatDate = (dateString) => {
@@ -184,9 +213,24 @@ const QuizDetail = () => {
               <div className="flex flex-col gap-2">
                 {isAdmin && (
                   <>
+                    {currentQuiz.status === 'draft' && (
+                      <button
+                        onClick={handlePublish}
+                        disabled={isPublishing || questions.length < 5}
+                        className={`inline-flex items-center justify-center px-4 py-2 rounded-lg transition-colors font-medium shadow-md ${
+                          questions.length >= 5
+                            ? 'bg-green-500 text-white hover:bg-green-600'
+                            : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                        }`}
+                        title={questions.length < 5 ? `Add ${5 - questions.length} more question${questions.length === 4 ? '' : 's'} to publish` : 'Publish Quiz'}
+                      >
+                        <Globe size={18} className="mr-2" />
+                        {isPublishing ? 'Publishing...' : 'Publish Quiz'}
+                      </button>
+                    )}
                     <button
                       onClick={() => navigate(`/quizzes/${currentQuiz._id}/questions`)}
-                      className="inline-flex items-center justify-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium shadow-md"
+                      className="inline-flex items-center justify-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium shadow-md"
                     >
                       <Plus size={18} className="mr-2" />
                        Questions

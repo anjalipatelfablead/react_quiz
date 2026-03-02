@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { getAllQuizzes, deleteQuiz, reset } from '../../redux/slices/quizSlice';
+import { getAllQuizzes, deleteQuiz, reset, updateQuiz } from '../../redux/slices/quizSlice';
 import resultService from '../../services/result_service';
+import questionService from '../../services/question_service';
+import { toast } from "react-toastify";
 import {
     BookOpen,
     Plus,
@@ -17,6 +19,7 @@ import {
     CheckCircle,
     XCircle,
     AlertCircle,
+    Globe,
 } from 'lucide-react';
 
 const QuizList = () => {
@@ -32,6 +35,8 @@ const QuizList = () => {
     const [quizToDelete, setQuizToDelete] = useState(null);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [attemptedQuizzes, setAttemptedQuizzes] = useState(new Set());
+    const [quizQuestionCounts, setQuizQuestionCounts] = useState({});
+    const [publishingQuizId, setPublishingQuizId] = useState(null);
 
     const isAdmin = user?.role === 'admin';
 
@@ -41,6 +46,7 @@ const QuizList = () => {
             fetchUserAttempts();
         } else {
             fetchAllAttempts();
+            fetchAllQuizQuestionCounts();
         }
         return () => {
             dispatch(reset());
@@ -70,6 +76,49 @@ const QuizList = () => {
             setAttemptedQuizzes(attemptedQuizIds);
         } catch (error) {
             console.error('Failed to fetch all attempts:', error);
+        }
+    };
+
+    const fetchAllQuizQuestionCounts = async () => {
+        try {
+            const counts = {};
+            for (const quiz of quizzes) {
+                try {
+                    const questions = await questionService.getQuestionsByQuiz(quiz._id);
+                    counts[quiz._id] = questions.length || 0;
+                } catch (error) {
+                    counts[quiz._id] = 0;
+                }
+            }
+            setQuizQuestionCounts(counts);
+        } catch (error) {
+            console.error('Failed to fetch question counts:', error);
+        }
+    };
+
+    const handlePublish = async (quiz) => {
+        const questionCount = quizQuestionCounts[quiz._id] || 0;
+        if (questionCount < 5) {
+            toast.error(`Quiz must have at least 5 questions before publishing. Currently has ${questionCount}.`);
+            return;
+        }
+        
+        setPublishingQuizId(quiz._id);
+        try {
+            const publishData = { 
+                title: quiz.title,
+                description: quiz.description,
+                category: quiz.category,
+                timeLimit: quiz.timeLimit,
+                status: 'published' 
+            };
+            await dispatch(updateQuiz({ quizId: quiz._id, quizData: publishData }));
+            toast.success('Quiz published successfully!');
+            dispatch(getAllQuizzes());
+        } catch (error) {
+            toast.error('Failed to publish quiz');
+        } finally {
+            setPublishingQuizId(null);
         }
     };
 
@@ -333,29 +382,43 @@ const QuizList = () => {
                                             </div>
                                             {isAdmin && (
                                                 <div className="relative ml-2">
-                                                    {isAdmin && (
-                                                        <div className="ml-2 flex items-center space-x-1">
+                                                    <div className="ml-2 flex items-center space-x-1">
+                                                        {quiz.status === 'draft' && (
                                                             <button
-                                                                onClick={() => navigate(`/quizzes/edit/${quiz._id}`)}
-                                                                className="p-2 text-gray-500 hover:text-orange-500 hover:bg-orange-50 rounded-lg transition-colors"
-                                                                title="Edit quiz"
-                                                            >
-                                                                <Edit size={16} />
-                                                            </button>
-                                                            <button
-                                                                onClick={() => openDeleteModal(quiz._id)}
-                                                                disabled={attemptedQuizzes.has(quiz._id)}
+                                                                onClick={() => handlePublish(quiz)}
+                                                                disabled={publishingQuizId === quiz._id || (quizQuestionCounts[quiz._id] || 0) < 5}
                                                                 className={`p-2 rounded-lg transition-colors ${
-                                                                    attemptedQuizzes.has(quiz._id)
-                                                                        ? 'text-gray-300 cursor-not-allowed'
-                                                                        : 'text-gray-500 hover:text-red-500 hover:bg-red-50'
+                                                                    (quizQuestionCounts[quiz._id] || 0) >= 5
+                                                                        ? 'text-gray-500 hover:text-green-500 hover:bg-green-50'
+                                                                        : 'text-gray-300 cursor-not-allowed'
                                                                 }`}
-                                                                title={attemptedQuizzes.has(quiz._id) ? 'Cannot delete - quiz has been attempted' : 'Delete quiz'}
+                                                                title={(quizQuestionCounts[quiz._id] || 0) < 5 
+                                                                    ? `Add ${5 - (quizQuestionCounts[quiz._id] || 0)} more question${(quizQuestionCounts[quiz._id] || 0) === 4 ? '' : 's'} to publish` 
+                                                                    : 'Publish quiz'}
                                                             >
-                                                                <Trash2 size={16} />
+                                                                <Globe size={16} />
                                                             </button>
-                                                        </div>
-                                                    )}
+                                                        )}
+                                                        <button
+                                                            onClick={() => navigate(`/quizzes/edit/${quiz._id}`)}
+                                                            className="p-2 text-gray-500 hover:text-orange-500 hover:bg-orange-50 rounded-lg transition-colors"
+                                                            title="Edit quiz"
+                                                        >
+                                                            <Edit size={16} />
+                                                        </button>
+                                                        <button
+                                                            onClick={() => openDeleteModal(quiz._id)}
+                                                            disabled={attemptedQuizzes.has(quiz._id)}
+                                                            className={`p-2 rounded-lg transition-colors ${
+                                                                attemptedQuizzes.has(quiz._id)
+                                                                    ? 'text-gray-300 cursor-not-allowed'
+                                                                    : 'text-gray-500 hover:text-red-500 hover:bg-red-50'
+                                                            }`}
+                                                            title={attemptedQuizzes.has(quiz._id) ? 'Cannot delete - quiz has been attempted' : 'Delete quiz'}
+                                                        >
+                                                            <Trash2 size={16} />
+                                                        </button>
+                                                    </div>
                                                 </div>
                                             )}
                                         </div>

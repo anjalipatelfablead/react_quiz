@@ -360,38 +360,65 @@ useEffect(() => {
             </div>
 
             {/* Status */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Status
-              </label>
-              <div className="flex flex-wrap gap-3">
-                {['draft', 'published', 'archived'].map((status) => (
-                  <label
-                    key={status}
-                    className={`inline-flex items-center px-4 py-2 rounded-lg border cursor-pointer transition-colors ${
-                      formData.status === status
-                        ? 'border-orange-500 bg-orange-50 text-orange-700'
-                        : 'border-gray-200 hover:border-orange-300'
-                    }`}
-                  >
-                    <input
-                      type="radio"
-                      name="status"
-                      value={status}
-                      checked={formData.status === status}
-                      onChange={handleChange}
-                      className="sr-only"
-                    />
-                    <span className="capitalize font-medium">{status}</span>
-                  </label>
-                ))}
+            {!isEditMode ? (
+              // Create mode - Status is always draft (hidden from user)
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <div className="flex items-center text-blue-700">
+                  <AlertCircle size={18} className="mr-2" />
+                  <span className="text-sm font-medium">
+                    Quiz will be created as a draft. You can publish it from the quiz list or detail page after adding at least 5 questions.
+                  </span>
+                </div>
               </div>
-              <p className="mt-2 text-xs text-gray-500">
-                {formData.status === 'draft' && 'Quiz is not visible to users yet.'}
-                {formData.status === 'published' && 'Quiz will be visible to all users.'}
-                {formData.status === 'archived' && 'Quiz is archived and hidden from users.'}
-              </p>
-            </div>
+            ) : (
+              // Edit mode - Show status selection for published/archived only
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Status
+                </label>
+                
+                {formData.status === 'draft' ? (
+                  <div className="space-y-3">
+                    <div className="inline-flex items-center px-4 py-2 rounded-lg border border-orange-500 bg-orange-50 text-orange-700">
+                      <span className="capitalize font-medium">Draft</span>
+                    </div>
+                    <p className="text-xs text-gray-500">
+                      Quiz is not visible to users yet. Use the Publish button from Quiz List or Quiz Detail page to publish.
+                    </p>
+                  </div>
+                ) : (
+                  <div className="flex flex-wrap gap-3">
+                    {['published', 'archived'].map((status) => (
+                      <label
+                        key={status}
+                        className={`inline-flex items-center px-4 py-2 rounded-lg border cursor-pointer transition-colors ${
+                          formData.status === status
+                            ? 'border-orange-500 bg-orange-50 text-orange-700'
+                            : 'border-gray-200 hover:border-orange-300'
+                        }`}
+                      >
+                        <input
+                          type="radio"
+                          name="status"
+                          value={status}
+                          checked={formData.status === status}
+                          onChange={handleChange}
+                          className="sr-only"
+                        />
+                        <span className="capitalize font-medium">{status}</span>
+                      </label>
+                    ))}
+                  </div>
+                )}
+                
+                {formData.status !== 'draft' && (
+                  <p className="mt-2 text-xs text-gray-500">
+                    {formData.status === 'published' && 'Quiz is visible to all users.'}
+                    {formData.status === 'archived' && 'Quiz is archived and hidden from users.'}
+                  </p>
+                )}
+              </div>
+            )}
 
             {/* Action Buttons */}
             <div className="flex items-center justify-end space-x-4 pt-6 border-t border-gray-100">

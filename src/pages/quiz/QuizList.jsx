@@ -23,6 +23,8 @@ import {
     Power,
     PowerOff,
     Users,
+    Archive,
+    ArchiveRestore,
 } from 'lucide-react';
 
 const QuizList = () => {
@@ -42,6 +44,7 @@ const QuizList = () => {
     const [quizQuestionCounts, setQuizQuestionCounts] = useState({});
     const [publishingQuizId, setPublishingQuizId] = useState(null);
     const [togglingActiveId, setTogglingActiveId] = useState(null);
+    const [archivingQuizId, setArchivingQuizId] = useState(null);
 
     const isAdmin = user?.role === 'admin';
 
@@ -160,13 +163,36 @@ const QuizList = () => {
         }
     };
 
+    const handleArchive = async (quiz, archive = true) => {
+        setArchivingQuizId(quiz._id);
+        try {
+            const updateData = {
+                title: quiz.title,
+                description: quiz.description,
+                category: quiz.category,
+                timeLimit: quiz.timeLimit,
+                status: archive ? 'archived' : 'published',
+                isActive: !archive // Set active when unarchiving, inactive when archiving
+            };
+            await dispatch(updateQuiz({ quizId: quiz._id, quizData: updateData }));
+            toast.success(`Quiz ${archive ? 'archived' : 'published'} successfully!`);
+            dispatch(getAllQuizzes());
+        } catch (error) {
+            toast.error(`Failed to ${archive ? 'archive' : 'publish'} quiz`);
+        } finally {
+            setArchivingQuizId(null);
+        }
+    };
+
     // Get unique categories
     const categories = [...new Set(quizzes.map(q => q.category))];
 
-    // Filter quizzes - users only see published quizzes
+    // Filter quizzes - users only see published and active quizzes (not archived)
     const filteredQuizzes = quizzes.filter(quiz => {
-        // For users, only show published quizzes
-        if (!isAdmin && quiz.status !== 'published') return false;
+        // For users, only show published quizzes that are not archived
+        if (!isAdmin) {
+            if (quiz.status !== 'published' || quiz.status === 'archived') return false;
+        }
 
         const matchesSearch = quiz.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
             quiz.description.toLowerCase().includes(searchTerm.toLowerCase());
@@ -326,7 +352,7 @@ const QuizList = () => {
                     )}
 
                     {/* Stats Cards */}
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
                         <div className="bg-white rounded-xl shadow-md p-4 border border-gray-100">
                             <div className="flex items-center space-x-3">
                                 <div className="p-2 bg-blue-100 rounded-lg">
@@ -365,6 +391,19 @@ const QuizList = () => {
                                                 {quizzes.filter(q => q.status === 'draft').length}
                                             </p>
                                             <p className="text-sm text-gray-500">Drafts</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="bg-white rounded-xl shadow-md p-4 border border-gray-100">
+                                    <div className="flex items-center space-x-3">
+                                        <div className="p-2 bg-gray-100 rounded-lg">
+                                            <Archive size={20} className="text-gray-600" />
+                                        </div>
+                                        <div>
+                                            <p className="text-2xl font-bold text-gray-800">
+                                                {quizzes.filter(q => q.status === 'archived').length}
+                                            </p>
+                                            <p className="text-sm text-gray-500">Archived</p>
                                         </div>
                                     </div>
                                 </div>
@@ -456,21 +495,55 @@ const QuizList = () => {
                                                                 )}
                                                             </button>
                                                         )}
+                                                        {/* Archive button for published quizzes */}
+                                                        {quiz.status === 'published' && (
+                                                            <button
+                                                                onClick={() => handleArchive(quiz, true)}
+                                                                disabled={archivingQuizId === quiz._id}
+                                                                className="p-2 text-gray-500 hover:text-orange-500 hover:bg-orange-50 rounded-lg transition-colors"
+                                                                title="Archive quiz"
+                                                            >
+                                                                {archivingQuizId === quiz._id ? (
+                                                                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-500"></div>
+                                                                ) : (
+                                                                    <Archive size={16} />
+                                                                )}
+                                                            </button>
+                                                        )}
+                                                        {/* Publish again button for archived quizzes */}
+                                                        {quiz.status === 'archived' && (
+                                                            <button
+                                                                onClick={() => handleArchive(quiz, false)}
+                                                                disabled={archivingQuizId === quiz._id}
+                                                                className="p-2 text-gray-500 hover:text-green-500 hover:bg-green-50 rounded-lg transition-colors"
+                                                                title="Publish again"
+                                                            >
+                                                                {archivingQuizId === quiz._id ? (
+                                                                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-500"></div>
+                                                                ) : (
+                                                                    <ArchiveRestore size={16} />
+                                                                )}
+                                                            </button>
+                                                        )}
                                                         <button
                                                             onClick={() => navigate(`/quizzes/edit/${quiz._id}`)}
-                                                            className="p-2 text-gray-500 hover:text-orange-500 hover:bg-orange-50 rounded-lg transition-colors"
-                                                            title="Edit quiz"
+                                                            disabled={quiz.status === 'archived'}
+                                                            className={`p-2 rounded-lg transition-colors ${quiz.status === 'archived'
+                                                                ? 'text-gray-300 cursor-not-allowed'
+                                                                : 'text-gray-500 hover:text-orange-500 hover:bg-orange-50'
+                                                                }`}
+                                                            title={quiz.status === 'archived' ? 'Cannot edit archived quiz' : 'Edit quiz'}
                                                         >
                                                             <Edit size={16} />
                                                         </button>
                                                         <button
                                                             onClick={() => openDeleteModal(quiz._id)}
-                                                            disabled={attemptedQuizzes.has(quiz._id)}
-                                                            className={`p-2 rounded-lg transition-colors ${attemptedQuizzes.has(quiz._id)
+                                                            disabled={attemptedQuizzes.has(quiz._id) || quiz.status === 'archived'}
+                                                            className={`p-2 rounded-lg transition-colors ${attemptedQuizzes.has(quiz._id) || quiz.status === 'archived'
                                                                 ? 'text-gray-300 cursor-not-allowed'
                                                                 : 'text-gray-500 hover:text-red-500 hover:bg-red-50'
                                                                 }`}
-                                                            title={attemptedQuizzes.has(quiz._id) ? 'Cannot delete - quiz has been attempted' : 'Delete quiz'}
+                                                            title={quiz.status === 'archived' ? 'Cannot delete archived quiz' : attemptedQuizzes.has(quiz._id) ? 'Cannot delete - quiz has been attempted' : 'Delete quiz'}
                                                         >
                                                             <Trash2 size={16} />
                                                         </button>
@@ -579,7 +652,12 @@ const QuizList = () => {
                                                 {isAdmin && (
                                                     <button
                                                         onClick={() => navigate(`/quizzes/${quiz._id}/questions`)}
-                                                        className="inline-flex items-center px-3 py-1.5 text-sm font-medium text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-colors"
+                                                        disabled={quiz.status === 'archived'}
+                                                        className={`inline-flex items-center px-3 py-1.5 text-sm font-medium rounded-lg transition-colors ${quiz.status === 'archived'
+                                                            ? 'text-gray-400 bg-gray-100 cursor-not-allowed'
+                                                            : 'text-blue-600 hover:text-blue-700 hover:bg-blue-50'
+                                                            }`}
+                                                        title={quiz.status === 'archived' ? 'Cannot manage questions for archived quiz' : 'Manage questions'}
                                                     >
                                                         Questions
                                                     </button>

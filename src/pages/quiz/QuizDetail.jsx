@@ -274,14 +274,24 @@ const QuizDetail = () => {
                     )}
                     <button
                       onClick={() => navigate(`/quizzes/${currentQuiz._id}/questions`)}
-                      className="inline-flex items-center justify-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium shadow-md"
+                      disabled={currentQuiz.status === 'archived'}
+                      className={`inline-flex items-center justify-center px-4 py-2 rounded-lg transition-colors font-medium shadow-md ${currentQuiz.status === 'archived'
+                          ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                          : 'bg-blue-600 text-white hover:bg-blue-700'
+                        }`}
+                      title={currentQuiz.status === 'archived' ? 'Cannot manage questions for archived quiz' : 'Manage Questions'}
                     >
                       <Plus size={18} className="mr-2" />
                       Questions
                     </button>
                     <button
                       onClick={() => navigate(`/quizzes/edit/${currentQuiz._id}`)}
-                      className="inline-flex items-center justify-center px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors font-medium shadow-md"
+                      disabled={currentQuiz.status === 'archived'}
+                      className={`inline-flex items-center justify-center px-4 py-2 rounded-lg transition-colors font-medium shadow-md ${currentQuiz.status === 'archived'
+                          ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                          : 'bg-orange-500 text-white hover:bg-orange-600'
+                        }`}
+                      title={currentQuiz.status === 'archived' ? 'Cannot edit archived quiz' : 'Edit Quiz'}
                     >
                       <Edit size={18} className="mr-2" />
                       Edit Quiz

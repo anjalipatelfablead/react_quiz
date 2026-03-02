@@ -29,6 +29,8 @@ const QuestionTest = () => {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [startTime, setStartTime] = useState(null);
 
+    const [shuffledQuestions, setShuffledQuestions] = useState([]);
+
     useEffect(() => {
         if (quizId) {
             dispatch(getQuizById(quizId));
@@ -67,6 +69,17 @@ const QuestionTest = () => {
 
         return () => clearInterval(timer);
     }, [timeLeft]);
+
+    useEffect(() => {
+        if (questions.length > 0) {
+            const shuffled = questions.map(q => ({
+                ...q,
+                shuffledOptions: shuffleArray(q.options)
+            }));
+
+            setShuffledQuestions(shuffled);
+        }
+    }, [questions]);
 
     const formatTime = (seconds) => {
         const mins = Math.floor(seconds / 60);
@@ -107,13 +120,14 @@ const QuestionTest = () => {
 
     const submitTest = async () => {
         setIsSubmitting(true);
-        
+
         // Calculate local results for display
         let correctCount = 0;
         let totalMarks = 0;
         let obtainedMarks = 0;
 
-        questions.forEach(question => {
+        // questions.forEach(question => {
+        shuffledQuestions.forEach(question => {
             totalMarks += question.marks;
             if (selectedAnswers[question._id] === question.correctAnswer) {
                 correctCount++;
@@ -145,7 +159,7 @@ const QuestionTest = () => {
         try {
             // Submit to backend
             const result = await dispatch(submitQuiz({ quizId, answers, timeTaken })).unwrap();
-            
+
             // Redirect to review page with results
             navigate(`/quizzes/${quizId}/review/${result.result._id}`, {
                 state: {
@@ -163,6 +177,13 @@ const QuestionTest = () => {
 
     const getOptionLabel = (index) => {
         return String.fromCharCode(65 + index); // A, B, C, D...
+    };
+
+    const shuffleArray = (array) => {
+        return [...array]
+            .map(value => ({ value, sort: Math.random() }))
+            .sort((a, b) => a.sort - b.sort)
+            .map(({ value }) => value);
     };
 
     if (quizLoading || questionsLoading) {
@@ -191,7 +212,8 @@ const QuestionTest = () => {
     }
 
     // Test Taking View
-    const currentQuestion = questions[currentQuestionIndex];
+    // const currentQuestion = questions[currentQuestionIndex];
+    const currentQuestion = shuffledQuestions[currentQuestionIndex];
     const answeredCount = Object.keys(selectedAnswers).length;
 
     return (
@@ -214,9 +236,8 @@ const QuestionTest = () => {
                         </div>
                         <div className="flex items-center gap-4">
                             {timeLeft !== null && (
-                                <div className={`flex items-center gap-2 px-3 py-1.5 rounded-lg ${
-                                    timeLeft < 60 ? 'bg-red-100 text-red-700' : 'bg-gray-100 text-gray-700'
-                                }`}>
+                                <div className={`flex items-center gap-2 px-3 py-1.5 rounded-lg ${timeLeft < 60 ? 'bg-red-100 text-red-700' : 'bg-gray-100 text-gray-700'
+                                    }`}>
                                     <Clock size={18} />
                                     <span className="font-mono font-medium">{formatTime(timeLeft)}</span>
                                 </div>
@@ -249,11 +270,10 @@ const QuestionTest = () => {
                                     </h3>
                                     <button
                                         onClick={() => toggleMarkQuestion(currentQuestion._id)}
-                                        className={`ml-4 p-2 rounded-lg transition-colors ${
-                                            markedQuestions.includes(currentQuestion._id)
-                                                ? 'bg-yellow-100 text-yellow-600'
-                                                : 'bg-gray-100 text-gray-400 hover:text-yellow-600'
-                                        }`}
+                                        className={`ml-4 p-2 rounded-lg transition-colors ${markedQuestions.includes(currentQuestion._id)
+                                            ? 'bg-yellow-100 text-yellow-600'
+                                            : 'bg-gray-100 text-gray-400 hover:text-yellow-600'
+                                            }`}
                                         title="Mark for review"
                                     >
                                         <Flag size={20} />
@@ -261,15 +281,15 @@ const QuestionTest = () => {
                                 </div>
 
                                 <div className="space-y-3">
-                                    {currentQuestion.options.map((option, index) => (
+                                    {/* {currentQuestion.options.map((option, index) => ( */}
+                                    {currentQuestion.shuffledOptions.map((option, index) => (
                                         <button
                                             key={index}
                                             onClick={() => handleAnswerSelect(currentQuestion._id, option)}
-                                            className={`w-full p-4 text-left rounded-lg border-2 transition-all ${
-                                                selectedAnswers[currentQuestion._id] === option
-                                                    ? 'border-orange-500 bg-orange-50 text-orange-800'
-                                                    : 'border-gray-200 hover:border-orange-300 hover:bg-orange-50/50'
-                                            }`}
+                                            className={`w-full p-4 text-left rounded-lg border-2 transition-all ${selectedAnswers[currentQuestion._id] === option
+                                                ? 'border-orange-500 bg-orange-50 text-orange-800'
+                                                : 'border-gray-200 hover:border-orange-300 hover:bg-orange-50/50'
+                                                }`}
                                         >
                                             <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-gray-100 text-gray-700 font-medium mr-3">
                                                 {getOptionLabel(index)}
@@ -329,15 +349,14 @@ const QuestionTest = () => {
                                         <button
                                             key={question._id}
                                             onClick={() => goToQuestion(index)}
-                                            className={`aspect-square rounded-lg text-sm font-medium transition-all ${
-                                                isCurrent
-                                                    ? 'bg-orange-500 text-white ring-2 ring-orange-300'
-                                                    : isAnswered
-                                                        ? 'bg-green-100 text-green-700 border border-green-300'
-                                                        : isMarked
-                                                            ? 'bg-yellow-100 text-yellow-700 border border-yellow-300'
-                                                            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                                            }`}
+                                            className={`aspect-square rounded-lg text-sm font-medium transition-all ${isCurrent
+                                                ? 'bg-orange-500 text-white ring-2 ring-orange-300'
+                                                : isAnswered
+                                                    ? 'bg-green-100 text-green-700 border border-green-300'
+                                                    : isMarked
+                                                        ? 'bg-yellow-100 text-yellow-700 border border-yellow-300'
+                                                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                                                }`}
                                         >
                                             {index + 1}
                                             {isMarked && <span className="block text-xs">★</span>}

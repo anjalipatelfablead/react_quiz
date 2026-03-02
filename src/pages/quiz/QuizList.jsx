@@ -22,6 +22,7 @@ import {
     Globe,
     Power,
     PowerOff,
+    Users,
 } from 'lucide-react';
 
 const QuizList = () => {
@@ -37,6 +38,7 @@ const QuizList = () => {
     const [quizToDelete, setQuizToDelete] = useState(null);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [attemptedQuizzes, setAttemptedQuizzes] = useState(new Set());
+    const [quizAttemptCounts, setQuizAttemptCounts] = useState({});
     const [quizQuestionCounts, setQuizQuestionCounts] = useState({});
     const [publishingQuizId, setPublishingQuizId] = useState(null);
     const [togglingActiveId, setTogglingActiveId] = useState(null);
@@ -77,6 +79,16 @@ const QuizList = () => {
                 allResults.map(r => r.quizId?._id || r.quizId)
             );
             setAttemptedQuizzes(attemptedQuizIds);
+            
+            // Calculate attempt counts per quiz
+            const attemptCounts = {};
+            allResults.forEach(r => {
+                const quizId = r.quizId?._id || r.quizId;
+                if (quizId) {
+                    attemptCounts[quizId] = (attemptCounts[quizId] || 0) + 1;
+                }
+            });
+            setQuizAttemptCounts(attemptCounts);
         } catch (error) {
             console.error('Failed to fetch all attempts:', error);
         }
@@ -501,6 +513,12 @@ const QuizList = () => {
                                                 <Clock size={14} className="mr-1 text-orange-500" />
                                                 <span>{quiz.timeLimit} min</span>
                                             </div>
+                                            {isAdmin && (
+                                                <div className="flex items-center">
+                                                    <Users size={14} className="mr-1 text-orange-500" />
+                                                    <span>{quizAttemptCounts[quiz._id] || 0} attempted</span>
+                                                </div>
+                                            )}
                                         </div>
 
                                         <div className="flex items-center justify-between pt-4 border-t border-gray-100">

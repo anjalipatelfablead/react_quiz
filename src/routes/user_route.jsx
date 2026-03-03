@@ -1,6 +1,8 @@
 import { Route, Navigate } from 'react-router-dom';
 import Login from '../pages/Login';
 import Register from '../pages/Register';
+import ForgotPassword from '../pages/ForgotPassword';
+import ResetPassword from '../pages/ResetPassword';
 import Dashboard from '../pages/dashboard';
 import UserList from '../pages/UserList';
 import Profile from '../pages/auth/profile';
@@ -17,6 +19,8 @@ const UserRoutes = ({ user }) => {
       {/* Public Routes - No sidebar */}
       <Route path="/login" element={!user ? <Login /> : <Navigate to="/dashboard" />} />
       <Route path="/register" element={!user ? <Register /> : <Navigate to="/dashboard" />} />
+      <Route path="/forgot-password" element={!user ? <ForgotPassword /> : <Navigate to="/dashboard" />} />
+      <Route path="/reset-password" element={!user ? <ResetPassword /> : <Navigate to="/dashboard" />} />
 
       {/* Protected Routes with Sidebar */}
       <Route element={<ProtectedRoute><DashboardLayout /></ProtectedRoute>}>

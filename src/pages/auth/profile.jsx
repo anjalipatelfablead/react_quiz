@@ -147,8 +147,10 @@ const Profile = () => {
                   )}
 
                   {isEditing && (
-                    <div className="absolute inset-0 bg-black/20 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
-                      <Camera className="text-white" size={24} />
+                    <div className="absolute inset-0 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity rounded-full overflow-hidden">
+                      <div className="w-32 h-32 rounded-full bg-black/20 flex items-center justify-center">
+                        <Camera className="text-white" size={24} />
+                      </div>
                     </div>
                   )}
                 </div>

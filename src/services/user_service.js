@@ -188,6 +188,47 @@ const userService = {
       throw error.response?.data || error.message;
     }
   },
+
+  // Forgot password - request password reset
+  forgotPassword: async (email) => {
+    try {
+      const formData = new FormData();
+      formData.append('email', email);
+
+      const response = await axios.post(`${API_BASE_URL}/users/forgot-password`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      return response.data;
+    } catch (error) {
+      if (error.response?.data) {
+        throw error.response.data;
+      }
+      throw { message: error.message || 'Failed to process forgot password request' };
+    }
+  },
+
+  // Reset password with token
+  resetPassword: async (resetToken, newPassword) => {
+    try {
+      const formData = new FormData();
+      formData.append('resetToken', resetToken);
+      formData.append('newPassword', newPassword);
+
+      const response = await axios.post(`${API_BASE_URL}/users/reset-password`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      return response.data;
+    } catch (error) {
+      if (error.response?.data) {
+        throw error.response.data;
+      }
+      throw { message: error.message || 'Failed to reset password' };
+    }
+  },
 };
 
 export default userService;

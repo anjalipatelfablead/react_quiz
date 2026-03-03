@@ -11,17 +11,20 @@ const Profile = () => {
   const [formData, setFormData] = useState({
     username: '',
     email: '',
+    oldPassword: '',
     password: '',
   });
   const [profileImage, setProfileImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const fileInputRef = useRef(null);
+  const [fieldErrors, setFieldErrors] = useState({});
 
   useEffect(() => {
     if (user) {
       setFormData({
         username: user.username || '',
         email: user.email || '',
+        oldPassword: '',
         password: '', // Password stays empty unless changing
       });
       if (user.profileImage) {
@@ -33,7 +36,8 @@ const Profile = () => {
   useEffect(() => {
     if (isSuccess && isEditing) {
       setIsEditing(false);
-      setFormData(prev => ({ ...prev, password: '' }));
+      setFormData(prev => ({ ...prev, oldPassword: '', password: '' }));
+      setFieldErrors({});
       // Reset success state after some time
       setTimeout(() => {
         dispatch(reset());
@@ -47,6 +51,13 @@ const Profile = () => {
       ...prev,
       [name]: value,
     }));
+    // Clear field error when user starts typing
+    if (fieldErrors[name]) {
+      setFieldErrors((prev) => ({
+        ...prev,
+        [name]: '',
+      }));
+    }
   };
 
   const handleImageChange = (e) => {
@@ -72,9 +83,11 @@ const Profile = () => {
     setFormData({
       username: user.username || '',
       email: user.email || '',
+      oldPassword: '',
       password: '',
     });
     setProfileImage(null);
+    setFieldErrors({});
     if (user.profileImage) {
       setImagePreview(`http://localhost:3030${user.profileImage}`);
     } else {
@@ -85,6 +98,13 @@ const Profile = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    setFieldErrors({});
+
+    // Validate old password if new password is being set
+    if (formData.password && !formData.oldPassword) {
+      setFieldErrors({ oldPassword: 'Old password is required to set a new password' });
+      return;
+    }
 
     const updateData = {
       username: formData.username,
@@ -92,6 +112,7 @@ const Profile = () => {
     };
 
     if (formData.password) {
+      updateData.oldPassword = formData.oldPassword;
       updateData.password = formData.password;
     }
 
@@ -213,10 +234,33 @@ const Profile = () => {
                   </div>
                 </div>
 
-                {/* Password Field - Only show/editable during edit */}
+                {/* Old Password Field - Required when setting new password */}
                 <div className={isEditing ? 'block' : 'hidden'}>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    New Password (leave blank to keep current)
+                    Old Password <span className="text-gray-400 font-normal">(required to change password)</span>
+                  </label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+                      <Shield size={18} />
+                    </div>
+                    <input
+                      type="password"
+                      name="oldPassword"
+                      value={formData.oldPassword}
+                      onChange={handleChange}
+                      placeholder="Enter your current password"
+                      className={`block w-full pl-10 pr-3 py-2.5 border rounded-lg focus:ring-orange-500 focus:border-orange-500 text-sm ${fieldErrors.oldPassword ? 'border-red-500' : 'border-gray-300'}`}
+                    />
+                  </div>
+                  {fieldErrors.oldPassword && (
+                    <p className="mt-1 text-xs text-red-500">{fieldErrors.oldPassword}</p>
+                  )}
+                </div>
+
+                {/* New Password Field - Only show/editable during edit */}
+                <div className={isEditing ? 'block' : 'hidden'}>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    New Password <span className="text-gray-400 font-normal">(leave blank to keep current)</span>
                   </label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
@@ -227,10 +271,13 @@ const Profile = () => {
                       name="password"
                       value={formData.password}
                       onChange={handleChange}
-                      placeholder="••••••••"
+                      placeholder="Enter new password"
                       className="block w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-lg focus:ring-orange-500 focus:border-orange-500 text-sm"
                     />
                   </div>
+                  <p className="mt-1 text-xs text-gray-500">
+                    Min 8 chars, uppercase, lowercase, number & special char
+                  </p>
                 </div>
               </div>
 

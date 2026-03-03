@@ -100,6 +100,7 @@ const userService = {
       const formData = new FormData();
       if (userData.username) formData.append('username', userData.username);
       if (userData.email) formData.append('email', userData.email);
+      if (userData.oldPassword) formData.append('oldPassword', userData.oldPassword);
       if (userData.password) formData.append('password', userData.password);
       if (userData.profileImage) {
         formData.append('profileImage', userData.profileImage);

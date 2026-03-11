@@ -397,26 +397,26 @@ const QuestionForm = () => {
                                             Options *
                                         </label>
                                         {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {question.options.map((option, optIndex) => (
-                        <div key={optIndex} className="flex items-center space-x-2">
-                          <input
-                            type="radio"
-                            name={`correct_${question.id}`}
-                            checked={question.correctAnswer === option}
-                            onChange={() => updateQuestionField(question.id, 'correctAnswer', option)}
-                            className="w-4 h-4 text-orange-500 focus:ring-orange-500"
-                          />
-                          <input
-                            type="text"
-                            value={option}
-                            onChange={(e) => updateOption(question.id, optIndex, e.target.value)}
-                            placeholder={`Option ${optIndex + 1}`}
-                            className={`flex-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none transition-colors ${
-                              errors[`option_${index}_${optIndex}`] ? 'border-red-300 bg-red-50' : 'border-gray-200'
-                            }`}
-                          />
-                        </div>
-                      ))}
+                                            {question.options.map((option, optIndex) => (
+                                                <div key={optIndex} className="flex items-center space-x-2">
+                                                <input
+                                                    type="radio"
+                                                    name={`correct_${question.id}`}
+                                                    checked={question.correctAnswer === option}
+                                                    onChange={() => updateQuestionField(question.id, 'correctAnswer', option)}
+                                                    className="w-4 h-4 text-orange-500 focus:ring-orange-500"
+                                                />
+                                                <input
+                                                    type="text"
+                                                    value={option}
+                                                    onChange={(e) => updateOption(question.id, optIndex, e.target.value)}
+                                                    placeholder={`Option ${optIndex + 1}`}
+                                                    className={`flex-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none transition-colors ${
+                                                    errors[`option_${index}_${optIndex}`] ? 'border-red-300 bg-red-50' : 'border-gray-200'
+                                                    }`}
+                                                />
+                                                </div>
+                                            ))}
                                         </div> */}
 
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -427,7 +427,6 @@ const QuestionForm = () => {
                                                     <div key={optIndex} className="flex items-center space-x-2">
 
                                                         {/* Label (A, B, C, D) */}
-
 
                                                         <input
                                                             type="radio"

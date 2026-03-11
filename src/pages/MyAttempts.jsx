@@ -11,7 +11,8 @@ import {
     AlertCircle,
     ChevronLeft,
     ChevronRight,
-    BookOpen
+    BookOpen,
+    Search
 } from 'lucide-react';
 
 const MyAttempts = () => {
@@ -19,6 +20,7 @@ const MyAttempts = () => {
     const navigate = useNavigate();
     const { results, isLoading } = useSelector((state) => state.result);
     const [currentPage, setCurrentPage] = useState(1);
+    const [searchTerm, setSearchTerm] = useState('');
     const itemsPerPage = 10;
 
     useEffect(() => {
@@ -28,9 +30,14 @@ const MyAttempts = () => {
         };
     }, [dispatch]);
 
+    // Filter results based on search term
+    const filteredResults = results?.filter(result =>
+        result.quizId?.title?.toLowerCase().includes(searchTerm.toLowerCase())
+    ) || [];
+
     // Calculate pagination
-    const totalPages = Math.ceil((results?.length || 0) / itemsPerPage);
-    const paginatedResults = results?.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage) || [];
+    const totalPages = Math.ceil((filteredResults.length || 0) / itemsPerPage);
+    const paginatedResults = filteredResults.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
     const formatDate = (dateString) => {
         if (!dateString) return 'N/A';
@@ -148,11 +155,24 @@ const MyAttempts = () => {
 
                 {/* Attempts List */}
                 <div className="bg-white rounded-xl shadow-md overflow-hidden">
-                    <div className="p-6 border-b border-gray-200">
+                    <div className="p-6 border-b border-gray-200 flex flex-col md:flex-row md:items-center justify-between gap-4">
                         <h2 className="text-xl font-semibold text-gray-800">Quiz History</h2>
+                        <div className="relative max-w-sm w-full">
+                            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+                            <input
+                                type="text"
+                                placeholder="Search by quiz title..."
+                                value={searchTerm}
+                                onChange={(e) => {
+                                    setSearchTerm(e.target.value);
+                                    setCurrentPage(1); // Reset to first page on search
+                                }}
+                                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all"
+                            />
+                        </div>
                     </div>
 
-                    {results && results.length > 0 ? (
+                    {filteredResults && filteredResults.length > 0 ? (
                         <>
                             <div className="divide-y divide-gray-200">
                                 {paginatedResults.map((result, index) => {
@@ -224,7 +244,7 @@ const MyAttempts = () => {
                             {totalPages > 1 && (
                                 <div className="p-4 border-t border-gray-200 flex items-center justify-between">
                                     <p className="text-sm text-gray-500">
-                                        Showing {(currentPage - 1) * itemsPerPage + 1} to {Math.min(currentPage * itemsPerPage, results.length)} of {results.length} attempts
+                                        Showing {(currentPage - 1) * itemsPerPage + 1} to {Math.min(currentPage * itemsPerPage, filteredResults.length)} of {filteredResults.length} attempts
                                     </p>
                                     <div className="flex items-center gap-2">
                                         <button
@@ -248,6 +268,18 @@ const MyAttempts = () => {
                                 </div>
                             )}
                         </>
+                    ) : searchTerm ? (
+                        <div className="p-12 text-center">
+                            <Search size={48} className="mx-auto text-gray-300 mb-4" />
+                            <h3 className="text-lg font-semibold text-gray-700 mb-2">No Results Found</h3>
+                            <p className="text-gray-500 mb-6">No attempts match your search term "{searchTerm}".</p>
+                            <button
+                                onClick={() => setSearchTerm('')}
+                                className="px-6 py-2 border border-orange-500 text-orange-500 rounded-lg hover:bg-orange-50 transition-colors font-medium"
+                            >
+                                Clear Search
+                            </button>
+                        </div>
                     ) : (
                         <div className="p-12 text-center">
                             <AlertCircle size={48} className="mx-auto text-gray-300 mb-4" />

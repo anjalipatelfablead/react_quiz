@@ -32,20 +32,20 @@ const Sidebar = ({ isOpen, onClose }) => {
         { path: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
         { path: '/quizzes', icon: BookOpen, label: 'Quizzes' },
         { path: '/users', icon: Users, label: 'Users' },
-        { path: '/analytics', icon: BarChart3, label: 'Analytics' },
+        // { path: '/analytics', icon: BarChart3, label: 'Analytics' },
         { path: '/reports', icon: FileText, label: 'Reports' },
         { path: '/profile', icon: User, label: 'Profile' },
-        { path: '/settings', icon: Settings, label: 'Settings' },
+        // { path: '/settings', icon: Settings, label: 'Settings' },
     ];
 
     const userMenuItems = [
         { path: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
         { path: '/quizzes', icon: BookOpen, label: 'Browse Quizzes' },
         { path: '/my-attempts', icon: History, label: 'My Attempts' },
-        { path: '/achievements', icon: Award, label: 'Achievements' },
+        // { path: '/achievements', icon: Award, label: 'Achievements' },
         { path: '/profile', icon: User, label: 'Profile' },
-        { path: '/help', icon: HelpCircle, label: 'Help' },
-        { path: '/settings', icon: Settings, label: 'Settings' },
+        // { path: '/help', icon: HelpCircle, label: 'Help' },
+        // { path: '/settings', icon: Settings, label: 'Settings' },
     ];
 
     const menuItems = isAdmin ? adminMenuItems : userMenuItems;

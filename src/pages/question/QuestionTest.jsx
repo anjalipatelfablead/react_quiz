@@ -245,20 +245,13 @@ const QuestionTest = () => {
                             <div className="text-sm text-gray-600 hidden sm:block">
                                 <span className="font-medium">{answeredCount}</span> / {questions.length} Answered
                             </div>
-                            <button
-                                onClick={() => setShowSubmitConfirm(true)}
-                                disabled={isSubmitting}
-                                className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-medium"
-                            >
-                                {isSubmitting ? 'Submitting...' : 'Submit'}
-                            </button>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-                <div className="flex flex-col lg:flex-row gap-6">
+            <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+                <div className="flex flex-col lg:flex-row gap-10">
                     {/* Question Panel */}
                     <div className="flex-1">
                         {currentQuestion && (
@@ -308,14 +301,24 @@ const QuestionTest = () => {
                                         <ChevronLeft size={20} className="mr-1" />
                                         Previous
                                     </button>
-                                    <button
-                                        onClick={goToNextQuestion}
-                                        disabled={currentQuestionIndex === questions.length - 1 || !selectedAnswers[currentQuestion._id]}
-                                        className="flex items-center px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                                    >
-                                        Next
-                                        <ChevronRight size={20} className="ml-1" />
-                                    </button>
+                                    {currentQuestionIndex === questions.length - 1 ? (
+                                        <button
+                                            onClick={() => setShowSubmitConfirm(true)}
+                                            disabled={isSubmitting}
+                                            className="flex items-center px-6 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium shadow-sm"
+                                        >
+                                            {isSubmitting ? 'Submitting...' : 'Submit'}
+                                        </button>
+                                    ) : (
+                                        <button
+                                            onClick={goToNextQuestion}
+                                            disabled={!selectedAnswers[currentQuestion._id]}
+                                            className="flex items-center px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                                        >
+                                            Next
+                                            <ChevronRight size={20} className="ml-1" />
+                                        </button>
+                                    )}
                                 </div>
                             </div>
                         )}

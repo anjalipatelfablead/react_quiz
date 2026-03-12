@@ -26,6 +26,7 @@ const QuestionForm = () => {
     const { user } = useSelector((state) => state.auth);
     const { currentQuiz } = useSelector((state) => state.quiz);
     const { questions, isLoading, isCreateSuccess, isUpdateSuccess, isError, message } = useSelector((state) => state.question);
+    const { darkMode } = useSelector((state) => state.theme);
 
     // State for multiple questions
     const [questionsList, setQuestionsList] = useState([
@@ -276,11 +277,11 @@ const QuestionForm = () => {
     // Redirect if not admin
     if (user?.role !== 'admin') {
         return (
-            <div className="min-h-screen bg-gradient-to-b from-primary-100 to-primary-400 flex items-center justify-center">
-                <div className="bg-white/90 backdrop-blur-sm rounded-xl shadow-md p-8 text-center max-w-md">
+            <div className={`min-h-screen flex items-center justify-center ${darkMode ? 'bg-gray-900' : 'bg-gradient-to-b from-primary-100 to-primary-400'}`}>
+                <div className={`${darkMode ? 'bg-gray-800' : 'bg-white/90 backdrop-blur-sm'} rounded-xl shadow-md p-8 text-center max-w-md`}>
                     <AlertCircle size={48} className="mx-auto text-red-500 mb-4" />
-                    <h2 className="text-xl font-bold text-gray-800 mb-2">Access Denied</h2>
-                    <p className="text-gray-600 mb-4">Only administrators can manage questions.</p>
+                    <h2 className={`text-xl font-bold mb-2 ${darkMode ? 'text-white' : 'text-gray-800'}`}>Access Denied</h2>
+                    <p className={`${darkMode ? 'text-gray-400' : 'text-gray-600'} mb-4`}>Only administrators can manage questions.</p>
                     <button
                         onClick={() => navigate(`/quizzes/${quizId}`)}
                         className="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors"
@@ -294,40 +295,40 @@ const QuestionForm = () => {
 
     if (!currentQuiz) {
         return (
-            <div className="min-h-screen bg-gradient-to-b from-primary-100 to-primary-400 flex items-center justify-center">
+            <div className={`min-h-screen flex items-center justify-center ${darkMode ? 'bg-gray-900' : 'bg-gradient-to-b from-primary-100 to-primary-400'}`}>
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500"></div>
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-b from-primary-100 to-primary-400">
+        <div className={`min-h-screen transition-colors duration-300 ${darkMode ? 'bg-gray-900' : 'bg-gradient-to-b from-primary-100 to-primary-400'}`}>
             <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 {/* Header */}
                 <div className="mb-8">
                     <button
                         onClick={() => navigate(`/quizzes/${quizId}`)}
-                        className="inline-flex items-center text-gray-600 hover:text-orange-500 transition-colors mb-4"
+                        className={`inline-flex items-center transition-colors mb-4 ${darkMode ? 'text-gray-400 hover:text-orange-400' : 'text-gray-600 hover:text-orange-500'}`}
                     >
                         <ArrowLeft size={20} className="mr-1" />
                         Back to Quiz
                     </button>
-                    <h1 className="text-3xl font-bold text-gray-800">
+                    <h1 className={`text-3xl font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>
                         <span className="text-orange-500">Manage</span> Questions
                     </h1>
-                    <p className="text-gray-600 mt-2">
+                    <p className={`mt-2 ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
                         Quiz: <span className="font-semibold">{currentQuiz.title}</span>
                     </p>
                 </div>
 
                 {/* Tabs */}
-                <div className="bg-white/90 backdrop-blur-sm rounded-xl shadow-md mb-6">
-                    <div className="flex border-b border-gray-100">
+                <div className={`${darkMode ? 'bg-gray-800' : 'bg-white/90 backdrop-blur-sm'} rounded-xl shadow-md mb-6 overflow-hidden`}>
+                    <div className={`flex border-b ${darkMode ? 'border-gray-700' : 'border-gray-100'}`}>
                         <button
                             onClick={() => setActiveTab('add')}
                             className={`flex-1 py-4 px-6 text-center font-medium transition-colors ${activeTab === 'add'
-                                ? 'text-orange-500 border-b-2 border-orange-500 bg-orange-50'
-                                : 'text-gray-600 hover:text-orange-500'
+                                ? (darkMode ? 'text-orange-400 border-b-2 border-orange-500 bg-orange-500/10' : 'text-orange-500 border-b-2 border-orange-500 bg-orange-50')
+                                : (darkMode ? 'text-gray-400 hover:text-orange-400' : 'text-gray-600 hover:text-orange-500')
                                 }`}
                         >
                             <Plus size={18} className="inline mr-2" />
@@ -336,8 +337,8 @@ const QuestionForm = () => {
                         <button
                             onClick={() => setActiveTab('manage')}
                             className={`flex-1 py-4 px-6 text-center font-medium transition-colors ${activeTab === 'manage'
-                                ? 'text-orange-500 border-b-2 border-orange-500 bg-orange-50'
-                                : 'text-gray-600 hover:text-orange-500'
+                                ? (darkMode ? 'text-orange-400 border-b-2 border-orange-500 bg-orange-500/10' : 'text-orange-500 border-b-2 border-orange-500 bg-orange-50')
+                                : (darkMode ? 'text-gray-400 hover:text-orange-400' : 'text-gray-600 hover:text-orange-500')
                                 }`}
                         >
                             <Edit3 size={18} className="inline mr-2" />
@@ -352,13 +353,13 @@ const QuestionForm = () => {
                         {questionsList.map((question, index) => (
                             <div
                                 key={question.id}
-                                className="bg-white/90 backdrop-blur-sm rounded-xl shadow-md overflow-hidden"
+                                className={`${darkMode ? 'bg-gray-800' : 'bg-white/90 backdrop-blur-sm'} rounded-xl shadow-md overflow-hidden`}
                             >
                                 {/* Question Header */}
-                                <div className="p-4 border-b border-gray-100 bg-gray-50 flex items-center justify-between">
+                                <div className={`p-4 border-b flex items-center justify-between ${darkMode ? 'border-gray-700 bg-gray-800/50' : 'border-gray-100 bg-gray-50'}`}>
                                     <div className="flex items-center space-x-2">
                                         <HelpCircle className="text-orange-500" size={20} />
-                                        <h3 className="font-semibold text-gray-800">Question {index + 1}</h3>
+                                        <h3 className={`font-semibold ${darkMode ? 'text-white' : 'text-gray-800'}`}>Question {index + 1}</h3>
                                     </div>
                                     {questionsList.length > 1 && (
                                         <button
@@ -375,7 +376,7 @@ const QuestionForm = () => {
                                 <div className="p-6 space-y-6">
                                     {/* Question Text */}
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                                        <label className={`block text-sm font-medium mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
                                             Question Text *
                                         </label>
                                         <textarea
@@ -383,17 +384,20 @@ const QuestionForm = () => {
                                             onChange={(e) => updateQuestionField(question.id, 'questionText', e.target.value)}
                                             placeholder="Enter your question here..."
                                             rows={2}
-                                            className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none transition-colors resize-none ${errors[`question_${index}`] ? 'border-red-300 bg-red-50' : 'border-gray-200'
+                                            className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none transition-colors resize-none ${
+                                                darkMode 
+                                                ? (errors[`question_${index}`] ? 'border-red-900/50 bg-red-900/20 text-red-200' : 'border-gray-700 bg-gray-900 text-white')
+                                                : (errors[`question_${index}`] ? 'border-red-300 bg-red-50' : 'border-gray-200 bg-white')
                                                 }`}
                                         />
                                         {errors[`question_${index}`] && (
-                                            <p className="mt-1 text-sm text-red-600">{errors[`question_${index}`]}</p>
+                                            <p className="mt-1 text-sm text-red-500">{errors[`question_${index}`]}</p>
                                         )}
                                     </div>
 
                                     {/* Options */}
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                                        <label className={`block text-sm font-medium mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
                                             Options *
                                         </label>
                                         {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -437,7 +441,7 @@ const QuestionForm = () => {
                                                             }
                                                             className="w-4 h-4 text-orange-500 focus:ring-orange-500"
                                                         />
-                                                        <span className="font-semibold text-gray-700 w-5">
+                                                        <span className={`font-semibold w-5 ${darkMode ? 'text-gray-400' : 'text-gray-700'}`}>
                                                             {optionLabel}.
                                                         </span>
 
@@ -448,9 +452,10 @@ const QuestionForm = () => {
                                                                 updateOption(question.id, optIndex, e.target.value)
                                                             }
                                                             placeholder={`Option ${optionLabel}`}
-                                                            className={`flex-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none transition-colors ${errors[`option_${index}_${optIndex}`]
-                                                                ? 'border-red-300 bg-red-50'
-                                                                : 'border-gray-200'
+                                                            className={`flex-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none transition-colors ${
+                                                                darkMode
+                                                                    ? (errors[`option_${index}_${optIndex}`] ? 'border-red-900/50 bg-red-900/20 text-red-200' : 'border-gray-700 bg-gray-900 text-white')
+                                                                    : (errors[`option_${index}_${optIndex}`] ? 'border-red-300 bg-red-50' : 'border-gray-200 bg-white')
                                                                 }`}
                                                         />
                                                     </div>
@@ -458,13 +463,13 @@ const QuestionForm = () => {
                                             })}
                                         </div>
                                         {errors[`correct_${index}`] && (
-                                            <p className="mt-1 text-sm text-red-600">{errors[`correct_${index}`]}</p>
+                                            <p className="mt-1 text-sm text-red-500">{errors[`correct_${index}`]}</p>
                                         )}
                                     </div>
 
                                     {/* Marks */}
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                                        <label className={`block text-sm font-medium mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
                                             Marks *
                                         </label>
                                         <input
@@ -472,7 +477,10 @@ const QuestionForm = () => {
                                             value={question.marks}
                                             onChange={(e) => updateQuestionField(question.id, 'marks', parseInt(e.target.value) || 1)}
                                             min="1"
-                                            className={`w-32 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none transition-colors ${errors[`marks_${index}`] ? 'border-red-300 bg-red-50' : 'border-gray-200'
+                                            className={`w-32 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none transition-colors ${
+                                                darkMode
+                                                    ? (errors[`marks_${index}`] ? 'border-red-900/50 bg-red-900/20 text-red-200' : 'border-gray-700 bg-gray-900 text-white')
+                                                    : (errors[`marks_${index}`] ? 'border-red-300 bg-red-50' : 'border-gray-200 bg-white')
                                                 }`}
                                         />
                                     </div>
@@ -484,25 +492,33 @@ const QuestionForm = () => {
                         <button
                             type="button"
                             onClick={addNewQuestion}
-                            className="w-full py-4 border-2 border-dashed border-black rounded-xl text-orange-500 hover:bg-orange-50 hover:border-orange-400 transition-colors flex items-center justify-center space-x-2"
+                            className={`w-full py-4 border-2 border-dashed rounded-xl text-orange-500 transition-colors flex items-center justify-center space-x-2 ${
+                                darkMode 
+                                ? 'border-gray-700 hover:bg-gray-800 hover:border-orange-500' 
+                                : 'border-gray-300 hover:bg-orange-50 hover:border-orange-400'
+                            }`}
                         >
                             <Plus size={20} />
                             <span>Add Another Question</span>
                         </button>
 
                         {/* Submit Button */}
-                        <div className="flex items-center justify-end space-x-4 pt-6">
+                        <div className={`flex items-center justify-end space-x-4 pt-6 border-t ${darkMode ? 'border-gray-700' : 'border-gray-100'}`}>
                             <button
                                 type="button"
                                 onClick={() => navigate(`/quizzes/${quizId}`)}
-                                className="px-6 py-2 border border-gray-300 bg-white text-gray-700 rounded-lg hover:bg-gray-200 transition-colors font-medium cursor-pointer"
+                                className={`px-6 py-2 border rounded-lg transition-colors font-medium cursor-pointer ${
+                                    darkMode 
+                                    ? 'border-gray-600 bg-gray-800 text-gray-300 hover:bg-gray-700' 
+                                    : 'border-gray-300 bg-white text-gray-700 hover:bg-gray-50'
+                                }`}
                             >
                                 Cancel
                             </button>
                             <button
                                 type="submit"
                                 disabled={isLoading}
-                                className="inline-flex items-center px-6 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors cursor-pointer font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="inline-flex items-center px-6 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors cursor-pointer font-medium disabled:opacity-50 disabled:cursor-not-allowed shadow-md"
                             >
                                 {isLoading ? (
                                     <>
@@ -522,13 +538,13 @@ const QuestionForm = () => {
 
                 {/* Manage Questions Tab */}
                 {activeTab === 'manage' && (
-                    <div className="bg-white/90 backdrop-blur-sm rounded-xl shadow-md overflow-hidden">
-                        <div className="p-6 border-b border-gray-100 bg-gray-50 flex items-center justify-between">
-                            <h2 className="text-xl font-semibold text-gray-800">Existing Questions</h2>
+                    <div className={`${darkMode ? 'bg-gray-800' : 'bg-white/90 backdrop-blur-sm'} rounded-xl shadow-md overflow-hidden`}>
+                        <div className={`p-6 border-b flex items-center justify-between ${darkMode ? 'border-gray-700 bg-gray-800/50' : 'border-gray-100 bg-gray-50'}`}>
+                            <h2 className={`text-xl font-semibold ${darkMode ? 'text-white' : 'text-gray-800'}`}>Existing Questions</h2>
                             {hasOrderChanged && (
                                 <button
                                     onClick={saveQuestionOrder}
-                                    className="inline-flex items-center px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors font-medium"
+                                    className="inline-flex items-center px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors font-medium shadow-md"
                                 >
                                     <Save size={18} className="mr-2" />
                                     Save Order
@@ -538,8 +554,8 @@ const QuestionForm = () => {
                         <div className="p-6">
                             {localQuestions.length === 0 ? (
                                 <div className="text-center py-12">
-                                    <HelpCircle size={48} className="mx-auto text-gray-300 mb-4" />
-                                    <p className="text-gray-600">No questions added yet.</p>
+                                    <HelpCircle size={48} className={`mx-auto mb-4 ${darkMode ? 'text-gray-600' : 'text-gray-300'}`} />
+                                    <p className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>No questions added yet.</p>
                                     <button
                                         onClick={() => setActiveTab('add')}
                                         className="mt-4 text-orange-500 hover:text-orange-600 font-medium"
@@ -549,7 +565,7 @@ const QuestionForm = () => {
                                 </div>
                             ) : (
                                 <div className="space-y-2">
-                                    <p className="text-sm text-gray-500 mb-4 flex items-center">
+                                    <p className={`text-sm mb-4 flex items-center ${darkMode ? 'text-gray-500' : 'text-gray-500'}`}>
                                         <GripVertical size={16} className="mr-1" />
                                         Drag and drop to reorder questions
                                     </p>
@@ -564,15 +580,15 @@ const QuestionForm = () => {
                                             onDragEnd={handleDragEnd}
                                             className={`border rounded-xl p-4 transition-all cursor-grab active:cursor-grabbing ${
                                                 draggedItem === index
-                                                    ? 'opacity-50 border-orange-300 bg-orange-50'
+                                                    ? (darkMode ? 'opacity-50 border-orange-500 bg-orange-500/10' : 'opacity-50 border-orange-300 bg-orange-50')
                                                     : dragOverItem === index
-                                                        ? 'border-orange-400 bg-orange-50 shadow-md transform scale-[1.02]'
-                                                        : 'border-gray-200 hover:shadow-md hover:border-orange-200'
+                                                        ? (darkMode ? 'border-orange-500 bg-orange-500/10 shadow-lg' : 'border-orange-400 bg-orange-50 shadow-md transform scale-[1.02]')
+                                                        : (darkMode ? 'border-gray-700 bg-gray-900/50 hover:shadow-md hover:border-orange-500/50' : 'border-gray-200 hover:shadow-md hover:border-orange-200')
                                             }`}
                                         >
                                             <div className="flex items-start justify-between">
                                                 <div className="flex items-start flex-1">
-                                                    <div className="flex items-center justify-center w-8 h-8 mr-3 text-gray-400 hover:text-orange-500">
+                                                    <div className={`flex items-center justify-center w-8 h-8 mr-3 transition-colors ${darkMode ? 'text-gray-600 hover:text-orange-400' : 'text-gray-400 hover:text-orange-500'}`}>
                                                         <GripVertical size={20} />
                                                     </div>
                                                     <div className="flex-1">
@@ -580,27 +596,27 @@ const QuestionForm = () => {
                                                             <span className="bg-orange-100 text-orange-600 text-xs font-medium px-2 py-1 rounded">
                                                                 Q{index + 1}
                                                             </span>
-                                                            <span className="bg-green-100 text-green-600 text-xs font-medium px-2 py-1 rounded">
+                                                            <span className={`${darkMode ? 'bg-green-900/30 text-green-400' : 'bg-green-100 text-green-600'} text-xs font-medium px-2 py-1 rounded`}>
                                                                 {q.marks} mark{q.marks > 1 ? 's' : ''}
                                                             </span>
                                                         </div>
-                                                        <p className="text-gray-800 font-medium mb-3">{q.questionText}</p>
+                                                        <p className={`font-medium mb-3 ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>{q.questionText}</p>
                                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                                                             {q.options.map((opt, optIndex) => (
                                                                 <div
                                                                     key={optIndex}
                                                                     className={`flex items-center space-x-2 text-sm ${opt === q.correctAnswer
-                                                                        ? 'text-green-600 font-medium'
-                                                                        : 'text-gray-600'
+                                                                        ? 'text-green-500 font-medium'
+                                                                        : (darkMode ? 'text-gray-400' : 'text-gray-600')
                                                                         }`}
                                                                 >
-                                                                    <span className="font-semibold w-6">
+                                                                    <span className={`font-semibold w-6 ${darkMode ? 'text-gray-500' : 'text-gray-400'}`}>
                                                                         {String.fromCharCode(65 + optIndex)}.
                                                                     </span>
                                                                     {opt === q.correctAnswer ? (
                                                                         <CheckCircle2 size={14} className="text-green-500" />
                                                                     ) : (
-                                                                        <X size={14} className="text-gray-400" />
+                                                                        <X size={14} className={darkMode ? 'text-gray-600' : 'text-gray-400'} />
                                                                     )}
                                                                     <span>{opt}</span>
                                                                 </div>
@@ -611,13 +627,13 @@ const QuestionForm = () => {
                                                 <div className="flex items-center space-x-2 ml-4">
                                                     <button
                                                         onClick={() => handleEditClick(q)}
-                                                        className="p-2 text-blue-500 hover:bg-blue-50 rounded-lg transition-colors"
+                                                        className={`p-2 rounded-lg transition-colors ${darkMode ? 'text-blue-400 hover:bg-blue-900/30' : 'text-blue-500 hover:bg-blue-50'}`}
                                                     >
                                                         <Edit3 size={18} />
                                                     </button>
                                                     <button
                                                         onClick={() => handleDeleteClick(q._id)}
-                                                        className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                                                        className={`p-2 rounded-lg transition-colors ${darkMode ? 'text-red-400 hover:bg-red-900/30' : 'text-red-500 hover:bg-red-50'}`}
                                                     >
                                                         <Trash2 size={18} />
                                                     </button>
@@ -634,21 +650,21 @@ const QuestionForm = () => {
 
             {showDeleteModal && (
                 <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
-                    <div className="bg-white rounded-xl shadow-xl w-full max-w-md p-6 animate-fadeIn">
+                    <div className={`${darkMode ? 'bg-gray-800' : 'bg-white'} rounded-xl shadow-xl w-full max-w-md p-6 animate-fadeIn`}>
 
                         {/* Icon */}
                         <div className="flex justify-center mb-4">
-                            <div className="p-3 bg-red-100 rounded-full">
+                            <div className={`${darkMode ? 'bg-red-900/30' : 'bg-red-100'} p-3 rounded-full`}>
                                 <Trash2 className="text-red-500" size={28} />
                             </div>
                         </div>
 
                         {/* Title */}
-                        <h3 className="text-lg font-semibold text-center text-gray-800 mb-2">
+                        <h3 className={`text-lg font-semibold text-center mb-2 ${darkMode ? 'text-white' : 'text-gray-800'}`}>
                             Delete Question?
                         </h3>
 
-                        <p className="text-sm text-gray-600 text-center mb-6">
+                        <p className={`text-sm text-center mb-6 ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
                             This action cannot be undone. Are you sure you want to delete this question?
                         </p>
 
@@ -656,14 +672,14 @@ const QuestionForm = () => {
                         <div className="flex justify-center space-x-3">
                             <button
                                 onClick={() => setShowDeleteModal(false)}
-                                className="px-4 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100 transition"
+                                className={`px-4 py-2 rounded-lg border transition ${darkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : 'border-gray-300 text-gray-700 hover:bg-gray-100'}`}
                             >
                                 Cancel
                             </button>
 
                             <button
                                 onClick={confirmDeleteQuestion}
-                                className="px-4 py-2 rounded-lg bg-red-500 text-white hover:bg-red-600 transition"
+                                className="px-4 py-2 rounded-lg bg-red-500 text-white hover:bg-red-600 transition shadow-md"
                             >
                                 Yes, Delete
                             </button>
@@ -675,16 +691,16 @@ const QuestionForm = () => {
 
             {showEditModal && editQuestionData && (
                 <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-                    <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl p-8 relative animate-fadeIn">
+                    <div className={`${darkMode ? 'bg-gray-800' : 'bg-white'} rounded-2xl shadow-2xl w-full max-w-2xl p-8 relative animate-fadeIn`}>
 
                         {/* Header */}
                         <div className="flex items-center justify-between mb-6">
-                            <h3 className="text-2xl font-bold text-gray-800">
+                            <h3 className={`text-2xl font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>
                                  Edit Question
                             </h3>
                             <button
                                 onClick={() => setShowEditModal(false)}
-                                className="text-gray-400 hover:text-gray-600 transition"
+                                className={`transition ${darkMode ? 'text-gray-500 hover:text-gray-300' : 'text-gray-400 hover:text-gray-600'}`}
                             >
                                 <X size={22} />
                             </button>
@@ -692,7 +708,7 @@ const QuestionForm = () => {
 
                         {/* Question Text */}
                         <div className="mb-6">
-                            <label className="block text-sm font-semibold text-gray-700 mb-2">
+                            <label className={`block text-sm font-semibold mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
                                 Question Text
                             </label>
                             <textarea
@@ -704,13 +720,15 @@ const QuestionForm = () => {
                                     })
                                 }
                                 rows={2}
-                                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none transition"
+                                className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none transition ${
+                                    darkMode ? 'border-gray-700 bg-gray-900 text-white' : 'border-gray-300 bg-white text-gray-800'
+                                }`}
                             />
                         </div>
 
                         {/* Options */}
                         <div className="mb-6">
-                            <label className="block text-sm font-semibold text-gray-700 mb-3">
+                            <label className={`block text-sm font-semibold mb-3 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
                                 Options (Select correct answer)
                             </label>
 
@@ -721,9 +739,10 @@ const QuestionForm = () => {
                                     return (
                                         <div
                                             key={index}
-                                            className={`flex items-center space-x-3 p-3 rounded-xl border transition ${editQuestionData.correctAnswer === opt
-                                                    ? "border-green-500 bg-green-50"
-                                                    : "border-gray-200"
+                                            className={`flex items-center space-x-3 p-3 rounded-xl border transition ${
+                                                editQuestionData.correctAnswer === opt
+                                                    ? (darkMode ? "border-green-500 bg-green-500/10" : "border-green-500 bg-green-50")
+                                                    : (darkMode ? "border-gray-700 bg-gray-900" : "border-gray-200 bg-white")
                                                 }`}
                                         >
                                             {/* Radio */}
@@ -741,7 +760,7 @@ const QuestionForm = () => {
                                             />
 
                                             {/* Label A B C D */}
-                                            <span className="font-bold text-gray-700 w-6">
+                                            <span className={`font-bold w-6 ${darkMode ? 'text-gray-400' : 'text-gray-700'}`}>
                                                 {label}.
                                             </span>
 
@@ -758,7 +777,9 @@ const QuestionForm = () => {
                                                         options: updatedOptions
                                                     });
                                                 }}
-                                                className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none"
+                                                className={`flex-1 px-3 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none ${
+                                                    darkMode ? 'border-gray-700 bg-gray-800 text-white' : 'border-gray-300 bg-white text-gray-800'
+                                                }`}
                                             />
                                         </div>
                                     );
@@ -768,7 +789,7 @@ const QuestionForm = () => {
 
                         {/* Marks */}
                         <div className="mb-6">
-                            <label className="block text-sm font-semibold text-gray-700 mb-2">
+                            <label className={`block text-sm font-semibold mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
                                 Marks
                             </label>
                             <input
@@ -781,15 +802,17 @@ const QuestionForm = () => {
                                         marks: parseInt(e.target.value) || 1
                                     })
                                 }
-                                className="w-32 px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none"
+                                className={`w-32 px-4 py-2 border rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none ${
+                                    darkMode ? 'border-gray-700 bg-gray-900 text-white' : 'border-gray-300 bg-white text-gray-800'
+                                }`}
                             />
                         </div>
 
                         {/* Footer Buttons */}
-                        <div className="flex justify-end space-x-4 pt-4 border-t">
+                        <div className={`flex justify-end space-x-4 pt-4 border-t ${darkMode ? 'border-gray-700' : 'border-gray-100'}`}>
                             <button
                                 onClick={() => setShowEditModal(false)}
-                                className="px-5 py-2 rounded-xl border border-gray-300 text-gray-700 hover:bg-gray-100 transition font-medium"
+                                className={`px-5 py-2 rounded-xl border transition font-medium ${darkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : 'border-gray-300 text-gray-700 hover:bg-gray-100'}`}
                             >
                                 Cancel
                             </button>

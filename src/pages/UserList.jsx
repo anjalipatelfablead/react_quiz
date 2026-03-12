@@ -18,6 +18,7 @@ import {
 const UserList = () => {
     const navigate = useNavigate();
     const { user: currentUser } = useSelector((state) => state.auth);
+    const { darkMode } = useSelector((state) => state.theme);
     const [users, setUsers] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -97,7 +98,7 @@ const UserList = () => {
 
     if (isLoading) {
         return (
-            <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-orange-100 flex items-center justify-center">
+            <div className={`min-h-screen flex items-center justify-center ${darkMode ? 'bg-gray-900' : 'bg-gradient-to-br from-orange-50 via-white to-orange-100'}`}>
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500"></div>
             </div>
         );
@@ -105,11 +106,11 @@ const UserList = () => {
 
     if (!isAdmin) {
         return (
-            <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-orange-100 flex items-center justify-center">
-                <div className="bg-white rounded-xl shadow-md p-8 text-center">
+            <div className={`min-h-screen flex items-center justify-center ${darkMode ? 'bg-gray-900' : 'bg-gradient-to-br from-orange-50 via-white to-orange-100'}`}>
+                <div className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white'} rounded-xl shadow-md p-8 text-center`}>
                     <AlertCircle size={48} className="mx-auto text-red-500 mb-4" />
-                    <h2 className="text-xl font-bold text-gray-800 mb-2">Access Denied</h2>
-                    <p className="text-gray-600">You don't have permission to view this page.</p>
+                    <h2 className={`text-xl font-bold mb-2 ${darkMode ? 'text-white' : 'text-gray-800'}`}>Access Denied</h2>
+                    <p className={darkMode ? 'text-gray-400' : 'text-gray-600'}>You don't have permission to view this page.</p>
                     <button
                         onClick={() => navigate('/dashboard')}
                         className="mt-4 px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors"
@@ -123,7 +124,7 @@ const UserList = () => {
 
     return (
         <>
-            <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-orange-100">
+            <div className={`min-h-screen transition-colors duration-300 ${darkMode ? 'bg-gray-900' : 'bg-gradient-to-br from-orange-50 via-white to-orange-100'}`}>
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                     {/* Header */}
                     <div className="mb-8">
@@ -131,28 +132,28 @@ const UserList = () => {
                             <div>
                                 <button
                                     onClick={() => navigate('/dashboard')}
-                                    className="inline-flex items-center text-gray-600 hover:text-orange-500 transition-colors mb-2"
+                                    className={`inline-flex items-center transition-colors mb-2 ${darkMode ? 'text-gray-400 hover:text-orange-400' : 'text-gray-600 hover:text-orange-500'}`}
                                 >
                                     <ArrowLeft size={20} className="mr-1" />
                                     Back to Dashboard
                                 </button>
-                                <h1 className="text-3xl font-bold text-gray-800">
+                                <h1 className={`text-3xl font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>
                                     <span className="text-orange-500">Users</span>
                                 </h1>
-                                <p className="text-gray-600 mt-2">
+                                <p className={`mt-2 ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
                                     Manage all registered users from here.
                                 </p>
                             </div>
-                            <div className="bg-white rounded-xl shadow-md p-4 border border-gray-100">
+                            <div className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'} rounded-xl shadow-md p-4 border`}>
                                 <div className="flex items-center space-x-3">
-                                    <div className="p-2 bg-purple-100 rounded-lg">
+                                    <div className={`${darkMode ? 'bg-purple-900/30' : 'bg-purple-100'} p-2 rounded-lg`}>
                                         <Shield size={20} className="text-purple-600" />
                                     </div>
                                     <div>
-                                        <p className="text-2xl font-bold text-gray-800">
+                                        <p className={`text-2xl font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>
                                             {users.filter(u => u.role === 'user').length}
                                         </p>
-                                        <p className="text-sm text-gray-500">Users</p>
+                                        <p className={`text-sm ${darkMode ? 'text-gray-500' : 'text-gray-500'}`}>Users</p>
                                     </div>
                                 </div>
                             </div>
@@ -162,8 +163,8 @@ const UserList = () => {
 
                     {/* Error Message */}
                     {error && (
-                        <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-6">
-                            <div className="flex items-center text-red-600">
+                        <div className={`${darkMode ? 'bg-red-900/20 border-red-900/30 text-red-400' : 'bg-red-50 border-red-200 text-red-600'} border rounded-xl p-4 mb-6`}>
+                            <div className="flex items-center">
                                 <AlertCircle size={20} className="mr-2" />
                                 <span>{error}</span>
                             </div>
@@ -190,7 +191,7 @@ const UserList = () => {
                     </div> */}
 
                     {/* Search */}
-                    <div className="bg-white rounded-xl shadow-md p-4 mb-6 border border-gray-100">
+                    <div className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'} rounded-xl shadow-md p-4 mb-6 border`}>
                         <div className="relative">
                             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
                             <input
@@ -198,49 +199,51 @@ const UserList = () => {
                                 placeholder="Search users by name or email..."
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
-                                className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none"
+                                className={`w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none transition-colors ${
+                                    darkMode ? 'border-gray-700 bg-gray-900 text-white' : 'border-gray-200 bg-white text-gray-800'
+                                }`}
                             />
                         </div>
                     </div>
 
                     {/* Users Table */}
                     {filteredUsers.length === 0 ? (
-                        <div className="bg-white rounded-xl shadow-md p-12 text-center border border-gray-100">
-                            <Users size={48} className="mx-auto text-gray-300 mb-4" />
-                            <h3 className="text-lg font-semibold text-gray-700 mb-2">No users found</h3>
-                            <p className="text-gray-500">
+                        <div className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'} rounded-xl shadow-md p-12 text-center border`}>
+                            <Users size={48} className={`mx-auto mb-4 ${darkMode ? 'text-gray-700' : 'text-gray-300'}`} />
+                            <h3 className={`text-lg font-semibold mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>No users found</h3>
+                            <p className={darkMode ? 'text-gray-500' : 'text-gray-500'}>
                                 {searchTerm ? 'Try adjusting your search' : 'No users registered yet'}
                             </p>
                         </div>
                     ) : (
-                        <div className="bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden">
+                        <div className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'} rounded-xl shadow-md border overflow-hidden`}>
                             <div className="overflow-x-auto">
                                 <table className="w-full">
-                                    <thead className="bg-gray-50 border-b border-gray-200">
+                                    <thead className={`${darkMode ? 'bg-gray-900' : 'bg-gray-50'} border-b ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}>
                                         <tr>
-                                            <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                            <th className={`px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
                                                 User
                                             </th>
-                                            <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                            <th className={`px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
                                                 Email
                                             </th>
-                                            <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                            <th className={`px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
                                                 Role
                                             </th>
-                                            <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                            <th className={`px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
                                                 Joined
                                             </th>
-                                            <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                            <th className={`px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
                                                 Status
                                             </th>
-                                            <th className="px-6 py-4 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                            <th className={`px-6 py-4 text-right text-xs font-semibold uppercase tracking-wider ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
                                                 Actions
                                             </th>
                                         </tr>
                                     </thead>
-                                    <tbody className="divide-y divide-gray-200">
+                                    <tbody className={`divide-y ${darkMode ? 'divide-gray-700' : 'divide-gray-200'}`}>
                                         {filteredUsers.map((user) => (
-                                            <tr key={user._id} className="hover:bg-gray-50 transition-colors">
+                                            <tr key={user._id} className={`transition-colors ${darkMode ? 'hover:bg-gray-750' : 'hover:bg-gray-50'}`}>
                                                 <td className="px-6 py-4 whitespace-nowrap">
                                                     <div className="flex items-center">
                                                         <div className="flex-shrink-0 h-10 w-10">
@@ -251,13 +254,13 @@ const UserList = () => {
                                                                     alt={user.username}
                                                                 />
                                                             ) : (
-                                                                <div className="h-10 w-10 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white font-bold">
+                                                                <div className={`h-10 w-10 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white font-bold`}>
                                                                     {user.username?.charAt(0).toUpperCase()}
                                                                 </div>
                                                             )}
                                                         </div>
                                                         <div className="ml-4">
-                                                            <div className="text-sm font-medium text-gray-900">
+                                                            <div className={`text-sm font-medium ${darkMode ? 'text-white' : 'text-gray-900'}`}>
                                                                 {user.username}
                                                             </div>
                                                             {user._id === currentUser?._id && (
@@ -267,23 +270,23 @@ const UserList = () => {
                                                     </div>
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap">
-                                                    <div className="flex items-center text-sm text-gray-600">
-                                                        <Mail size={14} className="mr-2 text-gray-400" />
+                                                    <div className={`flex items-center text-sm ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                                                        <Mail size={14} className={`mr-2 ${darkMode ? 'text-gray-500' : 'text-gray-400'}`} />
                                                         {user.email}
                                                     </div>
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap">
                                                     <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${user.role === 'admin'
-                                                        ? 'bg-purple-100 text-purple-600'
-                                                        : 'bg-blue-100 text-blue-600'
+                                                        ? (darkMode ? 'bg-purple-900/30 text-purple-400' : 'bg-purple-100 text-purple-600')
+                                                        : (darkMode ? 'bg-blue-900/30 text-blue-400' : 'bg-blue-100 text-blue-600')
                                                         }`}>
                                                         <Shield size={12} className="mr-1" />
                                                         {user.role}
                                                     </span>
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap">
-                                                    <div className="flex items-center text-sm text-gray-600">
-                                                        <Calendar size={14} className="mr-2 text-gray-400" />
+                                                    <div className={`flex items-center text-sm ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                                                        <Calendar size={14} className={`mr-2 ${darkMode ? 'text-gray-500' : 'text-gray-400'}`} />
                                                         {formatDate(user.createdAt)}
                                                     </div>
                                                 </td>
@@ -306,7 +309,7 @@ const UserList = () => {
                                                         <button
                                                             onClick={() => handleToggleStatus(user)}
                                                             disabled={user._id === currentUser?._id}
-                                                            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-300 ${user.isActive !== false ? 'bg-orange-500' : 'bg-gray-300'
+                                                            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-300 ${user.isActive !== false ? 'bg-orange-500' : (darkMode ? 'bg-gray-700' : 'bg-gray-300')
                                                                 } ${user._id === currentUser?._id ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
                                                             title={
                                                                 user._id === currentUser?._id
@@ -332,7 +335,7 @@ const UserList = () => {
                                                     {user._id !== currentUser?._id && (
                                                         <button
                                                             onClick={() => openDeleteModal(user)}
-                                                            className="text-red-600 hover:text-red-900 p-2 hover:bg-red-50 rounded-lg transition-colors"
+                                                            className={`p-2 rounded-lg transition-colors ${darkMode ? 'text-red-400 hover:bg-red-900/30' : 'text-red-600 hover:text-red-900 hover:bg-red-50'}`}
                                                             title="Delete user"
                                                         >
                                                             <Trash2 size={18} />
@@ -356,28 +359,28 @@ const UserList = () => {
                         className="absolute inset-0 bg-black/40 backdrop-blur-sm"
                         onClick={closeDeleteModal}
                     ></div>
-                    <div className="relative bg-white rounded-xl shadow-xl w-full max-w-md p-6 z-10">
+                    <div className={`relative rounded-xl shadow-xl w-full max-w-md p-6 z-10 ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
                         <div className="flex items-center space-x-3 mb-4">
-                            <div className="p-2 bg-red-100 rounded-full">
+                            <div className={`p-2 rounded-full ${darkMode ? 'bg-red-900/30' : 'bg-red-100'}`}>
                                 <AlertCircle className="text-red-600" size={24} />
                             </div>
-                            <h3 className="text-lg font-semibold text-gray-800">
+                            <h3 className={`text-lg font-semibold ${darkMode ? 'text-white' : 'text-gray-800'}`}>
                                 Confirm Deletion
                             </h3>
                         </div>
-                        <p className="text-gray-600 mb-6">
+                        <p className={`${darkMode ? 'text-gray-400' : 'text-gray-600'} mb-6`}>
                             Are you sure you want to delete <strong>{userToDelete?.username}</strong>? This action cannot be undone.
                         </p>
                         <div className="flex justify-end space-x-3">
                             <button
                                 onClick={closeDeleteModal}
-                                className="px-4 py-2 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 transition"
+                                className={`px-4 py-2 rounded-lg border transition ${darkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : 'border-gray-200 text-gray-600 hover:bg-gray-50'}`}
                             >
                                 Cancel
                             </button>
                             <button
                                 onClick={confirmDelete}
-                                className="px-4 py-2 rounded-lg bg-red-500 text-white hover:bg-red-600 transition"
+                                className="px-4 py-2 rounded-lg bg-red-500 text-white hover:bg-red-600 transition shadow-md"
                             >
                                 Delete
                             </button>

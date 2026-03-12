@@ -21,6 +21,7 @@ import {
 const Dashboard = () => {
     const { user } = useSelector((state) => state.auth);
     const { quizzes } = useSelector((state) => state.quiz);
+    const { darkMode } = useSelector((state) => state.theme);
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const [totalUsers, setTotalUsers] = useState(0);
@@ -133,29 +134,29 @@ const Dashboard = () => {
     const isAdmin = user?.role === 'admin';
 
     const StatCard = ({ icon: Icon, value, label, color }) => (
-        <div className="bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition-shadow duration-300 border border-gray-100">
+        <div className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'} rounded-xl shadow-md p-6 hover:shadow-lg transition-shadow duration-300 border`}>
             <div className="flex items-center space-x-4">
                 <div className={`p-3 rounded-lg ${color}`}>
                     <Icon size={24} className="text-white" />
                 </div>
                 <div>
-                    <p className="text-2xl font-bold text-gray-800">{value}</p>
-                    <p className="text-sm text-gray-500">{label}</p>
+                    <p className={`text-2xl font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>{value}</p>
+                    <p className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>{label}</p>
                 </div>
             </div>
         </div>
     );
 
     return (
-        <div className="min-h-screen bg-gradient-to-b from-primary-100 to-primary-400">
+        <div className={`min-h-screen transition-colors duration-300 ${darkMode ? 'bg-gray-900' : 'bg-gradient-to-b from-primary-100 to-primary-400'}`}>
             {/* Main Content */}
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 {/* Welcome Header */}
                 <div className="mb-8">
-                    <h1 className="text-3xl font-bold text-gray-800">
+                    <h1 className={`text-3xl font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>
                         Welcome back, <span className="text-orange-500">{user?.username || 'User'}</span>!
                     </h1>
-                    <p className="text-gray-600 mt-2">
+                    <p className={`${darkMode ? 'text-gray-300' : 'text-gray-600'} mt-2`}>
                         {isAdmin ? 'Here is your admin dashboard overview.' : 'Ready to test your knowledge today?'}
                     </p>
                 </div>
@@ -225,49 +226,49 @@ const Dashboard = () => {
                     <div className="lg:col-span-2">
                         {isAdmin ? (
                             /* Admin Analytics Section */
-                            <div className="bg-white rounded-xl shadow-md p-6 border border-gray-100">
+                            <div className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'} rounded-xl shadow-md p-6 border`}>
                                 <div className="flex items-center space-x-2 mb-6">
                                     <BarChart3 className="text-orange-500" size={24} />
-                                    <h2 className="text-xl font-bold text-gray-800">Analytics Summary</h2>
+                                    <h2 className={`text-xl font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>Analytics Summary</h2>
                                 </div>
                                 <div className="space-y-6">
                                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                        <div className="bg-gray-50 rounded-lg p-4 text-center">
-                                            <p className="text-3xl font-bold text-gray-800">{adminStats.analyticsSummary.avgScore}</p>
-                                            <p className="text-sm text-gray-500 mt-1">Average Score</p>
+                                        <div className={`${darkMode ? 'bg-gray-700' : 'bg-gray-50'} rounded-lg p-4 text-center`}>
+                                            <p className={`text-3xl font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>{adminStats.analyticsSummary.avgScore}</p>
+                                            <p className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'} mt-1`}>Average Score</p>
                                         </div>
-                                        <div className="bg-gray-50 rounded-lg p-4 text-center">
-                                            <p className="text-3xl font-bold text-gray-800">{adminStats.analyticsSummary.completionRate}</p>
-                                            <p className="text-sm text-gray-500 mt-1">Completion Rate</p>
+                                        <div className={`${darkMode ? 'bg-gray-700' : 'bg-gray-50'} rounded-lg p-4 text-center`}>
+                                            <p className={`text-3xl font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>{adminStats.analyticsSummary.completionRate}</p>
+                                            <p className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'} mt-1`}>Completion Rate</p>
                                         </div>
-                                        <div className="bg-gray-50 rounded-lg p-4 text-center">
-                                            <p className="text-3xl font-bold text-gray-800">{adminStats.analyticsSummary.activeUsers}</p>
-                                            <p className="text-sm text-gray-500 mt-1">Active Users Today</p>
+                                        <div className={`${darkMode ? 'bg-gray-700' : 'bg-gray-50'} rounded-lg p-4 text-center`}>
+                                            <p className={`text-3xl font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>{adminStats.analyticsSummary.activeUsers}</p>
+                                            <p className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'} mt-1`}>Active Users Today</p>
                                         </div>
                                     </div>
-                                    <div className="border-t border-gray-200 pt-6">
-                                        <h3 className="text-lg font-semibold text-gray-700 mb-4">Recent Activity</h3>
+                                    <div className={`border-t ${darkMode ? 'border-gray-700' : 'border-gray-200'} pt-6`}>
+                                        <h3 className={`text-lg font-semibold ${darkMode ? 'text-gray-200' : 'text-gray-700'} mb-4`}>Recent Activity</h3>
                                         <div className="space-y-3">
-                                            <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                            <div className={`flex items-center justify-between p-3 ${darkMode ? 'bg-gray-700' : 'bg-gray-50'} rounded-lg`}>
                                                 <div className="flex items-center space-x-3">
                                                     <FileText className="text-gray-400" size={18} />
-                                                    <span className="text-gray-700">New quiz "Advanced JavaScript" created</span>
+                                                    <span className={darkMode ? 'text-gray-200' : 'text-gray-700'}>New quiz "Advanced JavaScript" created</span>
                                                 </div>
-                                                <span className="text-sm text-gray-500">2 hours ago</span>
+                                                <span className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>2 hours ago</span>
                                             </div>
-                                            <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                            <div className={`flex items-center justify-between p-3 ${darkMode ? 'bg-gray-700' : 'bg-gray-50'} rounded-lg`}>
                                                 <div className="flex items-center space-x-3">
                                                     <Users className="text-gray-400" size={18} />
-                                                    <span className="text-gray-700">5 new users registered</span>
+                                                    <span className={darkMode ? 'text-gray-200' : 'text-gray-700'}>5 new users registered</span>
                                                 </div>
-                                                <span className="text-sm text-gray-500">5 hours ago</span>
+                                                <span className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>5 hours ago</span>
                                             </div>
-                                            <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                            <div className={`flex items-center justify-between p-3 ${darkMode ? 'bg-gray-700' : 'bg-gray-50'} rounded-lg`}>
                                                 <div className="flex items-center space-x-3">
                                                     <Award className="text-gray-400" size={18} />
-                                                    <span className="text-gray-700">Quiz "React Hooks" completed 12 times</span>
+                                                    <span className={darkMode ? 'text-gray-200' : 'text-gray-700'}>Quiz "React Hooks" completed 12 times</span>
                                                 </div>
-                                                <span className="text-sm text-gray-500">1 day ago</span>
+                                                <span className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>1 day ago</span>
                                             </div>
                                         </div>
                                     </div>
@@ -275,15 +276,15 @@ const Dashboard = () => {
                             </div>
                         ) : (
                             /* User Recent Attempts Section */
-                            <div className="bg-white rounded-xl shadow-md p-6 border border-gray-100">
+                            <div className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'} rounded-xl shadow-md p-6 border`}>
                                 <div className="flex items-center space-x-2 mb-6">
                                     <Clock className="text-orange-500" size={24} />
-                                    <h2 className="text-xl font-bold text-gray-800">Recent Attempts</h2>
+                                    <h2 className={`text-xl font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>Recent Attempts</h2>
                                 </div>
                                 <div className="space-y-4">
                                     {userStats.recentAttempts.length > 0 ? (
                                         userStats.recentAttempts.map((attempt, index) => (
-                                            <div key={index} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
+                                            <div key={index} className={`flex items-center justify-between p-4 ${darkMode ? 'bg-gray-700 hover:bg-gray-600' : 'bg-gray-50 hover:bg-gray-100'} transition-colors cursor-pointer rounded-lg`}
                                                 onClick={() => navigate(`/quizzes/${attempt.quizId}/review/${attempt.id}`)}>
                                                 <div className="flex items-center space-x-4">
                                                     <div className={`w-10 h-10 rounded-full flex items-center justify-center ${attempt.score >= 90 ? 'bg-green-100 text-green-600' :
@@ -293,8 +294,8 @@ const Dashboard = () => {
                                                         <Trophy size={18} />
                                                     </div>
                                                     <div>
-                                                        <p className="font-semibold text-gray-800">{attempt.quiz}</p>
-                                                        <p className="text-sm text-gray-500">{attempt.date}</p>
+                                                        <p className={`font-semibold ${darkMode ? 'text-white' : 'text-gray-800'}`}>{attempt.quiz}</p>
+                                                        <p className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>{attempt.date}</p>
                                                     </div>
                                                 </div>
                                                 <div className="text-right">
@@ -304,17 +305,17 @@ const Dashboard = () => {
                                                         }`}>
                                                         {attempt.score}%
                                                     </p>
-                                                    <p className="text-xs text-gray-500">Score</p>
+                                                    <p className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Score</p>
                                                 </div>
                                             </div>
                                         ))
                                     ) : (
-                                        <div className="text-center py-8">
-                                            <p className="text-gray-500">No attempts yet. Start taking quizzes to see your progress!</p>
+                                        <div className={`text-center py-8 ${darkMode ? 'bg-gray-700' : ''} rounded-lg`}>
+                                            <p className={`${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>No attempts yet. Start taking quizzes to see your progress!</p>
                                         </div>
                                     )}
                                 </div>
-                                <button className="w-full mt-6 py-3 text-center text-orange-500 font-medium hover:text-orange-600 transition-colors border border-orange-200 rounded-lg hover:bg-orange-50"
+                                <button className={`w-full mt-6 py-3 text-center text-orange-500 font-medium hover:text-orange-600 transition-colors border ${darkMode ? 'border-orange-500/30 hover:bg-orange-500/10' : 'border-orange-200 hover:bg-orange-50'} rounded-lg`}
                                 onClick={ () => navigate('/my-attempts') }>
                                     View All Attempts
                                 </button>
@@ -325,14 +326,14 @@ const Dashboard = () => {
                     {/* Sidebar */}
                     <div className="space-y-6">
                         {/* Quick Actions */}
-                        <div className="bg-white rounded-xl shadow-md p-6 border border-gray-100">
-                            <h3 className="text-lg font-semibold text-gray-800 mb-4">
+                        <div className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'} rounded-xl shadow-md p-6 border`}>
+                            <h3 className={`text-lg font-semibold ${darkMode ? 'text-white' : 'text-gray-800'} mb-4`}>
                                 {isAdmin ? 'Quick Actions' : 'Quick Links'}
                             </h3>
                             <div className="space-y-3">
                                 {isAdmin ? (
                                     <>
-                                        <button className="w-full py-2 px-4 bg-gray-800 text-white rounded-lg hover:bg-gray-900 transition-colors text-sm font-medium"
+                                        <button className={`w-full py-2 px-4 bg-gray-800 text-white rounded-lg hover:bg-gray-900 transition-colors text-sm font-medium ${darkMode ? 'border border-gray-600' : ''}`}
                                             onClick={() => navigate('/quizzes/create')}
                                         >
                                             Create New Quiz
@@ -343,7 +344,7 @@ const Dashboard = () => {
                                         >
                                             Manage Users
                                         </button>
-                                        <button className="w-full py-2 px-4 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium"
+                                        <button className={`w-full py-2 px-4 border ${darkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : 'border-gray-300 text-gray-700 hover:bg-gray-50'} rounded-lg transition-colors text-sm font-medium`}
                                             onClick={() => navigate('/reports')}
                                         >
                                             View Reports
@@ -351,10 +352,7 @@ const Dashboard = () => {
                                     </>
                                 ) : (
                                     <>
-                                        {/* <button className="w-full py-2 px-4 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors text-sm font-medium">
-                                            Start New Quiz
-                                        </button> */}
-                                        <button className="w-full py-2 px-4 bg-gray-800 text-white rounded-lg hover:bg-gray-900 transition-colors text-sm font-medium"
+                                        <button className={`w-full py-2 px-4 ${darkMode ? 'bg-gray-700 text-white hover:bg-gray-600' : 'bg-gray-800 text-white hover:bg-gray-900'} rounded-lg transition-colors text-sm font-medium`}
                                             onClick={() => navigate('/quizzes')}
                                         >
                                             Browse Quizzes
@@ -369,19 +367,19 @@ const Dashboard = () => {
                         </div>
 
                         {/* User Info Card */}
-                        <div className="bg-white rounded-xl shadow-md p-6 border border-gray-100">
-                            <h3 className="text-lg font-semibold text-gray-800 mb-4">Account Info</h3>
+                        <div className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'} rounded-xl shadow-md p-6 border`}>
+                            <h3 className={`text-lg font-semibold ${darkMode ? 'text-white' : 'text-gray-800'} mb-4`}>Account Info</h3>
                             <div className="space-y-3 text-sm">
                                 <div className="flex justify-between">
-                                    <span className="text-gray-500">Username</span>
-                                    <span className="font-medium text-gray-800">{user?.username}</span>
+                                    <span className={darkMode ? 'text-gray-400' : 'text-gray-500'}>Username</span>
+                                    <span className={`font-medium ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>{user?.username}</span>
                                 </div>
                                 <div className="flex justify-between">
-                                    <span className="text-gray-500">Email</span>
-                                    <span className="font-medium text-gray-800">{user?.email}</span>
+                                    <span className={darkMode ? 'text-gray-400' : 'text-gray-500'}>Email</span>
+                                    <span className={`font-medium ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>{user?.email}</span>
                                 </div>
                                 <div className="flex justify-between">
-                                    <span className="text-gray-500">Role</span>
+                                    <span className={darkMode ? 'text-gray-400' : 'text-gray-500'}>Role</span>
                                     <span className={`font-medium capitalize ${isAdmin ? 'text-purple-600' : 'text-blue-600'}`}>
                                         {user?.role}
                                     </span>

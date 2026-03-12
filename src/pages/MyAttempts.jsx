@@ -19,6 +19,7 @@ const MyAttempts = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const { results, isLoading } = useSelector((state) => state.result);
+    const { darkMode } = useSelector((state) => state.theme);
     const [currentPage, setCurrentPage] = useState(1);
     const [searchTerm, setSearchTerm] = useState('');
     const itemsPerPage = 10;
@@ -79,74 +80,74 @@ const MyAttempts = () => {
 
     if (isLoading) {
         return (
-            <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-orange-100 flex items-center justify-center">
+            <div className={`min-h-screen flex items-center justify-center ${darkMode ? 'bg-gray-900' : 'bg-gradient-to-br from-orange-50 via-white to-orange-100'}`}>
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500"></div>
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-orange-100 py-8">
+        <div className={`min-h-screen transition-colors duration-300 py-8 ${darkMode ? 'bg-gray-900' : 'bg-gradient-to-br from-orange-50 via-white to-orange-100'}`}>
             <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
                 {/* Header */}
                 <div className="mb-8">
                     <div className="flex items-center gap-3 mb-2">
                         <History className="text-orange-500" size={32} />
-                        <h1 className="text-3xl font-bold text-gray-800">My Attempts</h1>
+                        <h1 className={`text-3xl font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>My Attempts</h1>
                     </div>
-                    <p className="text-gray-600">View your quiz history and track your progress</p>
+                    <p className={darkMode ? 'text-gray-400' : 'text-gray-600'}>View your quiz history and track your progress</p>
                 </div>
 
                 {/* Stats Summary */}
                 {results && results.length > 0 && (
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-                        <div className="bg-white rounded-xl shadow-md p-6">
+                        <div className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white'} rounded-xl shadow-md p-6 border transition-colors`}>
                             <div className="flex items-center gap-3">
-                                <div className="p-3 bg-blue-100 rounded-lg">
+                                <div className={`${darkMode ? 'bg-blue-900/30' : 'bg-blue-100'} p-3 rounded-lg`}>
                                     <BookOpen className="text-blue-600" size={24} />
                                 </div>
                                 <div>
-                                    <p className="text-2xl font-bold text-gray-800">{results.length}</p>
-                                    <p className="text-sm text-gray-500">Total Attempts</p>
+                                    <p className={`text-2xl font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>{results.length}</p>
+                                    <p className={`text-sm ${darkMode ? 'text-gray-500' : 'text-gray-500'}`}>Total Attempts</p>
                                 </div>
                             </div>
                         </div>
-                        <div className="bg-white rounded-xl shadow-md p-6">
+                        <div className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white'} rounded-xl shadow-md p-6 border transition-colors`}>
                             <div className="flex items-center gap-3">
-                                <div className="p-3 bg-green-100 rounded-lg">
+                                <div className={`${darkMode ? 'bg-green-900/30' : 'bg-green-100'} p-3 rounded-lg`}>
                                     <Trophy className="text-green-600" size={24} />
                                 </div>
                                 <div>
-                                    <p className="text-2xl font-bold text-gray-800">
+                                    <p className={`text-2xl font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>
                                         {Math.max(...results.map(r => getScorePercentage(r.score, r.totalMarks)))}%
                                     </p>
-                                    <p className="text-sm text-gray-500">Best Score</p>
+                                    <p className={`text-sm ${darkMode ? 'text-gray-500' : 'text-gray-500'}`}>Best Score</p>
                                 </div>
                             </div>
                         </div>
-                        <div className="bg-white rounded-xl shadow-md p-6">
+                        <div className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white'} rounded-xl shadow-md p-6 border transition-colors`}>
                             <div className="flex items-center gap-3">
-                                <div className="p-3 bg-purple-100 rounded-lg">
+                                <div className={`${darkMode ? 'bg-purple-900/30' : 'bg-purple-100'} p-3 rounded-lg`}>
                                     <Trophy className="text-purple-600" size={24} />
                                 </div>
                                 <div>
-                                    <p className="text-2xl font-bold text-gray-800">
+                                    <p className={`text-2xl font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>
                                         {Math.round(results.reduce((acc, r) => acc + getScorePercentage(r.score, r.totalMarks), 0) / results.length)}%
                                     </p>
-                                    <p className="text-sm text-gray-500">Average Score</p>
+                                    <p className={`text-sm ${darkMode ? 'text-gray-500' : 'text-gray-500'}`}>Average Score</p>
                                 </div>
                             </div>
                         </div>
-                        <div className="bg-white rounded-xl shadow-md p-6">
+                        <div className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white'} rounded-xl shadow-md p-6 border transition-colors`}>
                             <div className="flex items-center gap-3">
-                                <div className="p-3 bg-orange-100 rounded-lg">
+                                <div className={`${darkMode ? 'bg-orange-900/30' : 'bg-orange-100'} p-3 rounded-lg`}>
                                     <Clock className="text-orange-600" size={24} />
                                 </div>
                                 <div>
-                                    <p className="text-2xl font-bold text-gray-800">
+                                    <p className={`text-2xl font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>
                                         {formatTime(Math.round(results.reduce((acc, r) => acc + (r.timeTaken || 0), 0) / results.length))}
                                     </p>
-                                    <p className="text-sm text-gray-500">Avg Time</p>
+                                    <p className={`text-sm ${darkMode ? 'text-gray-500' : 'text-gray-500'}`}>Avg Time</p>
                                 </div>
                             </div>
                         </div>
@@ -154,9 +155,9 @@ const MyAttempts = () => {
                 )}
 
                 {/* Attempts List */}
-                <div className="bg-white rounded-xl shadow-md overflow-hidden">
-                    <div className="p-6 border-b border-gray-200 flex flex-col md:flex-row md:items-center justify-between gap-4">
-                        <h2 className="text-xl font-semibold text-gray-800">Quiz History</h2>
+                <div className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white'} rounded-xl shadow-md overflow-hidden border transition-colors`}>
+                    <div className={`p-6 border-b flex flex-col md:flex-row md:items-center justify-between gap-4 ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}>
+                        <h2 className={`text-xl font-semibold ${darkMode ? 'text-white' : 'text-gray-800'}`}>Quiz History</h2>
                         <div className="relative max-w-sm w-full">
                             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
                             <input
@@ -167,14 +168,18 @@ const MyAttempts = () => {
                                     setSearchTerm(e.target.value);
                                     setCurrentPage(1); // Reset to first page on search
                                 }}
-                                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all"
+                                className={`w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all ${
+                                    darkMode 
+                                    ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-500' 
+                                    : 'bg-white border-gray-300 text-gray-900 placeholder-gray-400'
+                                }`}
                             />
                         </div>
                     </div>
 
                     {filteredResults && filteredResults.length > 0 ? (
                         <>
-                            <div className="divide-y divide-gray-200">
+                            <div className={`divide-y ${darkMode ? 'divide-gray-700' : 'divide-gray-200'}`}>
                                 {paginatedResults.map((result, index) => {
                                     const percentage = getScorePercentage(result.score, result.totalMarks);
                                     const scoreColor = getScoreColor(percentage);
@@ -182,18 +187,20 @@ const MyAttempts = () => {
                                     const globalIndex = (currentPage - 1) * itemsPerPage + index + 1;
 
                                     return (
-                                        <div key={result._id} className="p-6 hover:bg-gray-50 transition-colors">
+                                        <div key={result._id} className={`p-6 transition-colors ${darkMode ? 'hover:bg-gray-750' : 'hover:bg-gray-50'}`}>
                                             <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                                                 {/* Left: Quiz Info */}
                                                 <div className="flex items-start gap-4 flex-1">
-                                                    <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 font-bold">
+                                                    <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold ${
+                                                        darkMode ? 'bg-gray-700 text-gray-300' : 'bg-gray-100 text-gray-600'
+                                                    }`}>
                                                         {globalIndex}
                                                     </div>
                                                     <div className="flex-1">
-                                                        <h3 className="text-lg font-semibold text-gray-800 mb-1">
+                                                        <h3 className={`text-lg font-semibold mb-1 ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>
                                                             {result.quizId?.title || 'Unknown Quiz'}
                                                         </h3>
-                                                        <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500">
+                                                        <div className={`flex flex-wrap items-center gap-4 text-sm ${darkMode ? 'text-gray-500' : 'text-gray-500'}`}>
                                                             <span className="flex items-center gap-1">
                                                                 <Calendar size={14} />
                                                                 {formatDate(result.createdAt)}
@@ -213,10 +220,10 @@ const MyAttempts = () => {
                                                 {/* Middle: Progress Bar */}
                                                 <div className="flex-1 max-w-md">
                                                     <div className="flex items-center justify-between mb-1">
-                                                        <span className="text-sm font-medium text-gray-600">Score</span>
+                                                        <span className={`text-sm font-medium ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Score</span>
                                                         <span className={`text-sm font-bold ${scoreTextColor}`}>{percentage}%</span>
                                                     </div>
-                                                    <div className="w-full bg-gray-200 rounded-full h-3">
+                                                    <div className={`w-full rounded-full h-3 ${darkMode ? 'bg-gray-700' : 'bg-gray-200'}`}>
                                                         <div
                                                             className={`${scoreColor} h-3 rounded-full transition-all duration-500`}
                                                             style={{ width: `${percentage}%` }}
@@ -228,7 +235,7 @@ const MyAttempts = () => {
                                                 <div className="flex items-center gap-3">
                                                     <button
                                                         onClick={() => handleViewReview(result)}
-                                                        className="flex items-center gap-2 px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors text-sm font-medium"
+                                                        className="flex items-center gap-2 px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors text-sm font-medium shadow-md"
                                                     >
                                                         View Review
                                                         <ArrowRight size={16} />
@@ -242,25 +249,33 @@ const MyAttempts = () => {
 
                             {/* Pagination */}
                             {totalPages > 1 && (
-                                <div className="p-4 border-t border-gray-200 flex items-center justify-between">
-                                    <p className="text-sm text-gray-500">
+                                <div className={`p-4 border-t flex items-center justify-between ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}>
+                                    <p className={`text-sm ${darkMode ? 'text-gray-500' : 'text-gray-500'}`}>
                                         Showing {(currentPage - 1) * itemsPerPage + 1} to {Math.min(currentPage * itemsPerPage, filteredResults.length)} of {filteredResults.length} attempts
                                     </p>
                                     <div className="flex items-center gap-2">
                                         <button
                                             onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
                                             disabled={currentPage === 1}
-                                            className="p-2 rounded-lg border border-gray-300 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                                            className={`p-2 rounded-lg border transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
+                                                darkMode 
+                                                ? 'border-gray-600 text-gray-400 hover:bg-gray-700' 
+                                                : 'border-gray-300 text-gray-600 hover:bg-gray-50'
+                                            }`}
                                         >
                                             <ChevronLeft size={18} />
                                         </button>
-                                        <span className="px-4 py-2 text-sm font-medium text-gray-700">
+                                        <span className={`px-4 py-2 text-sm font-medium ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
                                             Page {currentPage} of {totalPages}
                                         </span>
                                         <button
                                             onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
                                             disabled={currentPage === totalPages}
-                                            className="p-2 rounded-lg border border-gray-300 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                                            className={`p-2 rounded-lg border transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
+                                                darkMode 
+                                                ? 'border-gray-600 text-gray-400 hover:bg-gray-700' 
+                                                : 'border-gray-300 text-gray-600 hover:bg-gray-50'
+                                            }`}
                                         >
                                             <ChevronRight size={18} />
                                         </button>
@@ -270,24 +285,28 @@ const MyAttempts = () => {
                         </>
                     ) : searchTerm ? (
                         <div className="p-12 text-center">
-                            <Search size={48} className="mx-auto text-gray-300 mb-4" />
-                            <h3 className="text-lg font-semibold text-gray-700 mb-2">No Results Found</h3>
-                            <p className="text-gray-500 mb-6">No attempts match your search term "{searchTerm}".</p>
+                            <Search size={48} className={`mx-auto mb-4 ${darkMode ? 'text-gray-700' : 'text-gray-300'}`} />
+                            <h3 className={`text-lg font-semibold mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>No Results Found</h3>
+                            <p className={`${darkMode ? 'text-gray-500' : 'text-gray-500'} mb-6`}>No attempts match your search term "{searchTerm}".</p>
                             <button
                                 onClick={() => setSearchTerm('')}
-                                className="px-6 py-2 border border-orange-500 text-orange-500 rounded-lg hover:bg-orange-50 transition-colors font-medium"
+                                className={`px-6 py-2 border rounded-lg transition-colors font-medium ${
+                                    darkMode 
+                                    ? 'border-orange-500 text-orange-500 hover:bg-orange-500/10' 
+                                    : 'border-orange-500 text-orange-500 hover:bg-orange-50'
+                                }`}
                             >
                                 Clear Search
                             </button>
                         </div>
                     ) : (
                         <div className="p-12 text-center">
-                            <AlertCircle size={48} className="mx-auto text-gray-300 mb-4" />
-                            <h3 className="text-lg font-semibold text-gray-700 mb-2">No Attempts Yet</h3>
-                            <p className="text-gray-500 mb-6">You haven't taken any quizzes yet. Start exploring quizzes to see your attempts here.</p>
+                            <AlertCircle size={48} className={`mx-auto mb-4 ${darkMode ? 'text-gray-700' : 'text-gray-300'}`} />
+                            <h3 className={`text-lg font-semibold mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>No Attempts Yet</h3>
+                            <p className={`${darkMode ? 'text-gray-500' : 'text-gray-500'} mb-6`}>You haven't taken any quizzes yet. Start exploring quizzes to see your attempts here.</p>
                             <button
                                 onClick={() => navigate('/quizzes')}
-                                className="px-6 py-3 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors font-medium"
+                                className="px-6 py-3 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors font-medium shadow-md"
                             >
                                 Browse Quizzes
                             </button>

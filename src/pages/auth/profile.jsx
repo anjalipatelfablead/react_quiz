@@ -6,6 +6,7 @@ import { updateProfile, reset } from '../../redux/slices/authSlice';
 const Profile = () => {
   const dispatch = useDispatch();
   const { user, isLoading, isSuccess, isError, message } = useSelector((state) => state.auth);
+  const { darkMode } = useSelector((state) => state.theme);
 
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
@@ -124,9 +125,9 @@ const Profile = () => {
   };
 
   return (
-    <div className=" min-h-screen overflow-hidden  bg-gradient-to-br from-orange-50 via-white to-orange-100 ">
+    <div className={`min-h-screen overflow-hidden transition-colors duration-300 ${darkMode ? 'bg-gray-900' : 'bg-gradient-to-br from-orange-50 via-white to-orange-100'}`}>
       <div className="max-w-5xl mx-auto py-8 px-4 sm:px-6 ">
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden mt-15">
+        <div className={`rounded-2xl shadow-sm border overflow-hidden mt-15 ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'}`}>
           {/* Header/Banner */}
           <div className="h-32 bg-gradient-to-r from-orange-400 to-orange-600"></div>
 
@@ -135,13 +136,15 @@ const Profile = () => {
             <div className="relative flex justify-center -mt-16 mb-6">
               <div className="relative">
                 <div
-                  className={`w-32 h-32 rounded-full border-4 border-white shadow-md overflow-hidden bg-gray-100 flex items-center justify-center ${isEditing ? 'cursor-pointer hover:opacity-90' : ''}`}
+                  className={`w-32 h-32 rounded-full border-4 shadow-md overflow-hidden flex items-center justify-center ${
+                    darkMode ? 'border-gray-800 bg-gray-700' : 'border-white bg-gray-100'
+                  } ${isEditing ? 'cursor-pointer hover:opacity-90' : ''}`}
                   onClick={triggerFileInput}
                 >
                   {imagePreview ? (
                     <img src={imagePreview} alt="Profile" className="w-full h-full object-cover" />
                   ) : (
-                    <div className="w-full h-full bg-orange-100 flex items-center justify-center text-orange-500">
+                    <div className={`w-full h-full flex items-center justify-center ${darkMode ? 'bg-orange-900/20 text-orange-400' : 'bg-orange-100 text-orange-500'}`}>
                       <UserIcon size={48} />
                     </div>
                   )}
@@ -167,10 +170,12 @@ const Profile = () => {
             </div>
 
             <div className="text-center mb-8">
-              <h1 className="text-2xl font-bold text-gray-900">{user?.username}</h1>
-              <p className="text-gray-500">{user?.email}</p>
+              <h1 className={`text-2xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>{user?.username}</h1>
+              <p className={darkMode ? 'text-gray-400' : 'text-gray-500'}>{user?.email}</p>
               <div className="mt-2 flex justify-center">
-                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                  darkMode ? 'bg-blue-900/30 text-blue-400' : 'bg-blue-100 text-blue-800'
+                }`}>
                   {user?.role?.toUpperCase()}
                 </span>
               </div>
@@ -178,14 +183,18 @@ const Profile = () => {
 
             {/* Messages */}
             {isError && (
-              <div className="mb-6 p-4 bg-red-50 border border-red-100 rounded-lg flex items-center text-red-700">
+              <div className={`mb-6 p-4 border rounded-lg flex items-center ${
+                darkMode ? 'bg-red-900/20 border-red-900/30 text-red-400' : 'bg-red-50 border-red-100 text-red-700'
+              }`}>
                 <AlertCircle size={20} className="mr-2 flex-shrink-0" />
                 <p className="text-sm">{message}</p>
               </div>
             )}
 
             {isSuccess && !isEditing && (
-              <div className="mb-6 p-4 bg-green-50 border border-green-100 rounded-lg flex items-center text-green-700">
+              <div className={`mb-6 p-4 border rounded-lg flex items-center ${
+                darkMode ? 'bg-green-900/20 border-green-900/30 text-green-400' : 'bg-green-50 border-green-100 text-green-700'
+              }`}>
                 <CheckCircle2 size={20} className="mr-2 flex-shrink-0" />
                 <p className="text-sm">{message}</p>
               </div>
@@ -195,11 +204,11 @@ const Profile = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Username Field */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className={`block text-sm font-medium mb-1 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
                     Username
                   </label>
                   <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+                    <div className={`absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none ${darkMode ? 'text-gray-500' : 'text-gray-400'}`}>
                       <UserIcon size={18} />
                     </div>
                     <input
@@ -208,7 +217,10 @@ const Profile = () => {
                       value={formData.username}
                       onChange={handleChange}
                       disabled={!isEditing}
-                      className={`block w-full pl-10 pr-3 py-2.5 border rounded-lg focus:ring-orange-500 focus:border-orange-500 text-sm transition-all ${isEditing ? 'border-gray-300 bg-white' : 'border-transparent bg-gray-50 cursor-not-allowed'
+                      className={`block w-full pl-10 pr-3 py-2.5 border rounded-lg focus:ring-orange-500 focus:border-orange-500 text-sm transition-all ${
+                        isEditing 
+                          ? (darkMode ? 'border-gray-600 bg-gray-700 text-white' : 'border-gray-300 bg-white') 
+                          : (darkMode ? 'border-transparent bg-gray-900 text-gray-400 cursor-not-allowed' : 'border-transparent bg-gray-50 cursor-not-allowed')
                         }`}
                     />
                   </div>
@@ -216,11 +228,11 @@ const Profile = () => {
 
                 {/* Email Field */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className={`block text-sm font-medium mb-1 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
                     Email Address
                   </label>
                   <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+                    <div className={`absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none ${darkMode ? 'text-gray-500' : 'text-gray-400'}`}>
                       <Mail size={18} />
                     </div>
                     <input
@@ -230,7 +242,10 @@ const Profile = () => {
                       onChange={handleChange}
                       disabled={!isEditing}
                       readOnly
-                      className={`block w-full pl-10 pr-3 py-2.5 border rounded-lg focus:ring-orange-500 focus:border-orange-500 text-sm transition-all ${isEditing ? 'border-gray-300 bg-white' : 'border-transparent bg-gray-50 cursor-not-allowed'
+                      className={`block w-full pl-10 pr-3 py-2.5 border rounded-lg focus:ring-orange-500 focus:border-orange-500 text-sm transition-all ${
+                        isEditing 
+                          ? (darkMode ? 'border-gray-600 bg-gray-700 text-white' : 'border-gray-300 bg-white') 
+                          : (darkMode ? 'border-transparent bg-gray-900 text-gray-400 cursor-not-allowed' : 'border-transparent bg-gray-50 cursor-not-allowed')
                         }`}
                     />
                   </div>
@@ -238,11 +253,11 @@ const Profile = () => {
 
                 {/* Old Password Field - Required when setting new password */}
                 <div className={isEditing ? 'block' : 'hidden'}>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className={`block text-sm font-medium mb-1 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
                     Old Password <span className="text-gray-400 font-normal">(required to change password)</span>
                   </label>
                   <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+                    <div className={`absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none ${darkMode ? 'text-gray-500' : 'text-gray-400'}`}>
                       <Shield size={18} />
                     </div>
                     <input
@@ -251,7 +266,11 @@ const Profile = () => {
                       value={formData.oldPassword}
                       onChange={handleChange}
                       placeholder="Enter your current password"
-                      className={`block w-full pl-10 pr-3 py-2.5 border rounded-lg focus:ring-orange-500 focus:border-orange-500 text-sm ${fieldErrors.oldPassword ? 'border-red-500' : 'border-gray-300'}`}
+                      className={`block w-full pl-10 pr-3 py-2.5 border rounded-lg focus:ring-orange-500 focus:border-orange-500 text-sm ${
+                        fieldErrors.oldPassword 
+                        ? 'border-red-500' 
+                        : (darkMode ? 'border-gray-600 bg-gray-700 text-white' : 'border-gray-300 bg-white')
+                      }`}
                     />
                   </div>
                   {fieldErrors.oldPassword && (
@@ -261,11 +280,11 @@ const Profile = () => {
 
                 {/* New Password Field - Only show/editable during edit */}
                 <div className={isEditing ? 'block' : 'hidden'}>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className={`block text-sm font-medium mb-1 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
                     New Password <span className="text-gray-400 font-normal">(leave blank to keep current)</span>
                   </label>
                   <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+                    <div className={`absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none ${darkMode ? 'text-gray-500' : 'text-gray-400'}`}>
                       <Shield size={18} />
                     </div>
                     <input
@@ -274,17 +293,19 @@ const Profile = () => {
                       value={formData.password}
                       onChange={handleChange}
                       placeholder="Enter new password"
-                      className="block w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-lg focus:ring-orange-500 focus:border-orange-500 text-sm"
+                      className={`block w-full pl-10 pr-3 py-2.5 border rounded-lg focus:ring-orange-500 focus:border-orange-500 text-sm ${
+                        darkMode ? 'border-gray-600 bg-gray-700 text-white' : 'border-gray-300 bg-white'
+                      }`}
                     />
                   </div>
-                  <p className="mt-1 text-xs text-gray-500">
+                  <p className={`mt-1 text-xs ${darkMode ? 'text-gray-500' : 'text-gray-500'}`}>
                     Min 8 chars, uppercase, lowercase, number & special char
                   </p>
                 </div>
               </div>
 
               {/* Action Buttons */}
-              <div className="pt-6 border-t border-gray-100 flex justify-end space-x-3">
+              <div className={`pt-6 border-t flex justify-end space-x-3 ${darkMode ? 'border-gray-700' : 'border-gray-100'}`}>
                 {!isEditing ? (
                   <button
                     type="button"
@@ -300,7 +321,9 @@ const Profile = () => {
                       type="button"
                       onClick={handleCancel}
                       disabled={isLoading}
-                      className="inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium disabled:opacity-50 cursor-pointer"
+                      className={`inline-flex items-center px-4 py-2 border rounded-lg transition-colors text-sm font-medium disabled:opacity-50 cursor-pointer ${
+                        darkMode ? 'border-gray-600 bg-gray-700 text-gray-300 hover:bg-gray-600' : 'border-gray-300 bg-white text-gray-700 hover:bg-gray-50'
+                      }`}
                     >
                       <X size={16} className="mr-2" />
                       Cancel

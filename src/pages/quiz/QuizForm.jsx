@@ -25,6 +25,7 @@ const QuizForm = () => {
   
   const { user } = useSelector((state) => state.auth);
   const { currentQuiz, isLoading, isCreateSuccess, isUpdateSuccess, isError, message } = useSelector((state) => state.quiz);
+  const { darkMode } = useSelector((state) => state.theme);
 
   const [formData, setFormData] = useState({
     title: '',
@@ -175,11 +176,11 @@ useEffect(() => {
   // Redirect if not admin
   if (user?.role !== 'admin') {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-primary-100 to-primary-400 flex items-center justify-center">
-        <div className="bg-white rounded-xl shadow-md p-8 text-center max-w-md">
+      <div className={`min-h-screen ${darkMode ? 'bg-gray-900' : 'bg-gradient-to-b from-primary-100 to-primary-400'} flex items-center justify-center`}>
+        <div className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white shadow-md'} rounded-xl p-8 text-center max-w-md border`}>
           <AlertTriangle size={48} className="mx-auto text-red-500 mb-4" />
-          <h2 className="text-xl font-bold text-gray-800 mb-2">Access Denied</h2>
-          <p className="text-gray-600 mb-4">Only administrators can create or edit quizzes.</p>
+          <h2 className={`text-xl font-bold mb-2 ${darkMode ? 'text-white' : 'text-gray-800'}`}>Access Denied</h2>
+          <p className={`${darkMode ? 'text-gray-400' : 'text-gray-600'} mb-4`}>Only administrators can create or edit quizzes.</p>
           <button
             onClick={() => navigate('/quizzes')}
             className="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors"
@@ -192,25 +193,25 @@ useEffect(() => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-primary-100 to-primary-400">
+    <div className={`min-h-screen transition-colors duration-300 ${darkMode ? 'bg-gray-900' : 'bg-gradient-to-b from-primary-100 to-primary-400'}`}>
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="mb-8">
           <button
             onClick={handleCancel}
-            className="inline-flex items-center text-gray-600 hover:text-orange-500 transition-colors mb-4"
+            className={`inline-flex items-center transition-colors mb-4 ${darkMode ? 'text-gray-300 hover:text-orange-500' : 'text-gray-600 hover:text-orange-500'}`}
           >
             <ArrowLeft size={20} className="mr-1" />
             Back to Quizzes
           </button>
-          <h1 className="text-3xl font-bold text-gray-800">
+          <h1 className={`text-3xl font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>
             {isEditMode ? (
               <><span className="text-orange-500">Edit</span> Quiz</>
             ) : (
               <><span className="text-orange-500">Create</span> New Quiz</>
             )}
           </h1>
-          <p className="text-gray-600 mt-2">
+          <p className={`${darkMode ? 'text-gray-400' : 'text-gray-600'} mt-2`}>
             {isEditMode 
               ? 'Update the quiz details below.' 
               : 'Fill in the details below to create a new quiz.'}
@@ -240,18 +241,18 @@ useEffect(() => {
         )}
 
         {/* Form */}
-        <div className="bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden">
-          <div className="p-6 border-b border-gray-100 bg-gray-50">
+        <div className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100 shadow-md'} rounded-xl border overflow-hidden`}>
+          <div className={`p-6 border-b ${darkMode ? 'border-gray-700 bg-gray-800/50' : 'border-gray-100 bg-gray-50'}`}>
             <div className="flex items-center space-x-2">
               <BookOpen className="text-orange-500" size={24} />
-              <h2 className="text-xl font-semibold text-gray-800">Quiz Information</h2>
+              <h2 className={`text-xl font-semibold ${darkMode ? 'text-white' : 'text-gray-800'}`}>Quiz Information</h2>
             </div>
           </div>
 
           <form onSubmit={handleSubmit} className="p-6 space-y-6">
             {/* Title */}
             <div>
-              <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="title" className={`block text-sm font-medium mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
                 <Type size={16} className="inline mr-1" />
                 Quiz Title *
               </label>
@@ -263,11 +264,13 @@ useEffect(() => {
                 onChange={handleChange}
                 placeholder="Enter quiz title"
                 className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none transition-colors ${
-                  errors.title ? 'border-red-300 bg-red-50' : 'border-gray-200'
+                  errors.title 
+                    ? (darkMode ? 'border-red-900 bg-red-900/20' : 'border-red-300 bg-red-50') 
+                    : (darkMode ? 'border-gray-600 bg-gray-700 text-white' : 'border-gray-200 text-gray-800')
                 }`}
               />
               {errors.title && (
-                <p className="mt-1 text-sm text-red-600 flex items-center">
+                <p className="mt-1 text-sm text-red-500 flex items-center">
                   <AlertCircle size={14} className="mr-1" />
                   {errors.title}
                 </p>
@@ -276,7 +279,7 @@ useEffect(() => {
 
             {/* Description */}
             <div>
-              <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="description" className={`block text-sm font-medium mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
                 <FileText size={16} className="inline mr-1" />
                 Description *
               </label>
@@ -288,16 +291,18 @@ useEffect(() => {
                 placeholder="Enter quiz description"
                 rows={4}
                 className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none transition-colors resize-none ${
-                  errors.description ? 'border-red-300 bg-red-50' : 'border-gray-200'
+                  errors.description 
+                    ? (darkMode ? 'border-red-900 bg-red-900/20' : 'border-red-300 bg-red-50') 
+                    : (darkMode ? 'border-gray-600 bg-gray-700 text-white' : 'border-gray-200 text-gray-800')
                 }`}
               />
               {errors.description && (
-                <p className="mt-1 text-sm text-red-600 flex items-center">
+                <p className="mt-1 text-sm text-red-500 flex items-center">
                   <AlertCircle size={14} className="mr-1" />
                   {errors.description}
                 </p>
               )}
-              <p className="mt-1 text-xs text-gray-500">
+              <p className={`mt-1 text-xs ${darkMode ? 'text-gray-500' : 'text-gray-500'}`}>
                 {formData.description.length}/500 characters
               </p>
             </div>
@@ -306,7 +311,7 @@ useEffect(() => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Category */}
               <div>
-                <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="category" className={`block text-sm font-medium mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
                   <Tag size={16} className="inline mr-1" />
                   Category *
                 </label>
@@ -315,17 +320,19 @@ useEffect(() => {
                   name="category"
                   value={formData.category}
                   onChange={handleChange}
-                  className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none transition-colors bg-white ${
-                    errors.category ? 'border-red-300 bg-red-50' : 'border-gray-200'
+                  className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none transition-colors ${
+                    errors.category 
+                      ? (darkMode ? 'border-red-900 bg-red-900/20' : 'border-red-300 bg-red-50') 
+                      : (darkMode ? 'border-gray-600 bg-gray-700 text-white' : 'border-gray-200 text-gray-800')
                   }`}
                 >
                   <option value="">Select a category</option>
                   {categories.map(cat => (
-                    <option key={cat} value={cat}>{cat}</option>
+                    <option key={cat} value={cat} className={darkMode ? 'bg-gray-800 text-white' : 'bg-white text-gray-800'}>{cat}</option>
                   ))}
                 </select>
                 {errors.category && (
-                  <p className="mt-1 text-sm text-red-600 flex items-center">
+                  <p className="mt-1 text-sm text-red-500 flex items-center">
                     <AlertCircle size={14} className="mr-1" />
                     {errors.category}
                   </p>
@@ -334,7 +341,7 @@ useEffect(() => {
 
               {/* Time Limit */}
               <div>
-                <label htmlFor="timeLimit" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="timeLimit" className={`block text-sm font-medium mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
                   <Clock size={16} className="inline mr-1" />
                   Time Limit (minutes) *
                 </label>
@@ -347,11 +354,13 @@ useEffect(() => {
                   min="1"
                   max="180"
                   className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none transition-colors ${
-                    errors.timeLimit ? 'border-red-300 bg-red-50' : 'border-gray-200'
+                    errors.timeLimit 
+                      ? (darkMode ? 'border-red-900 bg-red-900/20' : 'border-red-300 bg-red-50') 
+                      : (darkMode ? 'border-gray-600 bg-gray-700 text-white' : 'border-gray-200 text-gray-800')
                   }`}
                 />
                 {errors.timeLimit && (
-                  <p className="mt-1 text-sm text-red-600 flex items-center">
+                  <p className="mt-1 text-sm text-red-500 flex items-center">
                     <AlertCircle size={14} className="mr-1" />
                     {errors.timeLimit}
                   </p>
@@ -362,8 +371,8 @@ useEffect(() => {
             {/* Status */}
             {!isEditMode ? (
               // Create mode - Status is always draft (hidden from user)
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                <div className="flex items-center text-blue-700">
+              <div className={`${darkMode ? 'bg-blue-900/20 border-blue-900/30 text-blue-300' : 'bg-blue-50 border-blue-200 text-blue-700'} border rounded-lg p-4`}>
+                <div className="flex items-center">
                   <AlertCircle size={18} className="mr-2" />
                   <span className="text-sm font-medium">
                     Quiz will be created as a draft. You can publish it from the quiz list or detail page after adding at least 5 questions.
@@ -373,16 +382,16 @@ useEffect(() => {
             ) : (
               // Edit mode - Show status selection for published/archived only
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className={`block text-sm font-medium mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
                   Status
                 </label>
                 
                 {formData.status === 'draft' ? (
                   <div className="space-y-3">
-                    <div className="inline-flex items-center px-4 py-2 rounded-lg border border-orange-500 bg-orange-50 text-orange-700">
+                    <div className={`inline-flex items-center px-4 py-2 rounded-lg border ${darkMode ? 'border-orange-500 bg-orange-500/10 text-orange-400' : 'border-orange-500 bg-orange-50 text-orange-700'}`}>
                       <span className="capitalize font-medium">Draft</span>
                     </div>
-                    <p className="text-xs text-gray-500">
+                    <p className={`text-xs ${darkMode ? 'text-gray-500' : 'text-gray-500'}`}>
                       Quiz is not visible to users yet. Use the Publish button from Quiz List or Quiz Detail page to publish.
                     </p>
                   </div>
@@ -393,8 +402,8 @@ useEffect(() => {
                         key={status}
                         className={`inline-flex items-center px-4 py-2 rounded-lg border cursor-pointer transition-colors ${
                           formData.status === status
-                            ? 'border-orange-500 bg-orange-50 text-orange-700'
-                            : 'border-gray-200 hover:border-orange-300'
+                            ? (darkMode ? 'border-orange-500 bg-orange-500/10 text-orange-400' : 'border-orange-500 bg-orange-50 text-orange-700')
+                            : (darkMode ? 'border-gray-600 bg-gray-700 text-gray-400 hover:border-orange-500' : 'border-gray-200 text-gray-600 hover:border-orange-300')
                         }`}
                       >
                         <input
@@ -412,7 +421,7 @@ useEffect(() => {
                 )}
                 
                 {formData.status !== 'draft' && (
-                  <p className="mt-2 text-xs text-gray-500">
+                  <p className={`mt-2 text-xs ${darkMode ? 'text-gray-500' : 'text-gray-500'}`}>
                     {formData.status === 'published' && 'Quiz is visible to all users.'}
                     {formData.status === 'archived' && 'Quiz is archived and hidden from users.'}
                   </p>
@@ -421,18 +430,18 @@ useEffect(() => {
             )}
 
             {/* Action Buttons */}
-            <div className="flex items-center justify-end space-x-4 pt-6 border-t border-gray-100">
+            <div className={`flex items-center justify-end space-x-4 pt-6 border-t ${darkMode ? 'border-gray-700' : 'border-gray-100'}`}>
               <button
                 type="button"
                 onClick={handleCancel}
-                className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium"
+                className={`px-6 py-2 border rounded-lg transition-colors font-medium ${darkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : 'border-gray-300 text-gray-700 hover:bg-gray-50'}`}
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={isLoading}
-                className="inline-flex items-center px-6 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                className="inline-flex items-center px-6 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed shadow-md"
               >
                 {isLoading ? (
                   <>

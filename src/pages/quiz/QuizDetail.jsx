@@ -34,6 +34,7 @@ const QuizDetail = () => {
   const { user } = useSelector((state) => state.auth);
   const { currentQuiz, isLoading, isError, message } = useSelector((state) => state.quiz);
   const { questions, isLoading: questionsLoading } = useSelector((state) => state.question);
+  const { darkMode } = useSelector((state) => state.theme);
   const [hasAttempted, setHasAttempted] = useState(false);
   const [userResult, setUserResult] = useState(null);
   const [isPublishing, setIsPublishing] = useState(false);
@@ -148,7 +149,7 @@ const QuizDetail = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-primary-100 to-primary-400 flex items-center justify-center">
+      <div className={`min-h-screen ${darkMode ? 'bg-gray-900' : 'bg-gradient-to-b from-primary-100 to-primary-400'} flex items-center justify-center`}>
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500"></div>
       </div>
     );
@@ -156,19 +157,19 @@ const QuizDetail = () => {
 
   if (isError) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-primary-100 to-primary-400">
+      <div className={`min-h-screen ${darkMode ? 'bg-gray-900 text-white' : 'bg-gradient-to-b from-primary-100 to-primary-400'}`}>
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <button
             onClick={() => navigate('/quizzes')}
-            className="inline-flex items-center text-gray-600 hover:text-orange-500 transition-colors mb-4"
+            className={`inline-flex items-center transition-colors mb-4 ${darkMode ? 'text-gray-300 hover:text-orange-500' : 'text-gray-600 hover:text-orange-500'}`}
           >
             <ArrowLeft size={20} className="mr-1" />
             Back to Quizzes
           </button>
-          <div className="bg-red-50 border border-red-200 rounded-xl p-8 text-center">
+          <div className={`${darkMode ? 'bg-gray-800 border-red-900/50' : 'bg-red-50 border-red-200'} border rounded-xl p-8 text-center`}>
             <AlertCircle size={48} className="mx-auto text-red-500 mb-4" />
-            <h2 className="text-xl font-bold text-gray-800 mb-2">Error Loading Quiz</h2>
-            <p className="text-gray-600">{message}</p>
+            <h2 className={`text-xl font-bold mb-2 ${darkMode ? 'text-white' : 'text-gray-800'}`}>Error Loading Quiz</h2>
+            <p className={darkMode ? 'text-gray-400' : 'text-gray-600'}>{message}</p>
           </div>
         </div>
       </div>
@@ -177,19 +178,19 @@ const QuizDetail = () => {
 
   if (!currentQuiz) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-primary-100 to-primary-400">
+      <div className={`min-h-screen ${darkMode ? 'bg-gray-900 text-white' : 'bg-gradient-to-b from-primary-100 to-primary-400'}`}>
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <button
             onClick={() => navigate('/quizzes')}
-            className="inline-flex items-center text-gray-600 hover:text-orange-500 transition-colors mb-4"
+            className={`inline-flex items-center transition-colors mb-4 ${darkMode ? 'text-gray-300 hover:text-orange-500' : 'text-gray-600 hover:text-orange-500'}`}
           >
             <ArrowLeft size={20} className="mr-1" />
             Back to Quizzes
           </button>
-          <div className="bg-white rounded-xl shadow-md p-8 text-center border border-gray-100">
+          <div className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'} rounded-xl shadow-md p-8 text-center border`}>
             <BookOpen size={48} className="mx-auto text-gray-300 mb-4" />
-            <h2 className="text-xl font-bold text-gray-800 mb-2">Quiz Not Found</h2>
-            <p className="text-gray-600">The quiz you are looking for does not exist.</p>
+            <h2 className={`text-xl font-bold mb-2 ${darkMode ? 'text-white' : 'text-gray-800'}`}>Quiz Not Found</h2>
+            <p className={darkMode ? 'text-gray-400' : 'text-gray-600'}>The quiz you are looking for does not exist.</p>
           </div>
         </div>
       </div>
@@ -197,38 +198,38 @@ const QuizDetail = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-primary-100 to-primary-400">
+    <div className={`min-h-screen transition-colors duration-300 ${darkMode ? 'bg-gray-900' : 'bg-gradient-to-b from-primary-100 to-primary-400'}`}>
       {/* <div className="min-h-screen bg-white"> */}
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Back Button */}
         <button
           onClick={() => navigate('/quizzes')}
-          className="inline-flex items-center text-gray-600 hover:text-orange-500 transition-colors  overflow-hidden"
+          className={`inline-flex items-center transition-colors mb-4 ${darkMode ? 'text-gray-300 hover:text-orange-500' : 'text-gray-600 hover:text-orange-500'}`}
         >
           <ArrowLeft size={20} className="mr-1" />
           Back to Quizzes
         </button>
 
         {/* Main Content */}
-        <div className="bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden">
+        <div className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100 shadow-md'} rounded-xl border overflow-hidden`}>
           {/* <div className=" bg-gradient-to-b from-primary-100 to-primary-400"> */}
 
           {/* Header */}
-          <div className="p-6 border-b border-gray-100 bg-gradient-to-r from-orange-50 to-white">
+          <div className={`p-6 border-b ${darkMode ? 'border-gray-700 bg-gray-800/50' : 'border-gray-100 bg-gradient-to-r from-orange-50 to-white'}`}>
             <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
               <div className="flex-1">
                 <div className="flex items-center gap-3 mb-3">
                   {isAdmin && getStatusBadge(currentQuiz.status)}
-                  <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-600">
+                  <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${darkMode ? 'bg-blue-900/40 text-blue-300' : 'bg-blue-100 text-blue-600'}`}>
                     <Tag size={14} className="mr-1" />
                     {currentQuiz.category}
                   </span>
                 </div>
-                <h1 className="text-2xl md:text-3xl font-bold text-gray-800 mb-2">
+                <h1 className={`text-2xl md:text-3xl font-bold mb-2 ${darkMode ? 'text-white' : 'text-gray-800'}`}>
                   {currentQuiz.title}
                 </h1>
-                <p className="text-gray-600">{currentQuiz.description}</p>
+                <p className={darkMode ? 'text-gray-400' : 'text-gray-600'}>{currentQuiz.description}</p>
               </div>
 
               {/* Action Buttons */}
@@ -302,10 +303,10 @@ const QuizDetail = () => {
                 {currentQuiz.status === 'published' && !isAdmin && (
                   hasAttempted ? (
                     <div className="text-center">
-                      <p className="text-sm text-gray-500 mb-2">You have already taken this quiz</p>
+                      <p className={`text-sm mb-2 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>You have already taken this quiz</p>
                       <button
                         onClick={() => navigate(`/quizzes/${currentQuiz._id}/review/${userResult._id}`)}
-                        className="inline-flex items-center justify-center px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors font-medium shadow-md"
+                        className={`inline-flex items-center justify-center px-4 py-2 rounded-lg transition-colors font-medium shadow-md ${darkMode ? 'bg-green-600 text-white hover:bg-green-700' : 'bg-green-500 text-white hover:bg-green-600'}`}
                       >
                         <CheckCircle size={18} className="mr-2" />
                         View Result
@@ -322,7 +323,7 @@ const QuizDetail = () => {
                       className={`inline-flex items-center justify-center px-4 py-2 rounded-lg transition-colors font-medium shadow-md
                       ${isQuizActive
                           ? 'bg-orange-500 text-white hover:bg-orange-600'
-                          : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                          : darkMode ? 'bg-gray-700 text-gray-500 cursor-not-allowed' : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                         }`}
                     >
                       <Play size={18} className="mr-2" />
@@ -338,59 +339,59 @@ const QuizDetail = () => {
           <div className="p-6">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
               {/* Time Limit */}
-              <div className="bg-gray-50 rounded-xl p-4">
+              <div className={`${darkMode ? 'bg-gray-700/50' : 'bg-gray-50'} rounded-xl p-4 transition-colors`}>
                 <div className="flex items-center space-x-3">
                   <div className="p-2 bg-orange-100 rounded-lg">
                     <Clock size={20} className="text-orange-600" />
                   </div>
                   <div>
-                    <p className="text-lg font-bold text-gray-800">{currentQuiz.timeLimit} min</p>
-                    <p className="text-sm text-gray-500">Time Limit</p>
+                    <p className={`text-lg font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>{currentQuiz.timeLimit} min</p>
+                    <p className={darkMode ? 'text-gray-400' : 'text-gray-500'}>Time Limit</p>
                   </div>
                 </div>
               </div>
 
               {/* Created By */}
-              <div className="bg-gray-50 rounded-xl p-4">
+              <div className={`${darkMode ? 'bg-gray-700/50' : 'bg-gray-50'} rounded-xl p-4 transition-colors`}>
                 <div className="flex items-center space-x-3">
                   <div className="p-2 bg-blue-100 rounded-lg">
                     <User size={20} className="text-blue-600" />
                   </div>
                   <div>
-                    <p className="text-lg font-bold text-gray-800">
+                    <p className={`text-lg font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>
                       {currentQuiz.createdBy?.username || 'Unknown'}
                     </p>
-                    <p className="text-sm text-gray-500">Created By</p>
+                    <p className={darkMode ? 'text-gray-400' : 'text-gray-500'}>Created By</p>
                   </div>
                 </div>
               </div>
 
               {/* Created Date */}
-              <div className="bg-gray-50 rounded-xl p-4">
+              <div className={`${darkMode ? 'bg-gray-700/50' : 'bg-gray-50'} rounded-xl p-4 transition-colors`}>
                 <div className="flex items-center space-x-3">
                   <div className="p-2 bg-green-100 rounded-lg">
                     <Calendar size={20} className="text-green-600" />
                   </div>
                   <div>
-                    <p className="text-lg font-bold text-gray-800">
+                    <p className={`text-lg font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>
                       {new Date(currentQuiz.createdAt).toLocaleDateString()}
                     </p>
-                    <p className="text-sm text-gray-500">Created On</p>
+                    <p className={darkMode ? 'text-gray-400' : 'text-gray-500'}>Created On</p>
                   </div>
                 </div>
               </div>
 
               {/* Questions Count */}
-              <div className="bg-gray-50 rounded-xl p-4">
+              <div className={`${darkMode ? 'bg-gray-700/50' : 'bg-gray-50'} rounded-xl p-4 transition-colors`}>
                 <div className="flex items-center space-x-3">
                   <div className="p-2 bg-purple-100 rounded-lg">
                     <FileText size={20} className="text-purple-600" />
                   </div>
                   <div>
-                    <p className="text-lg font-bold text-gray-800">
+                    <p className={`text-lg font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>
                       {questionsLoading ? '...' : questions.length}
                     </p>
-                    <p className="text-sm text-gray-500">Questions</p>
+                    <p className={darkMode ? 'text-gray-400' : 'text-gray-500'}>Questions</p>
                   </div>
                 </div>
               </div>
@@ -399,37 +400,37 @@ const QuizDetail = () => {
             {/* Additional Info */}
             <div className="space-y-6">
               {/* Quiz Details Section */}
-              <div className="border-t border-gray-100 pt-6">
-                <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+              <div className={`border-t ${darkMode ? 'border-gray-700' : 'border-gray-100'} pt-6`}>
+                <h3 className={`text-lg font-semibold mb-4 flex items-center ${darkMode ? 'text-white' : 'text-gray-800'}`}>
                   <BarChart3 size={20} className="mr-2 text-orange-500" />
                   Quiz Details
                 </h3>
-                <div className="bg-gray-50 rounded-xl p-4 space-y-3">
+                <div className={`${darkMode ? 'bg-gray-700/50' : 'bg-gray-50'} rounded-xl p-4 space-y-3`}>
                   {/* <div className="flex justify-between items-center py-2 border-b border-gray-200 last:border-0">
                     <span className="text-gray-600">Quiz ID</span>
                     <span className="font-mono text-sm text-gray-800">{currentQuiz._id}</span>
                   </div> */}
-                  <div className="flex justify-between items-center py-2 border-b border-gray-200 last:border-0">
-                    <span className="text-gray-600">Last Updated</span>
-                    <span className="text-gray-800">{formatDate(currentQuiz.updatedAt)}</span>
+                  <div className={`flex justify-between items-center py-2 border-b ${darkMode ? 'border-gray-600' : 'border-gray-200'} last:border-0`}>
+                    <span className={darkMode ? 'text-gray-400' : 'text-gray-600'}>Last Updated</span>
+                    <span className={darkMode ? 'text-gray-200' : 'text-gray-800'}>{formatDate(currentQuiz.updatedAt)}</span>
                   </div>
                   {isAdmin && (
-                    <div className="flex justify-between items-center py-2 border-b border-gray-200 last:border-0">
-                      <span className="text-gray-600">Status</span>
-                      <span className="capitalize text-gray-800">{currentQuiz.status}</span>
+                    <div className={`flex justify-between items-center py-2 border-b ${darkMode ? 'border-gray-600' : 'border-gray-200'} last:border-0`}>
+                      <span className={darkMode ? 'text-gray-400' : 'text-gray-600'}>Status</span>
+                      <span className={`capitalize ${darkMode ? 'text-gray-200' : 'text-gray-800'}`}>{currentQuiz.status}</span>
                     </div>
                   )}
                 </div>
               </div>
 
               {/* Instructions Section */}
-              <div className="border-t border-gray-100 pt-6">
-                <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+              <div className={`border-t ${darkMode ? 'border-gray-700' : 'border-gray-100'} pt-6`}>
+                <h3 className={`text-lg font-semibold mb-4 flex items-center ${darkMode ? 'text-white' : 'text-gray-800'}`}>
                   <Award size={20} className="mr-2 text-orange-500" />
                   Instructions
                 </h3>
-                <div className="bg-blue-50 border border-blue-100 rounded-xl p-4">
-                  <ul className="space-y-2 text-gray-700">
+                <div className={`${darkMode ? 'bg-blue-900/20 border-blue-900/30' : 'bg-blue-50 border-blue-100'} border rounded-xl p-4`}>
+                  <ul className={`space-y-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
                     <li className="flex items-start">
                       <span className="mr-2">•</span>
                       <span>You have <strong>{currentQuiz.timeLimit} minutes</strong> to complete this quiz.</span>
@@ -452,8 +453,8 @@ const QuizDetail = () => {
 
               {/* Status Messages - Only for Admin */}
               {isAdmin && currentQuiz.status === 'draft' && (
-                <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4">
-                  <div className="flex items-center text-yellow-700">
+                <div className={`${darkMode ? 'bg-yellow-900/20 border-yellow-900/30' : 'bg-yellow-50 border-yellow-200'} border rounded-xl p-4`}>
+                  <div className={`flex items-center ${darkMode ? 'text-yellow-400' : 'text-yellow-700'}`}>
                     <AlertCircle size={20} className="mr-2" />
                     <span>This quiz is in draft mode. Users cannot see it until you publish it.</span>
                   </div>
@@ -462,8 +463,8 @@ const QuizDetail = () => {
 
               {/* Deactivation Message - Show to all users when quiz is inactive */}
               {currentQuiz.status === 'published' && !isQuizActive && (
-                <div className="bg-red-50 border border-red-200 rounded-xl p-4">
-                  <div className="flex items-center text-red-700">
+                <div className={`${darkMode ? 'bg-red-900/20 border-red-900/30' : 'bg-red-50 border-red-200'} border rounded-xl p-4`}>
+                  <div className={`flex items-center ${darkMode ? 'text-red-400' : 'text-red-700'}`}>
                     <PowerOff size={20} className="mr-2" />
                     <span>This quiz is temporarily deactivated.</span>
                   </div>
@@ -471,8 +472,8 @@ const QuizDetail = () => {
               )}
 
               {currentQuiz.status === 'archived' && (
-                <div className="bg-gray-50 border border-gray-200 rounded-xl p-4">
-                  <div className="flex items-center text-gray-600">
+                <div className={`${darkMode ? 'bg-gray-700 border-gray-600' : 'bg-gray-50 border-gray-200'} border rounded-xl p-4`}>
+                  <div className={`flex items-center ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
                     <XCircle size={20} className="mr-2" />
                     <span>This quiz has been archived and is no longer available for taking.</span>
                   </div>

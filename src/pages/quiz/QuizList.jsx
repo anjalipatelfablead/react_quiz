@@ -32,6 +32,7 @@ const QuizList = () => {
     const navigate = useNavigate();
     const { user } = useSelector((state) => state.auth);
     const { quizzes, isLoading, isError, message } = useSelector((state) => state.quiz);
+    const { darkMode } = useSelector((state) => state.theme);
 
     const [searchTerm, setSearchTerm] = useState('');
     const [statusFilter, setStatusFilter] = useState('all');
@@ -258,7 +259,7 @@ const QuizList = () => {
 
     if (isLoading) {
         return (
-            <div className="min-h-screen bg-gradient-to-b from-primary-100 to-primary-400 flex items-center justify-center">
+            <div className={`min-h-screen ${darkMode ? 'bg-gray-900' : 'bg-gradient-to-b from-primary-100 to-primary-400'} flex items-center justify-center`}>
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500"></div>
             </div>
         );
@@ -267,16 +268,16 @@ const QuizList = () => {
     return (
 
         <>
-            <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-orange-100">
+            <div className={`min-h-screen transition-colors duration-300 ${darkMode ? 'bg-gray-900' : 'bg-gradient-to-br from-orange-50 via-white to-orange-100'}`}>
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                     {/* Header */}
                     <div className="mb-8">
                         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                             <div>
-                                <h1 className="text-3xl font-bold text-gray-800">
+                                <h1 className={`text-3xl font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>
                                     <span className="text-orange-500">Quizzes</span>
                                 </h1>
-                                <p className="text-gray-600 mt-2">
+                                <p className={`${darkMode ? 'text-gray-400' : 'text-gray-600'} mt-2`}>
                                     {isAdmin ? 'Manage all quizzes from here.' : 'Browse available quizzes to test your knowledge.'}
                                 </p>
                             </div>
@@ -293,7 +294,7 @@ const QuizList = () => {
                     </div>
 
                     {/* Filters */}
-                    <div className="bg-white rounded-xl shadow-md p-4 mb-6 border border-gray-100">
+                    <div className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'} rounded-xl shadow-md p-4 mb-6 border`}>
                         <div className="flex flex-col md:flex-row gap-4">
                             {/* Search */}
                             <div className="flex-1 relative">
@@ -303,7 +304,7 @@ const QuizList = () => {
                                     placeholder="Search quizzes..."
                                     value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)}
-                                    className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none"
+                                    className={`w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none ${darkMode ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400' : 'bg-white border-gray-200 text-gray-800'}`}
                                 />
                             </div>
 
@@ -314,7 +315,7 @@ const QuizList = () => {
                                     <select
                                         value={statusFilter}
                                         onChange={(e) => setStatusFilter(e.target.value)}
-                                        className="px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none bg-white"
+                                        className={`px-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none ${darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-200 text-gray-800'}`}
                                     >
                                         <option value="all">All Status</option>
                                         <option value="published">Published</option>
@@ -330,7 +331,7 @@ const QuizList = () => {
                                 <select
                                     value={categoryFilter}
                                     onChange={(e) => setCategoryFilter(e.target.value)}
-                                    className="px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none bg-white"
+                                    className={`px-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none ${darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-200 text-gray-800'}`}
                                 >
                                     <option value="all">All Categories</option>
                                     {categories.map(cat => (
@@ -343,8 +344,8 @@ const QuizList = () => {
 
                     {/* Error Message */}
                     {isError && (
-                        <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-6">
-                            <div className="flex items-center text-red-600">
+                        <div className={`${darkMode ? 'bg-red-900/20 border-red-900/30 text-red-400' : 'bg-red-50 border-red-200 text-red-600'} border rounded-xl p-4 mb-6`}>
+                            <div className="flex items-center">
                                 <AlertCircle size={20} className="mr-2" />
                                 <span>{message}</span>
                             </div>
@@ -353,70 +354,70 @@ const QuizList = () => {
 
                     {/* Stats Cards */}
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
-                        <div className="bg-white rounded-xl shadow-md p-4 border border-gray-100">
+                        <div className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'} rounded-xl shadow-md p-4 border`}>
                             <div className="flex items-center space-x-3">
-                                <div className="p-2 bg-blue-100 rounded-lg">
+                                <div className={`${darkMode ? 'bg-blue-900/30' : 'bg-blue-100'} p-2 rounded-lg`}>
                                     <BookOpen size={20} className="text-blue-600" />
                                 </div>
                                 <div>
-                                    <p className="text-2xl font-bold text-gray-800">
+                                    <p className={`text-2xl font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>
                                         {isAdmin ? quizzes.length : quizzes.filter(q => q.status === 'published').length}
                                     </p>
-                                    <p className="text-sm text-gray-500">{isAdmin ? 'Total Quizzes' : 'Available Quizzes'}</p>
+                                    <p className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>{isAdmin ? 'Total Quizzes' : 'Available Quizzes'}</p>
                                 </div>
                             </div>
                         </div>
                         {isAdmin && (
                             <>
-                                <div className="bg-white rounded-xl shadow-md p-4 border border-gray-100">
+                                <div className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'} rounded-xl shadow-md p-4 border`}>
                                     <div className="flex items-center space-x-3">
-                                        <div className="p-2 bg-green-100 rounded-lg">
+                                        <div className={`${darkMode ? 'bg-green-900/30' : 'bg-green-100'} p-2 rounded-lg`}>
                                             <CheckCircle size={20} className="text-green-600" />
                                         </div>
                                         <div>
-                                            <p className="text-2xl font-bold text-gray-800">
+                                            <p className={`text-2xl font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>
                                                 {quizzes.filter(q => q.status === 'published').length}
                                             </p>
-                                            <p className="text-sm text-gray-500">Published</p>
+                                            <p className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Published</p>
                                         </div>
                                     </div>
                                 </div>
-                                <div className="bg-white rounded-xl shadow-md p-4 border border-gray-100">
+                                <div className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'} rounded-xl shadow-md p-4 border`}>
                                     <div className="flex items-center space-x-3">
-                                        <div className="p-2 bg-yellow-100 rounded-lg">
+                                        <div className={`${darkMode ? 'bg-yellow-900/30' : 'bg-yellow-100'} p-2 rounded-lg`}>
                                             <AlertCircle size={20} className="text-yellow-600" />
                                         </div>
                                         <div>
-                                            <p className="text-2xl font-bold text-gray-800">
+                                            <p className={`text-2xl font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>
                                                 {quizzes.filter(q => q.status === 'draft').length}
                                             </p>
-                                            <p className="text-sm text-gray-500">Drafts</p>
+                                            <p className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Drafts</p>
                                         </div>
                                     </div>
                                 </div>
-                                <div className="bg-white rounded-xl shadow-md p-4 border border-gray-100">
+                                <div className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'} rounded-xl shadow-md p-4 border`}>
                                     <div className="flex items-center space-x-3">
-                                        <div className="p-2 bg-gray-100 rounded-lg">
+                                        <div className={`${darkMode ? 'bg-gray-700' : 'bg-gray-100'} p-2 rounded-lg`}>
                                             <Archive size={20} className="text-gray-600" />
                                         </div>
                                         <div>
-                                            <p className="text-2xl font-bold text-gray-800">
+                                            <p className={`text-2xl font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>
                                                 {quizzes.filter(q => q.status === 'archived').length}
                                             </p>
-                                            <p className="text-sm text-gray-500">Archived</p>
+                                            <p className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Archived</p>
                                         </div>
                                     </div>
                                 </div>
                             </>
                         )}
-                        <div className="bg-white rounded-xl shadow-md p-4 border border-gray-100">
+                        <div className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'} rounded-xl shadow-md p-4 border`}>
                             <div className="flex items-center space-x-3">
-                                <div className="p-2 bg-purple-100 rounded-lg">
+                                <div className={`${darkMode ? 'bg-purple-900/30' : 'bg-purple-100'} p-2 rounded-lg`}>
                                     <Tag size={20} className="text-purple-600" />
                                 </div>
                                 <div>
-                                    <p className="text-2xl font-bold text-gray-800">{categories.length}</p>
-                                    <p className="text-sm text-gray-500">Categories</p>
+                                    <p className={`text-2xl font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>{categories.length}</p>
+                                    <p className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Categories</p>
                                 </div>
                             </div>
                         </div>
@@ -424,10 +425,10 @@ const QuizList = () => {
 
                     {/* Quiz Grid */}
                     {filteredQuizzes.length === 0 ? (
-                        <div className="bg-white rounded-xl shadow-md p-12 text-center border border-gray-100">
+                        <div className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'} rounded-xl shadow-md p-12 text-center border`}>
                             <BookOpen size={48} className="mx-auto text-gray-300 mb-4" />
-                            <h3 className="text-lg font-semibold text-gray-700 mb-2">No quizzes found</h3>
-                            <p className="text-gray-500">
+                            <h3 className={`text-lg font-semibold ${darkMode ? 'text-gray-200' : 'text-gray-700'} mb-2`}>No quizzes found</h3>
+                            <p className={darkMode ? 'text-gray-400' : 'text-gray-500'}>
                                 {searchTerm || statusFilter !== 'all' || categoryFilter !== 'all'
                                     ? 'Try adjusting your filters'
                                     : isAdmin
@@ -449,13 +450,13 @@ const QuizList = () => {
                             {filteredQuizzes.map((quiz) => (
                                 <div
                                     key={quiz._id}
-                                    className="bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden hover:shadow-lg transition-shadow duration-300"
+                                    className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'} rounded-xl shadow-md border overflow-hidden hover:shadow-lg transition-all duration-300`}
                                 >
-                                    <div className="p-6  ">
+                                    <div className="p-6">
                                         <div className="flex items-start justify-between mb-4">
                                             <div className="flex-1">
-                                                <h3 className="text-lg font-bold text-gray-800 mb-1 line-clamp-1">{quiz.title}</h3>
-                                                <p className="text-sm text-gray-500 line-clamp-2">{quiz.description}</p>
+                                                <h3 className={`text-lg font-bold ${darkMode ? 'text-white' : 'text-gray-800'} mb-1 line-clamp-1`}>{quiz.title}</h3>
+                                                <p className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'} line-clamp-2`}>{quiz.description}</p>
                                             </div>
                                             {isAdmin && (
                                                 <div className="relative ml-2">
@@ -569,7 +570,7 @@ const QuizList = () => {
                                                     </>
                                                 )}
                                             </div>
-                                            <span className="text-xs text-gray-400">
+                                            <span className={`text-xs ${darkMode ? 'text-gray-500' : 'text-gray-400'}`}>
                                                 {isAdmin
                                                     ? formatDate(quiz.createdAt)
                                                     : `Published on ${formatDate(quiz.createdAt)}`
@@ -577,7 +578,7 @@ const QuizList = () => {
                                             </span>
                                         </div>
 
-                                        <div className="flex items-center space-x-4 text-sm text-gray-600 mb-4">
+                                        <div className={`flex items-center space-x-4 text-sm ${darkMode ? 'text-gray-300' : 'text-gray-600'} mb-4`}>
                                             <div className="flex items-center">
                                                 <Tag size={14} className="mr-1 text-orange-500" />
                                                 <span>{quiz.category}</span>
@@ -594,31 +595,15 @@ const QuizList = () => {
                                             )}
                                         </div>
 
-                                        <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-                                            <div className="flex items-center text-sm text-gray-500">
+                                        <div className={`flex items-center justify-between pt-4 border-t ${darkMode ? 'border-gray-700' : 'border-gray-100'}`}>
+                                            <div className={`flex items-center text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
                                                 <span>By {quiz.createdBy?.username || 'Unknown'}</span>
                                             </div>
                                             <div className="flex items-center gap-2">
-                                                {/* Show Start button only for active published quizzes */}
-                                                {/* {!isAdmin && quiz.status === 'published' && quiz.isActive !== false && (
-                                                    attemptedQuizzes.has(quiz._id) ? (
-                                                        <span className="inline-flex items-center px-3 py-1.5 text-sm font-medium text-gray-400 cursor-not-allowed">
-                                                            ✓ Completed
-                                                        </span>
-                                                    ) : (
-                                                        <button
-                                                            onClick={() => navigate(`/quizzes/${quiz._id}/take`)}
-                                                            className="inline-flex items-center px-3 py-1.5 text-sm font-medium text-green-600 hover:text-green-700 hover:bg-green-50 rounded-lg transition-colors"
-                                                        >
-                                                            ▶ Start
-                                                        </button>
-                                                    )
-                                                )} */}
-
                                                 {/* Show Start button for all published quizzes (user side) */}
                                                 {!isAdmin && quiz.status === 'published' && (
                                                     attemptedQuizzes.has(quiz._id) ? (
-                                                        <span className="inline-flex items-center px-3 py-1.5 text-sm font-medium text-gray-400 cursor-not-allowed">
+                                                        <span className={`inline-flex items-center px-3 py-1.5 text-sm font-medium ${darkMode ? 'text-gray-500' : 'text-gray-400'} cursor-not-allowed`}>
                                                             ✓ Completed
                                                         </span>
                                                     ) : (
@@ -631,8 +616,8 @@ const QuizList = () => {
                                                             disabled={quiz.isActive === false}
                                                             className={`inline-flex items-center px-3 py-1.5 text-sm font-medium rounded-lg transition-colors
                                                             ${quiz.isActive === false
-                                                                    ? 'text-gray-400 bg-gray-100 cursor-not-allowed'
-                                                                    : 'text-green-600 hover:text-green-700 hover:bg-green-50'
+                                                                    ? (darkMode ? 'text-gray-500 bg-gray-700 cursor-not-allowed' : 'text-gray-400 bg-gray-100 cursor-not-allowed')
+                                                                    : (darkMode ? 'text-green-400 hover:text-green-300 hover:bg-green-400/10' : 'text-green-600 hover:text-green-700 hover:bg-green-50')
                                                                 }`}
                                                             title={quiz.isActive === false ? 'Temporarily deactivated' : 'Start quiz'}
                                                         >
@@ -641,21 +626,13 @@ const QuizList = () => {
                                                     )
                                                 )}
 
-                                                {/* Show deactivated message for inactive quizzes */}
-                                                {/* {!isAdmin && quiz.status === 'published' && quiz.isActive === false && (
-                                                    <span className="inline-flex items-center px-3 py-1.5 text-sm font-medium text-red-500">
-                                                        <PowerOff size={14} className="mr-1" />
-                                                        Deactivated
-                                                    </span>
-                                                )} */}
-
                                                 {isAdmin && (
                                                     <button
                                                         onClick={() => navigate(`/quizzes/${quiz._id}/questions`)}
                                                         disabled={quiz.status === 'archived'}
                                                         className={`inline-flex items-center px-3 py-1.5 text-sm font-medium rounded-lg transition-colors ${quiz.status === 'archived'
-                                                            ? 'text-gray-400 bg-gray-100 cursor-not-allowed'
-                                                            : 'text-blue-600 hover:text-blue-700 hover:bg-blue-50'
+                                                            ? (darkMode ? 'text-gray-500 bg-gray-700 cursor-not-allowed' : 'text-gray-400 bg-gray-100 cursor-not-allowed')
+                                                            : (darkMode ? 'text-blue-400 hover:text-blue-300 hover:bg-blue-400/10' : 'text-blue-600 hover:text-blue-700 hover:bg-blue-50')
                                                             }`}
                                                         title={quiz.status === 'archived' ? 'Cannot manage questions for archived quiz' : 'Manage questions'}
                                                     >
@@ -665,7 +642,7 @@ const QuizList = () => {
 
                                                 <button
                                                     onClick={() => navigate(`/quizzes/${quiz._id}`)}
-                                                    className="inline-flex items-center px-3 py-1.5 text-sm font-medium text-orange-600 hover:text-orange-700 hover:bg-orange-50 rounded-lg transition-colors"
+                                                    className={`inline-flex items-center px-3 py-1.5 text-sm font-medium rounded-lg transition-colors ${darkMode ? 'text-orange-400 hover:text-orange-300 hover:bg-orange-400/10' : 'text-orange-600 hover:text-orange-700 hover:bg-orange-50'}`}
                                                 >
                                                     <Eye size={16} className="mr-1" />
                                                     View
@@ -689,24 +666,24 @@ const QuizList = () => {
                     ></div>
 
                     {/* Modal */}
-                    <div className="relative bg-white rounded-xl shadow-xl w-full max-w-md p-6 z-10 animate-fadeIn">
+                    <div className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white'} relative rounded-xl shadow-xl w-full max-w-md p-6 z-10 animate-fadeIn border`}>
                         <div className="flex items-center space-x-3 mb-4">
                             <div className="p-2 bg-red-100 rounded-full">
                                 <AlertCircle className="text-red-600" size={24} />
                             </div>
-                            <h3 className="text-lg font-semibold text-gray-800">
+                            <h3 className={`text-lg font-semibold ${darkMode ? 'text-white' : 'text-gray-800'}`}>
                                 Confirm Deletion
                             </h3>
                         </div>
 
-                        <p className="text-gray-600 mb-6">
+                        <p className={`${darkMode ? 'text-gray-400' : 'text-gray-600'} mb-6`}>
                             Are you sure you want to delete this quiz? This action cannot be undone.
                         </p>
 
                         <div className="flex justify-end space-x-3">
                             <button
                                 onClick={closeDeleteModal}
-                                className="px-4 py-2 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 transition"
+                                className={`px-4 py-2 rounded-lg border transition ${darkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : 'border-gray-200 text-gray-600 hover:bg-gray-50'}`}
                             >
                                 Cancel
                             </button>

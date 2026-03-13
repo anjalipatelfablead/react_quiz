@@ -5,27 +5,9 @@ import { getAllQuizzes, deleteQuiz, reset, updateQuiz } from '../../redux/slices
 import resultService from '../../services/result_service';
 import questionService from '../../services/question_service';
 import { toast } from "react-toastify";
-import {
-    BookOpen,
-    Plus,
-    Search,
-    Filter,
-    Clock,
-    Tag,
-    Edit,
-    Trash2,
-    Eye,
-    MoreVertical,
-    CheckCircle,
-    XCircle,
-    AlertCircle,
-    Globe,
-    Power,
-    PowerOff,
-    Users,
-    Archive,
-    ArchiveRestore,
-} from 'lucide-react';
+import { BookOpen, Plus, Search, Filter, Clock, Tag, Edit, Trash2, Eye, MoreVertical,
+    CheckCircle, XCircle, AlertCircle, Globe, Power, PowerOff,
+    Users, Archive, ArchiveRestore, ChevronLeft, ChevronRight, } from 'lucide-react';
 
 const QuizList = () => {
     const dispatch = useDispatch();
@@ -37,6 +19,13 @@ const QuizList = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [statusFilter, setStatusFilter] = useState('all');
     const [categoryFilter, setCategoryFilter] = useState('all');
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 9;
+
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [searchTerm, statusFilter, categoryFilter]);
+
     //   const [deleteConfirm, setDeleteConfirm] = useState(null);
     const [quizToDelete, setQuizToDelete] = useState(null);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -201,6 +190,14 @@ const QuizList = () => {
         const matchesCategory = categoryFilter === 'all' || quiz.category === categoryFilter;
         return matchesSearch && matchesStatus && matchesCategory;
     });
+
+    // Pagination logic
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    const currentQuizzes = filteredQuizzes.slice(indexOfFirstItem, indexOfLastItem);
+    const totalPages = Math.ceil(filteredQuizzes.length / itemsPerPage);
+
+    const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
     // const handleDelete = async (quizId) => {
     //     if (deleteConfirm === quizId) {
@@ -446,8 +443,9 @@ const QuizList = () => {
                             )}
                         </div>
                     ) : (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            {filteredQuizzes.map((quiz) => (
+                        <>
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                {currentQuizzes.map((quiz) => (
                                 <div
                                     key={quiz._id}
                                     className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'} rounded-xl shadow-md border overflow-hidden hover:shadow-lg transition-all duration-300`}
@@ -653,7 +651,55 @@ const QuizList = () => {
                                 </div>
                             ))}
                         </div>
-                    )}
+
+                        {/* Pagination */}
+                        {totalPages > 1 && (
+                            <div className="mt-8 flex justify-center items-center space-x-2">
+                                <button
+                                    onClick={() => paginate(currentPage - 1)}
+                                    disabled={currentPage === 1}
+                                    className={`p-2 rounded-lg border transition-colors ${
+                                        currentPage === 1
+                                        ? (darkMode ? 'text-gray-600 border-gray-800' : 'text-gray-300 border-gray-100')
+                                        : (darkMode ? 'text-gray-300 border-gray-700 hover:bg-gray-800 cursor-pointer' : 'text-gray-600 border-gray-200 hover:bg-gray-50 cursor-pointer')
+                                    }`}
+                                >
+                                    <ChevronLeft size={20} />
+                                </button>
+                                
+                                <div className="flex items-center space-x-1">
+                                    {[...Array(totalPages)].map((_, i) => (
+                                        <button
+                                            key={i + 1}
+                                            onClick={() => paginate(i + 1)}
+                                            className={`w-10 h-10 rounded-lg text-sm font-medium transition-colors  ${
+                                                currentPage === i + 1
+                                                ? 'bg-orange-500 text-white'
+                                                : (darkMode 
+                                                    ? 'text-gray-400 hover:bg-gray-800 hover:text-white cursor-pointer' 
+                                                    : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900 cursor-pointer')
+                                            }`}
+                                        >
+                                            {i + 1}
+                                        </button>
+                                    ))}
+                                </div>
+
+                                <button
+                                    onClick={() => paginate(currentPage + 1)}
+                                    disabled={currentPage === totalPages}
+                                    className={`p-2 rounded-lg border transition-colors ${
+                                        currentPage === totalPages
+                                        ? (darkMode ? 'text-gray-600 border-gray-800' : 'text-gray-300 border-gray-100')
+                                        : (darkMode ? 'text-gray-300 border-gray-700 hover:bg-gray-800 cursor-pointer' : 'text-gray-600 border-gray-200 hover:bg-gray-50 cursor-pointer')
+                                    }`}
+                                >
+                                    <ChevronRight size={20} />
+                                </button>
+                            </div>
+                        )}
+                    </>
+                )}
                 </div>
             </div>
 

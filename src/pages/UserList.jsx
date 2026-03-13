@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import DataTable, { createTheme } from 'react-data-table-component';
 import userService from '../services/user_service';
 import {
     Users,
@@ -27,6 +28,219 @@ const UserList = () => {
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
     const isAdmin = currentUser?.role === 'admin';
+
+    // Theme configuration for data table
+    useEffect(() => {
+        createTheme('custom', {
+            text: {
+                primary: darkMode ? '#f8fafc' : '#1e293b',
+                secondary: darkMode ? '#94a3b8' : '#64748b',
+            },
+            background: {
+                default: darkMode ? '#1e293b' : '#ffffff',
+            },
+            context: {
+                background: darkMode ? '#1e293b' : '#e2e8f0',
+                text: '#FFFFFF',
+            },
+            divider: {
+                default: darkMode ? '#334155' : '#f1f5f9',
+            },
+            action: {
+                button: 'rgba(0,0,0,.54)',
+                hover: 'rgba(0,0,0,.08)',
+                disabled: 'rgba(0,0,0,.12)',
+            },
+        });
+    }, [darkMode]);
+
+    const columns = [
+        {
+            name: 'User',
+            selector: row => row.username,
+            sortable: true,
+            cell: row => (
+                <div className="flex items-center py-2">
+                    <div className="flex-shrink-0 h-10 w-10">
+                        {row.profileImage ? (
+                            <img
+                                className="h-10 w-10 rounded-full object-cover"
+                                src={`http://localhost:3030${row.profileImage}`}
+                                alt={row.username}
+                            />
+                        ) : (
+                            <div className="h-10 w-10 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white font-bold">
+                                {row.username?.charAt(0).toUpperCase()}
+                            </div>
+                        )}
+                    </div>
+                    <div className="ml-4">
+                        <div className={`text-sm font-medium ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+                            {row.username}
+                        </div>
+                        {row._id === currentUser?._id && (
+                            <span className="text-xs text-orange-500">(You)</span>
+                        )}
+                    </div>
+                </div>
+            ),
+        },
+        {
+            name: 'Email',
+            selector: row => row.email,
+            sortable: true,
+            cell: row => (
+                <div className={`flex items-center text-sm ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                    <Mail size={14} className={`mr-2 ${darkMode ? 'text-gray-500' : 'text-gray-400'}`} />
+                    {row.email}
+                </div>
+            ),
+        },
+        {
+            name: 'Role',
+            selector: row => row.role,
+            sortable: true,
+            cell: row => (
+                <span className={`inline-flex items-center px-2 py-1 text-xs font-semibold rounded-full ${row.role === 'admin'
+                    ? (darkMode ? 'bg-purple-900/30 text-purple-400' : 'bg-purple-100 text-purple-600')
+                    : (darkMode ? 'bg-blue-900/30 text-blue-400' : 'bg-blue-100 text-blue-600')
+                }`}>
+                    <Shield size={12} className="mr-1" />
+                    {row.role}
+                </span>
+            ),
+        },
+        {
+            name: 'Joined',
+            selector: row => row.createdAt,
+            sortable: true,
+            cell: row => (
+                <div className={`flex items-center text-sm ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                    <Calendar size={14} className={`mr-2 ${darkMode ? 'text-gray-500' : 'text-gray-400'}`} />
+                    {formatDate(row.createdAt)}
+                </div>
+            ),
+        },
+        {
+            name: 'Status',
+            cell: row => (
+                <div className="flex items-center">
+                    <button
+                        onClick={() => handleToggleStatus(row)}
+                        disabled={row._id === currentUser?._id}
+                        className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-300 ${row.isActive !== false ? 'bg-orange-500' : (darkMode ? 'bg-gray-700' : 'bg-gray-300')
+                        } ${row._id === currentUser?._id ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+                        title={
+                            row._id === currentUser?._id
+                                ? "Cannot change your own status"
+                                : row.isActive !== false
+                                    ? "Click to deactivate"
+                                    : "Click to activate"
+                        }
+                    >
+                        <span
+                            className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-300 ${row.isActive !== false ? 'translate-x-6' : 'translate-x-1'
+                            }`}
+                        />
+                    </button>
+                </div>
+            ),
+        },
+        {
+            name: 'Actions',
+            right: true,
+            cell: row => (
+                row._id !== currentUser?._id && (
+                    <button
+                        onClick={() => openDeleteModal(row)}
+                        className={`p-2 rounded-lg transition-colors ${darkMode ? 'text-red-400 hover:bg-red-900/30' : 'text-red-600 hover:text-red-900 hover:bg-red-50'}`}
+                        title="Delete user"
+                    >
+                        <Trash2 size={18} />
+                    </button>
+                )
+            ),
+        },
+    ];
+
+    const customStyles = {
+        header: {
+            style: {
+                minHeight: '56px',
+            },
+        },
+        headRow: {
+            style: {
+                borderTopStyle: 'solid',
+                borderTopWidth: '1px',
+                borderTopColor: darkMode ? '#334155' : '#f1f5f9',
+                backgroundColor: darkMode ? '#0f172a' : '#f8fafc',
+            },
+        },
+        headCells: {
+            style: {
+                fontSize: '12px',
+                fontWeight: '600',
+                textTransform: 'uppercase',
+                letterSpacing: '0.05em',
+                color: darkMode ? '#94a3b8' : '#64748b',
+                paddingLeft: '24px',
+                paddingRight: '24px',
+            },
+        },
+        cells: {
+            style: {
+                paddingLeft: '24px',
+                paddingRight: '24px',
+                backgroundColor: 'transparent',
+            },
+        },
+        rows: {
+            style: {
+                minHeight: '72px',
+                '&:not(:last-of-type)': {
+                    borderBottomStyle: 'solid',
+                    borderBottomWidth: '1px',
+                    borderBottomColor: darkMode ? '#334155' : '#f1f5f9',
+                },
+                backgroundColor: 'transparent',
+                '&:hover': {
+                    backgroundColor: darkMode ? '#1e293b' : '#f8fafc',
+                    cursor: 'pointer',
+                    transitionDuration: '0.15s',
+                    transitionProperty: 'background-color',
+                },
+            },
+        },
+        pagination: {
+            style: {
+                borderTopStyle: 'solid',
+                borderTopWidth: '1px',
+                borderTopColor: darkMode ? '#334155' : '#f1f5f9',
+                backgroundColor: darkMode ? '#1e293b' : '#ffffff',
+                color: darkMode ? '#f8fafc' : '#1e293b',
+            },
+            pageButtonsStyle: {
+                borderRadius: '50%',
+                height: '40px',
+                width: '40px',
+                padding: '8px',
+                margin: 'px',
+                cursor: 'pointer',
+                transition: '0.4s',
+                color: darkMode ? '#f8fafc' : '#1e293b',
+                fill: darkMode ? '#f8fafc' : '#1e293b',
+                backgroundColor: 'transparent',
+                '&:hover:not(:disabled)': {
+                    backgroundColor: darkMode ? '#334155' : '#f1f5f9',
+                },
+                '&:focus': {
+                    outline: 'none',
+                    backgroundColor: darkMode ? '#334155' : '#f1f5f9',
+                },
+            },
+        },
+    };
 
     useEffect(() => {
         fetchUsers();
@@ -217,136 +431,16 @@ const UserList = () => {
                         </div>
                     ) : (
                         <div className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'} rounded-xl shadow-md border overflow-hidden`}>
-                            <div className="overflow-x-auto">
-                                <table className="w-full">
-                                    <thead className={`${darkMode ? 'bg-gray-900' : 'bg-gray-50'} border-b ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}>
-                                        <tr>
-                                            <th className={`px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                                                User
-                                            </th>
-                                            <th className={`px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                                                Email
-                                            </th>
-                                            <th className={`px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                                                Role
-                                            </th>
-                                            <th className={`px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                                                Joined
-                                            </th>
-                                            <th className={`px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                                                Status
-                                            </th>
-                                            <th className={`px-6 py-4 text-right text-xs font-semibold uppercase tracking-wider ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-                                                Actions
-                                            </th>
-                                        </tr>
-                                    </thead>
-                                    <tbody className={`divide-y ${darkMode ? 'divide-gray-700' : 'divide-gray-200'}`}>
-                                        {filteredUsers.map((user) => (
-                                            <tr key={user._id} className={`transition-colors ${darkMode ? 'hover:bg-gray-750' : 'hover:bg-gray-50'}`}>
-                                                <td className="px-6 py-4 whitespace-nowrap">
-                                                    <div className="flex items-center">
-                                                        <div className="flex-shrink-0 h-10 w-10">
-                                                            {user.profileImage ? (
-                                                                <img
-                                                                    className="h-10 w-10 rounded-full object-cover"
-                                                                    src={`http://localhost:3030${user.profileImage}`}
-                                                                    alt={user.username}
-                                                                />
-                                                            ) : (
-                                                                <div className={`h-10 w-10 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white font-bold`}>
-                                                                    {user.username?.charAt(0).toUpperCase()}
-                                                                </div>
-                                                            )}
-                                                        </div>
-                                                        <div className="ml-4">
-                                                            <div className={`text-sm font-medium ${darkMode ? 'text-white' : 'text-gray-900'}`}>
-                                                                {user.username}
-                                                            </div>
-                                                            {user._id === currentUser?._id && (
-                                                                <span className="text-xs text-orange-500">(You)</span>
-                                                            )}
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                                <td className="px-6 py-4 whitespace-nowrap">
-                                                    <div className={`flex items-center text-sm ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                                                        <Mail size={14} className={`mr-2 ${darkMode ? 'text-gray-500' : 'text-gray-400'}`} />
-                                                        {user.email}
-                                                    </div>
-                                                </td>
-                                                <td className="px-6 py-4 whitespace-nowrap">
-                                                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${user.role === 'admin'
-                                                        ? (darkMode ? 'bg-purple-900/30 text-purple-400' : 'bg-purple-100 text-purple-600')
-                                                        : (darkMode ? 'bg-blue-900/30 text-blue-400' : 'bg-blue-100 text-blue-600')
-                                                        }`}>
-                                                        <Shield size={12} className="mr-1" />
-                                                        {user.role}
-                                                    </span>
-                                                </td>
-                                                <td className="px-6 py-4 whitespace-nowrap">
-                                                    <div className={`flex items-center text-sm ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                                                        <Calendar size={14} className={`mr-2 ${darkMode ? 'text-gray-500' : 'text-gray-400'}`} />
-                                                        {formatDate(user.createdAt)}
-                                                    </div>
-                                                </td>
-                                                <td className="px-6 py-4 whitespace-nowrap">
-                                                    {/* <button
-                                                        onClick={() => handleToggleStatus(user)}
-                                                        disabled={user._id === currentUser?._id}
-                                                        className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold transition-colors ${
-                                                            user.isActive !== false
-                                                                ? 'bg-green-100 text-green-700 hover:bg-green-200'
-                                                                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                                                        } ${user._id === currentUser?._id ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
-                                                        title={user._id === currentUser?._id ? "Cannot change your own status" : (user.isActive !== false ? "Click to deactivate" : "Click to activate")}
-                                                    >
-                                                        <Power size={12} className="mr-1" />
-                                                        {user.isActive !== false ? 'Active' : 'Inactive'}
-                                                    </button> */}
-
-                                                    <div className="flex items-center">
-                                                        <button
-                                                            onClick={() => handleToggleStatus(user)}
-                                                            disabled={user._id === currentUser?._id}
-                                                            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-300 ${user.isActive !== false ? 'bg-orange-500' : (darkMode ? 'bg-gray-700' : 'bg-gray-300')
-                                                                } ${user._id === currentUser?._id ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
-                                                            title={
-                                                                user._id === currentUser?._id
-                                                                    ? "Cannot change your own status"
-                                                                    : user.isActive !== false
-                                                                        ? "Click to deactivate"
-                                                                        : "Click to activate"
-                                                            }
-                                                        >
-                                                            <span
-                                                                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-300 ${user.isActive !== false ? 'translate-x-6' : 'translate-x-1'
-                                                                    }`}
-                                                            />
-                                                        </button>
-
-                                                        {/* <span className={`ml-3 text-xs font-medium ${user.isActive !== false ? 'text-green-600' : 'text-gray-500'
-                                                            }`}>
-                                                            {user.isActive !== false ? 'Active' : 'Inactive'}
-                                                        </span> */}
-                                                    </div>
-                                                </td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                                    {user._id !== currentUser?._id && (
-                                                        <button
-                                                            onClick={() => openDeleteModal(user)}
-                                                            className={`p-2 rounded-lg transition-colors ${darkMode ? 'text-red-400 hover:bg-red-900/30' : 'text-red-600 hover:text-red-900 hover:bg-red-50'}`}
-                                                            title="Delete user"
-                                                        >
-                                                            <Trash2 size={18} />
-                                                        </button>
-                                                    )}
-                                                </td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            </div>
+                            <DataTable
+                                columns={columns}
+                                data={filteredUsers}
+                                pagination
+                                theme="custom"
+                                customStyles={customStyles}
+                                highlightOnHover
+                                pointerOnHover
+                                responsive
+                            />
                         </div>
                     )}
                 </div>

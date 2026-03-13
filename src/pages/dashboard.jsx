@@ -5,6 +5,8 @@ import { logout } from '../redux/slices/authSlice';
 import { getAllQuizzes } from '../redux/slices/quizSlice';
 import userService from '../services/user_service';
 import resultService from '../services/result_service';
+import { Chart as ChartJS, ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement, Title } from 'chart.js';
+import { Pie, Bar } from 'react-chartjs-2';
 import {
     BookOpen,
     Users,
@@ -15,8 +17,11 @@ import {
     Clock,
     TrendingUp,
     Award,
-    FileText
+    FileText,
+    PieChart
 } from 'lucide-react';
+
+ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement, Title);
 
 const Dashboard = () => {
     const { user } = useSelector((state) => state.auth);
@@ -27,6 +32,7 @@ const Dashboard = () => {
     const [totalUsers, setTotalUsers] = useState(0);
     const [totalAttempts, setTotalAttempts] = useState(0);
     const [userAttempts, setUserAttempts] = useState(0);
+    const [topUsers, setTopUsers] = useState([]);
     const [recentAttempts, setRecentAttempts] = useState([]);
     const [userStatsData, setUserStatsData] = useState({
         highestScore: 0,
@@ -55,6 +61,15 @@ const Dashboard = () => {
             const resultData = await resultService.getAllResults();
             const results = Array.isArray(resultData) ? resultData : resultData.results || [];
             setTotalAttempts(results.length);
+
+            // Process latest 10 user scores for bar chart
+            const sortedResults = [...results].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            const latest10 = sortedResults.slice(0, 10).map(r => ({
+                username: r.userId?.username || 'Anonymous',
+                score: r.totalMarks > 0 ? Math.round((r.score / r.totalMarks) * 100) : 0,
+                quiz: r.quizId?.title || 'Unknown Quiz'
+            }));
+            setTopUsers(latest10);
         } catch (error) {
             console.error('Failed to fetch admin data:', error);
         }
@@ -394,6 +409,198 @@ const Dashboard = () => {
                         </div>
                     </div>
                 </div>
+
+                {/* Admin Quiz Status Charts */}
+                {isAdmin && (
+                    <div className="space-y-10 mt-10">
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                            {/* Quiz Distribution Chart */}
+                            <div className={`${darkMode ? 'bg-gray-800 border-gray-700 border' : 'bg-white border-gray-100 shadow-xl'} rounded-2xl p-8 transition-all hover:shadow-2xl`}>
+                                <div className="flex items-center space-x-3 mb-8">
+                                    <div className="p-2 bg-blue-500 rounded-lg">
+                                        <PieChart size={24} className="text-white" />
+                                    </div>
+                                    <h2 className={`text-2xl font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>Quiz Distribution</h2>
+                                </div>
+                                <div className="h-80 relative">
+                                    <Pie 
+                                        data={{
+                                            labels: ['Published', 'Archived', 'Active', 'Deactive'],
+                                            datasets: [{
+                                                data: [
+                                                    quizzes.filter(q => q.status === 'published').length,
+                                                    quizzes.filter(q => q.status === 'archived').length,
+                                                    quizzes.filter(q => q.isActive === true).length,
+                                                    quizzes.filter(q => q.isActive === false).length,
+                                                ],
+                                                backgroundColor: [
+                                                    'rgba(59, 130, 246, 0.8)', // blue-500
+                                                    'rgba(239, 68, 68, 0.8)',  // red-500
+                                                    'rgba(16, 185, 129, 0.8)', // green-500
+                                                    'rgba(245, 158, 11, 0.8)', // orange-500
+                                                ],
+                                                borderColor: darkMode ? '#1f2937' : '#ffffff',
+                                                borderWidth: 3,
+                                                hoverOffset: 20
+                                            }]
+                                        }}
+                                        options={{
+                                            responsive: true,
+                                            maintainAspectRatio: false,
+                                            plugins: {
+                                                legend: {
+                                                    position: 'bottom',
+                                                    labels: {
+                                                        color: darkMode ? '#d1d5db' : '#4b5563',
+                                                        padding: 25,
+                                                        font: { 
+                                                            size: 14,
+                                                            weight: 'bold'
+                                                        },
+                                                        usePointStyle: true,
+                                                        pointStyle: 'circle'
+                                                    }
+                                                },
+                                                tooltip: {
+                                                    backgroundColor: darkMode ? '#374151' : '#ffffff',
+                                                    titleColor: darkMode ? '#ffffff' : '#1f2937',
+                                                    bodyColor: darkMode ? '#d1d5db' : '#4b5563',
+                                                    borderColor: darkMode ? '#4b5563' : '#e5e7eb',
+                                                    borderWidth: 1,
+                                                    padding: 12,
+                                                    displayColors: true,
+                                                    callbacks: {
+                                                        label: (context) => {
+                                                            const label = context.label || '';
+                                                            const value = context.formattedValue || '';
+                                                            const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                                            const percentage = Math.round((context.raw / total) * 100);
+                                                            return ` ${label}: ${value} (${percentage}%)`;
+                                                        }
+                                                    }
+                                                }
+                                            },
+                                            layout: {
+                                                padding: 10
+                                            }
+                                        }}
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Latest 10 Users Report Chart */}
+                            <div className={`${darkMode ? 'bg-gray-800 border-gray-700 border' : 'bg-white border-gray-100 shadow-xl'} rounded-2xl p-8 transition-all hover:shadow-2xl`}>
+                                <div className="flex items-center space-x-3 mb-8">
+                                    <div className="p-2 bg-orange-500 rounded-lg">
+                                        <BarChart3 className="text-white" size={24} />
+                                    </div>
+                                    <h2 className={`text-2xl font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>Latest Results</h2>
+                                </div>
+                                <div className="h-80 relative">
+                                    {topUsers.length > 0 ? (
+                                        <Bar 
+                                            data={{
+                                                labels: topUsers.map(u => u.username),
+                                                datasets: [{
+                                                    label: 'Score %',
+                                                    data: topUsers.map(u => u.score),
+                                                    backgroundColor: 'rgba(249, 115, 22, 1)', // orange-500
+                                                    borderColor: 'rgba(249, 115, 22, 1)',
+                                                    borderWidth: 1,
+                                                    borderRadius: 8,
+                                                    hoverBackgroundColor: 'rgba(249, 115, 22, 0.8)',
+                                                }]
+                                            }}
+                                            options={{
+                                                responsive: true,
+                                                maintainAspectRatio: false,
+                                                plugins: {
+                                                    legend: {
+                                                        display: false
+                                                    },
+                                                    tooltip: {
+                                                        backgroundColor: darkMode ? '#374151' : '#ffffff',
+                                                        titleColor: darkMode ? '#ffffff' : '#1f2937',
+                                                        bodyColor: darkMode ? '#d1d5db' : '#4b5563',
+                                                        borderColor: darkMode ? '#4b5563' : '#e5e7eb',
+                                                        borderWidth: 1,
+                                                        padding: 12,
+                                                        callbacks: {
+                                                            label: (context) => {
+                                                                const result = topUsers[context.dataIndex];
+                                                                return ` Score: ${context.raw}% (${result.quiz})`;
+                                                            }
+                                                        }
+                                                    }
+                                                },
+                                                scales: {
+                                                    y: {
+                                                        beginAtZero: true,
+                                                        max: 100,
+                                                        grid: {
+                                                            color: darkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
+                                                            drawBorder: false
+                                                        },
+                                                        ticks: {
+                                                            color: darkMode ? '#9ca3af' : '#4b5563',
+                                                            font: {
+                                                                size: 12
+                                                            },
+                                                            callback: (value) => `${value}%`
+                                                        }
+                                                    },
+                                                    x: {
+                                                        grid: {
+                                                            display: false
+                                                        },
+                                                        ticks: {
+                                                            color: darkMode ? '#9ca3af' : '#4b5563',
+                                                            font: {
+                                                                size: 11
+                                                            },
+                                                            maxRotation: 45,
+                                                            minRotation: 45
+                                                        }
+                                                    }
+                                                }
+                                            }}
+                                        />
+                                    ) : (
+                                        <div className="flex flex-col items-center justify-center h-full space-y-3">
+                                            <div className={`p-4 rounded-full ${darkMode ? 'bg-gray-700' : 'bg-gray-100'}`}>
+                                                <BarChart3 size={48} className="text-gray-400" />
+                                            </div>
+                                            <p className={`text-lg font-medium ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>No performance data available yet</p>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Quiz Distribution Summary Cards */}
+                        {/* <div className={`${darkMode ? 'bg-gray-800 border-gray-700 border' : 'bg-white border-gray-100 shadow-xl'} rounded-2xl p-8 transition-all hover:shadow-2xl`}>
+                            <h3 className={`text-xl font-bold ${darkMode ? 'text-white' : 'text-gray-800'} mb-8 text-center`}>Quiz Distribution Summary</h3>
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                                <div className={`${darkMode ? 'bg-gray-700/50 hover:bg-gray-700' : 'bg-blue-50 hover:bg-blue-100'} p-5 rounded-2xl transition-all text-center border ${darkMode ? 'border-blue-500/20' : 'border-blue-200'}`}>
+                                    <p className={`text-3xl font-black ${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>{quizzes.filter(q => q.status === 'published').length}</p>
+                                    <p className={`text-sm font-semibold uppercase tracking-wider mt-1 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Published</p>
+                                </div>
+                                <div className={`${darkMode ? 'bg-gray-700/50 hover:bg-gray-700' : 'bg-red-50 hover:bg-red-100'} p-5 rounded-2xl transition-all text-center border ${darkMode ? 'border-red-500/20' : 'border-red-200'}`}>
+                                    <p className={`text-3xl font-black ${darkMode ? 'text-red-400' : 'text-red-600'}`}>{quizzes.filter(q => q.status === 'archived').length}</p>
+                                    <p className={`text-sm font-semibold uppercase tracking-wider mt-1 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Archived</p>
+                                </div>
+                                <div className={`${darkMode ? 'bg-gray-700/50 hover:bg-gray-700' : 'bg-emerald-50 hover:bg-emerald-100'} p-5 rounded-2xl transition-all text-center border ${darkMode ? 'border-emerald-500/20' : 'border-emerald-200'}`}>
+                                    <p className={`text-3xl font-black ${darkMode ? 'text-emerald-400' : 'text-emerald-600'}`}>{quizzes.filter(q => q.isActive === true).length}</p>
+                                    <p className={`text-sm font-semibold uppercase tracking-wider mt-1 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Active</p>
+                                </div>
+                                <div className={`${darkMode ? 'bg-gray-700/50 hover:bg-gray-700' : 'bg-orange-50 hover:bg-orange-100'} p-5 rounded-2xl transition-all text-center border ${darkMode ? 'border-orange-500/20' : 'border-orange-200'}`}>
+                                    <p className={`text-3xl font-black ${darkMode ? 'text-orange-400' : 'text-orange-600'}`}>{quizzes.filter(q => q.isActive === false).length}</p>
+                                    <p className={`text-sm font-semibold uppercase tracking-wider mt-1 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Deactive</p>
+                                </div>
+                            </div>
+                        </div> */}
+                    </div>
+                )}
             </div>
         </div>
     );

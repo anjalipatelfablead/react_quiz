@@ -186,7 +186,7 @@ const Reports = () => {
 
                 {/* Overall Stats */}
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-                    <div className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white'} rounded-xl shadow-md p-6 border transition-colors`}>
+                    <div className={`${darkMode ? 'bg-gray-800 border-gray-700 border' : 'bg-white'} rounded-xl shadow-md p-6 transition-colors`}>
                         <div className="flex items-center gap-3">
                             <div className={`${darkMode ? 'bg-blue-900/30' : 'bg-blue-100'} p-3 rounded-lg`}>
                                 <Users className="text-blue-600" size={24} />
@@ -197,7 +197,7 @@ const Reports = () => {
                             </div>
                         </div>
                     </div>
-                    <div className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white'} rounded-xl shadow-md p-6 border transition-colors`}>
+                    <div className={`${darkMode ? 'bg-gray-800 border-gray-700 border' : 'bg-white'} rounded-xl shadow-md p-6 transition-colors`}>
                         <div className="flex items-center gap-3">
                             <div className={`${darkMode ? 'bg-purple-900/30' : 'bg-purple-100'} p-3 rounded-lg`}>
                                 <BarChart3 className="text-purple-600" size={24} />
@@ -208,7 +208,7 @@ const Reports = () => {
                             </div>
                         </div>
                     </div>
-                    <div className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white'} rounded-xl shadow-md p-6 border transition-colors`}>
+                    <div className={`${darkMode ? 'bg-gray-800 border-gray-700 border' : 'bg-white'} rounded-xl shadow-md p-6 transition-colors`}>
                         <div className="flex items-center gap-3">
                             <div className={`${darkMode ? 'bg-green-900/30' : 'bg-green-100'} p-3 rounded-lg`}>
                                 <TrendingUp className="text-green-600" size={24} />
@@ -219,7 +219,7 @@ const Reports = () => {
                             </div>
                         </div>
                     </div>
-                    <div className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white'} rounded-xl shadow-md p-6 border transition-colors`}>
+                    <div className={`${darkMode ? 'bg-gray-800 border-gray-700 border' : 'bg-white'} rounded-xl shadow-md p-6 transition-colors`}>
                         <div className="flex items-center gap-3">
                             <div className={`${darkMode ? 'bg-yellow-900/30' : 'bg-yellow-100'} p-3 rounded-lg`}>
                                 <Award className="text-yellow-600" size={24} />
@@ -235,7 +235,7 @@ const Reports = () => {
                 </div>
 
                 {/* Search Bar */}
-                <div className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white'} rounded-xl shadow-md p-4 mb-6 border`}>
+                <div className={`${darkMode ? 'bg-gray-800 border-gray-700 border' : 'bg-white'} rounded-xl shadow-md p-4 mb-6`}>
                     <div className="relative">
                         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
                         <input
@@ -253,7 +253,7 @@ const Reports = () => {
                 </div>
 
                 {/* User Progress Table */}
-                <div className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white'} rounded-xl shadow-md overflow-hidden border transition-colors`}>
+                <div className={`${darkMode ? 'bg-gray-800 border-gray-700 border' : 'bg-white'} rounded-xl shadow-md overflow-hidden transition-colors`}>
                     <div className={`p-6 border-b flex items-center justify-between ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}>
                         <h2 className={`text-xl font-semibold ${darkMode ? 'text-white' : 'text-gray-800'}`}>User Progress Report</h2>
                         <span className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>{filteredData.length} users found</span>
@@ -406,7 +406,7 @@ const Reports = () => {
 
                 {/* Recent Attempts Section */}
                 {results && results.length > 0 && (
-                    <div className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white'} mt-8 rounded-xl shadow-md overflow-hidden border transition-colors`}>
+                    <div className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white'} mt-8 rounded-xl shadow-md overflow-hidden  transition-colors`}>
                         <div className={`p-6 border-b ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}>
                             <h2 className={`text-xl font-semibold ${darkMode ? 'text-white' : 'text-gray-800'}`}>Recent Attempts</h2>
                         </div>

@@ -101,7 +101,7 @@ const MyAttempts = () => {
                 {/* Stats Summary */}
                 {results && results.length > 0 && (
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-                        <div className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white'} rounded-xl shadow-md p-6 border transition-colors`}>
+                        <div className={`${darkMode ? 'bg-gray-800 border-gray-700 border' : 'bg-white'} rounded-xl shadow-md p-6 transition-colors`}>
                             <div className="flex items-center gap-3">
                                 <div className={`${darkMode ? 'bg-blue-900/30' : 'bg-blue-100'} p-3 rounded-lg`}>
                                     <BookOpen className="text-blue-600" size={24} />
@@ -112,7 +112,7 @@ const MyAttempts = () => {
                                 </div>
                             </div>
                         </div>
-                        <div className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white'} rounded-xl shadow-md p-6 border transition-colors`}>
+                        <div className={`${darkMode ? 'bg-gray-800 border-gray-700 border' : 'bg-white'} rounded-xl shadow-md p-6 transition-colors`}>
                             <div className="flex items-center gap-3">
                                 <div className={`${darkMode ? 'bg-green-900/30' : 'bg-green-100'} p-3 rounded-lg`}>
                                     <Trophy className="text-green-600" size={24} />
@@ -125,7 +125,7 @@ const MyAttempts = () => {
                                 </div>
                             </div>
                         </div>
-                        <div className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white'} rounded-xl shadow-md p-6 border transition-colors`}>
+                        <div className={`${darkMode ? 'bg-gray-800 border-gray-700 border' : 'bg-white'} rounded-xl shadow-md p-6 transition-colors`}>
                             <div className="flex items-center gap-3">
                                 <div className={`${darkMode ? 'bg-purple-900/30' : 'bg-purple-100'} p-3 rounded-lg`}>
                                     <Trophy className="text-purple-600" size={24} />
@@ -138,7 +138,7 @@ const MyAttempts = () => {
                                 </div>
                             </div>
                         </div>
-                        <div className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white'} rounded-xl shadow-md p-6 border transition-colors`}>
+                        <div className={`${darkMode ? 'bg-gray-800 border-gray-700 border' : 'bg-white'} rounded-xl shadow-md p-6 transition-colors`}>
                             <div className="flex items-center gap-3">
                                 <div className={`${darkMode ? 'bg-orange-900/30' : 'bg-orange-100'} p-3 rounded-lg`}>
                                     <Clock className="text-orange-600" size={24} />
@@ -155,7 +155,7 @@ const MyAttempts = () => {
                 )}
 
                 {/* Attempts List */}
-                <div className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white'} rounded-xl shadow-md overflow-hidden border transition-colors`}>
+                <div className={`${darkMode ? 'bg-gray-800 border-gray-700 border' : 'bg-white'} rounded-xl shadow-md overflow-hidden transition-colors`}>
                     <div className={`p-6 border-b flex flex-col md:flex-row md:items-center justify-between gap-4 ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}>
                         <h2 className={`text-xl font-semibold ${darkMode ? 'text-white' : 'text-gray-800'}`}>Quiz History</h2>
                         <div className="relative max-w-sm w-full">

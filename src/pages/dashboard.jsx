@@ -133,8 +133,11 @@ const Dashboard = () => {
 
     const isAdmin = user?.role === 'admin';
 
-    const StatCard = ({ icon: Icon, value, label, color }) => (
-        <div className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'} rounded-xl shadow-md p-6 hover:shadow-lg transition-shadow duration-300 border`}>
+    const StatCard = ({ icon: Icon, value, label, color, onClick }) => (
+        <div 
+            onClick={onClick}
+            className={`${darkMode ? 'bg-gray-800 border-gray-700 border' : 'bg-white border-gray-100'} rounded-xl shadow-md p-6 hover:shadow-lg transition-all duration-300 ${onClick ? 'cursor-pointer hover:scale-105 active:scale-95' : ''}`}
+        >
             <div className="flex items-center space-x-4">
                 <div className={`p-3 rounded-lg ${color}`}>
                     <Icon size={24} className="text-white" />
@@ -170,18 +173,21 @@ const Dashboard = () => {
                                 value={adminStats.totalQuizzes}
                                 label="Total Quizzes"
                                 color="bg-blue-500"
+                                onClick={() => navigate('/quizzes')}
                             />
                             <StatCard
                                 icon={Users}
                                 value={adminStats.totalUsers}
                                 label="Total Users"
                                 color="bg-green-500"
+                                onClick={() => navigate('/users')}
                             />
                             <StatCard
                                 icon={ClipboardList}
                                 value={adminStats.totalAttempts}
                                 label="Total Attempts"
                                 color="bg-purple-500"
+                                onClick={() => navigate('/reports')}
                             />
                             <StatCard
                                 icon={BarChart3}
@@ -226,7 +232,7 @@ const Dashboard = () => {
                     <div className="lg:col-span-2">
                         {isAdmin ? (
                             /* Admin Analytics Section */
-                            <div className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'} rounded-xl shadow-md p-6 border`}>
+                            <div className={`${darkMode ? 'bg-gray-800 border-gray-700 border' : 'bg-white border-gray-100'} rounded-xl shadow-md p-6 transition-colors`}>
                                 <div className="flex items-center space-x-2 mb-6">
                                     <BarChart3 className="text-orange-500" size={24} />
                                     <h2 className={`text-xl font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>Analytics Summary</h2>
@@ -276,7 +282,7 @@ const Dashboard = () => {
                             </div>
                         ) : (
                             /* User Recent Attempts Section */
-                            <div className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'} rounded-xl shadow-md p-6 border`}>
+                            <div className={`${darkMode ? 'bg-gray-800 border-gray-700 border' : 'bg-white border-gray-100'} rounded-xl shadow-md p-6 transition-colors`}>
                                 <div className="flex items-center space-x-2 mb-6">
                                     <Clock className="text-orange-500" size={24} />
                                     <h2 className={`text-xl font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>Recent Attempts</h2>
@@ -315,7 +321,7 @@ const Dashboard = () => {
                                         </div>
                                     )}
                                 </div>
-                                <button className={`w-full mt-6 py-3 text-center text-orange-500 font-medium hover:text-orange-600 transition-colors border ${darkMode ? 'border-orange-500/30 hover:bg-orange-500/10' : 'border-orange-200 hover:bg-orange-50'} rounded-lg`}
+                                <button className={`w-full mt-6 py-3 text-center text-orange-500 font-medium hover:text-orange-600 transition-colors ${darkMode ? 'border border-orange-500/30 hover:bg-orange-500/10' : 'hover:bg-orange-50'} rounded-lg`}
                                 onClick={ () => navigate('/my-attempts') }>
                                     View All Attempts
                                 </button>
@@ -326,7 +332,7 @@ const Dashboard = () => {
                     {/* Sidebar */}
                     <div className="space-y-6">
                         {/* Quick Actions */}
-                        <div className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'} rounded-xl shadow-md p-6 border`}>
+                        <div className={`${darkMode ? 'bg-gray-800 border-gray-700 border' : 'bg-white border-gray-100'} rounded-xl shadow-md p-6 transition-colors`}>
                             <h3 className={`text-lg font-semibold ${darkMode ? 'text-white' : 'text-gray-800'} mb-4`}>
                                 {isAdmin ? 'Quick Actions' : 'Quick Links'}
                             </h3>
@@ -344,7 +350,7 @@ const Dashboard = () => {
                                         >
                                             Manage Users
                                         </button>
-                                        <button className={`w-full py-2 px-4 border ${darkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : 'border-gray-300 text-gray-700 hover:bg-gray-50'} rounded-lg transition-colors text-sm font-medium`}
+                                        <button className={`w-full py-2 px-4 ${darkMode ? 'border border-gray-600 text-gray-300 hover:bg-gray-700' : 'text-gray-700 hover:bg-gray-50'} rounded-lg transition-colors text-sm font-medium`}
                                             onClick={() => navigate('/reports')}
                                         >
                                             View Reports
@@ -367,7 +373,7 @@ const Dashboard = () => {
                         </div>
 
                         {/* User Info Card */}
-                        <div className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'} rounded-xl shadow-md p-6 border`}>
+                        <div className={`${darkMode ? 'bg-gray-800 border-gray-700 border' : 'bg-white border-gray-100'} rounded-xl shadow-md p-6 transition-colors`}>
                             <h3 className={`text-lg font-semibold ${darkMode ? 'text-white' : 'text-gray-800'} mb-4`}>Account Info</h3>
                             <div className="space-y-3 text-sm">
                                 <div className="flex justify-between">

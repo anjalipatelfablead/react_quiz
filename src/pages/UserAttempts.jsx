@@ -148,7 +148,7 @@ const UserAttempts = () => {
                 </button>
 
                 {/* User Info Header */}
-                <div className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white'} rounded-xl shadow-md p-6 mb-8 border transition-colors`}>
+                <div className={`${darkMode ? 'bg-gray-800 border-gray-700 border' : 'bg-white'} rounded-xl shadow-md p-6 mb-8 transition-colors`}>
                     <div className="flex flex-col md:flex-row md:items-center gap-6">
                         <div className="w-20 h-20 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white text-3xl font-bold shadow-lg">
                             {userDetails?.username?.charAt(0).toUpperCase() || 'U'}
@@ -173,7 +173,7 @@ const UserAttempts = () => {
 
                 {/* Stats Summary */}
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-                    <div className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white'} rounded-xl shadow-md p-6 border transition-colors`}>
+                    <div className={`${darkMode ? 'bg-gray-800 border-gray-700 border' : 'bg-white'} rounded-xl shadow-md p-6 transition-colors`}>
                         <div className="flex items-center gap-3">
                             <div className={`${darkMode ? 'bg-blue-900/30' : 'bg-blue-100'} p-3 rounded-lg`}>
                                 <BookOpen className="text-blue-600" size={24} />
@@ -184,7 +184,7 @@ const UserAttempts = () => {
                             </div>
                         </div>
                     </div>
-                    <div className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white'} rounded-xl shadow-md p-6 border transition-colors`}>
+                    <div className={`${darkMode ? 'bg-gray-800 border-gray-700 border' : 'bg-white'} rounded-xl shadow-md p-6 transition-colors`}>
                         <div className="flex items-center gap-3">
                             <div className={`${darkMode ? 'bg-green-900/30' : 'bg-green-100'} p-3 rounded-lg`}>
                                 <Trophy className="text-green-600" size={24} />
@@ -195,7 +195,7 @@ const UserAttempts = () => {
                             </div>
                         </div>
                     </div>
-                    <div className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white'} rounded-xl shadow-md p-6 border transition-colors`}>
+                    <div className={`${darkMode ? 'bg-gray-800 border-gray-700 border' : 'bg-white'} rounded-xl shadow-md p-6 transition-colors`}>
                         <div className="flex items-center gap-3">
                             <div className={`${darkMode ? 'bg-purple-900/30' : 'bg-purple-100'} p-3 rounded-lg`}>
                                 <TrendingUp className="text-purple-600" size={24} />
@@ -206,7 +206,7 @@ const UserAttempts = () => {
                             </div>
                         </div>
                     </div>
-                    <div className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white'} rounded-xl shadow-md p-6 border transition-colors`}>
+                    <div className={`${darkMode ? 'bg-gray-800 border-gray-700 border' : 'bg-white'} rounded-xl shadow-md p-6 transition-colors`}>
                         <div className="flex items-center gap-3">
                             <div className={`${darkMode ? 'bg-orange-900/30' : 'bg-orange-100'} p-3 rounded-lg`}>
                                 <Clock className="text-orange-600" size={24} />
@@ -220,7 +220,7 @@ const UserAttempts = () => {
                 </div>
 
                 {/* Attempts List */}
-                <div className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white'} rounded-xl shadow-md overflow-hidden border transition-colors`}>
+                <div className={`${darkMode ? 'bg-gray-800 border-gray-700 border' : 'bg-white'} rounded-xl shadow-md overflow-hidden transition-colors`}>
                     <div className={`p-6 border-b ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}>
                         <div className="flex items-center gap-3">
                             <History className="text-orange-500" size={24} />

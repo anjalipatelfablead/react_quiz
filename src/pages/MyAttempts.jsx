@@ -12,8 +12,10 @@ import {
     ChevronLeft,
     ChevronRight,
     BookOpen,
-    Search
+    Search,
+    Download
 } from 'lucide-react';
+import axios from 'axios';
 
 const MyAttempts = () => {
     const dispatch = useDispatch();
@@ -76,6 +78,43 @@ const MyAttempts = () => {
 
     const handleViewReview = (result) => {
         navigate(`/quizzes/${result.quizId?._id || result.quizId}/review/${result._id}`);
+    };
+
+    const handleDownloadCertificate = async (resultId) => {
+        try {
+            const token = sessionStorage.getItem('token');
+            const response = await axios.get(`http://localhost:3030/api/results/${resultId}/certificate`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                },
+                responseType: 'blob'
+            });
+
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', `certificate-${resultId}.pdf`);
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+        } catch (error) {
+            console.error("Error downloading certificate:", error);
+            if (error.response && error.response.data instanceof Blob) {
+                // If the error response is a blob, we need to read it as text
+                const reader = new FileReader();
+                reader.onload = () => {
+                    try {
+                        const errorData = JSON.parse(reader.result);
+                        alert(errorData.message || "Failed to download certificate.");
+                    } catch (e) {
+                        alert("Failed to download certificate.");
+                    }
+                };
+                reader.readAsText(error.response.data);
+            } else {
+                alert("Failed to download certificate. Please try again.");
+            }
+        }
     };
 
     if (isLoading) {
@@ -240,6 +279,15 @@ const MyAttempts = () => {
                                                         View Review
                                                         <ArrowRight size={16} />
                                                     </button>
+                                                    {percentage >= 60 && (
+                                                        <button
+                                                            onClick={() => handleDownloadCertificate(result._id)}
+                                                            className="flex items-center gap-2 px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors text-sm font-medium shadow-md"
+                                                        >
+                                                            <Download size={16} />
+                                                            Certificate
+                                                        </button>
+                                                    )}
                                                 </div>
                                             </div>
                                         </div>

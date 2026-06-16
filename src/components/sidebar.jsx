@@ -13,6 +13,9 @@ import {
     BarChart3,
     User
 } from 'lucide-react';
+import logo from '../assets/fablead_f.png';
+
+
 
 const Sidebar = ({ isOpen, onClose }) => {
     const { user } = useSelector((state) => state.auth);
@@ -70,9 +73,7 @@ const Sidebar = ({ isOpen, onClose }) => {
                 {/* Sidebar Header */}
                 <div className={`flex items-center justify-between p-4 border-b ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}>
                     <div className="flex items-center space-x-2">
-                        <div className="w-8 h-8 bg-gradient-to-br from-gray-700 to-gray-900 rounded-lg flex items-center justify-center border border-gray-600">
-                            <span className="text-orange-500 font-bold text-lg">F</span>
-                        </div>
+                        <img src={logo} alt="Fablead Logo" className="w-8 h-8 rounded-lg object-contain" />
                         <span className={`text-lg font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>
                             Fablead<span className="text-orange-500">Quiz</span>
                         </span>

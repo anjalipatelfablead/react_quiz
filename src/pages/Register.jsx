@@ -3,6 +3,8 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate, Link } from 'react-router-dom';
 import { register, reset } from '../redux/slices/authSlice';
 import { User, Mail, Lock, CheckCircle, Eye, EyeOff } from "lucide-react";
+import logo from '../assets/fablead_f.png';
+
 
 const Register = () => {
     const [formData, setFormData] = useState({
@@ -102,9 +104,15 @@ const Register = () => {
     return (
         <div className="min-h-screen bg-gradient-to-b from-primary-100 to-primary-400 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
             <div className="max-w-md w-full bg-card-bg/90 backdrop-blur-sm p-8 rounded-2xl shadow-xl border border-card-border">
-                <div className="mb-8">
-                    <h2 className="text-center text-2xl tracking-wide font-bold text-gray-900 uppercase">
-                        Join <span className="text-orange-500">Fablead Quiz</span>
+                <div className="mb-8 flex flex-col items-center">
+                    <div className="flex items-center space-x-2 mb-4">
+                        <img src={logo} alt="Fablead Logo" className="w-10 h-10 rounded-lg object-contain" />
+                        <span className="text-2xl font-bold text-gray-900">
+                            Fablead<span className="text-orange-500">Quiz</span>
+                        </span>
+                    </div>
+                    <h2 className="text-center text-xl tracking-wide font-bold text-gray-700 uppercase">
+                        Join the platform
                     </h2>
                 </div>
 

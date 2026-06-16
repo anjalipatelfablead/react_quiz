@@ -4,6 +4,9 @@ import { logout } from '../redux/slices/authSlice';
 import { toggleDarkMode } from '../redux/slices/themeSlice';
 import { User, LogOut, Menu, X, Sun, Moon } from 'lucide-react';
 import { useState } from 'react';
+import logo from '../assets/fablead_f.png';
+
+
 
 const Navbar = ({ onMenuClick }) => {
     const { user } = useSelector((state) => state.auth);
@@ -44,9 +47,7 @@ const Navbar = ({ onMenuClick }) => {
 
                         {/* Mobile Logo - NOW ON LEFT */}
                         <div className="md:hidden flex items-center space-x-2">
-                            <div className="w-8 h-8 bg-gradient-to-br from-gray-700 to-gray-900 rounded-lg flex items-center justify-center border border-gray-600">
-                                <span className="text-orange-500 font-bold text-lg">F</span>
-                            </div>
+                            <img src={logo} alt="Fablead Logo" className="w-8 h-8 rounded-lg object-contain" />
                             <span className={`text-lg font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>
                                 Fablead<span className="text-orange-500">Quiz</span>
                             </span>
